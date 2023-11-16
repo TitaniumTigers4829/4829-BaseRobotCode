@@ -15,42 +15,47 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class ExampleSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  private final WPI_TalonFX motor;
-  private final DoubleSolenoid solenoid;
+  private final TalonFX exampleMotor;
+  private final DoubleSolenoid exampleSolenoid;
 
 
-  public IntakeSubsystem() {
-    motor = new WPI_TalonFX(IntakeConstants.intakeMotorPort);
-    motor.setInverted(false);
-    motor.setNeutralMode(NeutralMode.Coast);
-    motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0,0);
+  public ExampleSubsystem() {
+    //example Configs
+    TalonFXConfiguration exampleConfig = new TalonFXConfiguration();
+    exampleConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    exampleConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    exampleConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
+    exampleConfig.Slot0.kS = DriveConstants.TURN_S;
+    exampleConfig.Slot0.kV = DriveConstants.TURN_V;
+    exampleMotor.getConfigurator().apply(exampleConfig, HardwareConstants.TIMEOUT_S);
 
-    solenoid = new DoubleSolenoid(ElectronicsConstants.pneumaticsModuleType, IntakeConstants.deploySolenoidPort, IntakeConstants.retractSolenoidPort);
+    //configure example solenoid. 
+    exampleSolenoid = new DoubleSolenoid(ElectronicsConstants.pneumaticsModuleType, IntakeConstants.deploySolenoidPort, IntakeConstants.retractSolenoidPort);
 
     motor.setStatusFramePeriod(StatusFrame.Status_1_General, 250);
     motor.setStatusFramePeriod(StatusFrame.Status_1_General, 250);
   }
   public void setMotorStopped() {
-    motor.set(0);
+    exampleMotor.set(0);
   }
   public void setMotorFullPowerIn() {
-    motor.set(1);
+    exampleMotor.set(1);
   }
   public void setMotorFullPowerOut() {
-    motor.set(-1);
+    exampleMotor.set(-1);
   }
   public void setCustomPower(double customPower) {
-    motor.set(customPower);
+    exampleMotor.set(customPower);
   }
 
 
   public void setRetractedSolenoidPort() {
-    solenoid.set(Value.kReverse);
+    exampleSolenoid.set(Value.kReverse);
   }
   public void setDeployedSolenoidPort() {
-    solenoid.set(Value.kForward);
+    exampleSolenoid.set(Value.kForward);
   }
 
   @Override
