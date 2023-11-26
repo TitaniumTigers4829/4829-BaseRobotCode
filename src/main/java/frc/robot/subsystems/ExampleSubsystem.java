@@ -53,8 +53,6 @@ public class ExampleSubsystem extends SubsystemBase {
     solenoid.set(ExampleConstants.SOLENOID_FORWARD_VALUE);
   }
 
-
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
