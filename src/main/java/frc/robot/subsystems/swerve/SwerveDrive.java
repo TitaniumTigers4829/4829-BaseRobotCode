@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.extras.debug.Alert;
+import edu.wpi.first.wpilibj.Alert;
 import frc.robot.extras.util.DeviceCANBus;
 import frc.robot.extras.util.TimeUtil;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;

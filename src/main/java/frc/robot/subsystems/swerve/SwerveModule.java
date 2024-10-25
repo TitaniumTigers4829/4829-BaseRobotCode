@@ -7,7 +7,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.extras.debug.Alert;
+import edu.wpi.first.wpilibj.Alert;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
 import frc.robot.subsystems.swerve.moduleIO.ModuleInterface;
@@ -29,8 +29,8 @@ public class SwerveModule extends SubsystemBase {
     this.io = io;
     this.name = name;
     this.hardwareFaultAlert =
-        new Alert("Module-" + name + " Hardware Fault", Alert.AlertType.ERROR);
-    this.hardwareFaultAlert.setActivated(false);
+        new Alert("Module-" + name + " Hardware Fault", Alert.AlertType.kError);
+    this.hardwareFaultAlert.set(false);
 
     CommandScheduler.getInstance().unregisterSubsystem(this);
 

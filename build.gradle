@@ -64,18 +64,12 @@ deploy {
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-<<<<<<< HEAD
-=======
                     gcType = edu.wpi.first.gradlerio.deploy.roborio.GarbageCollectorType.G1_Base
->>>>>>> 8cf93f64d02ee4029910e2beff71a8f24825894f
                 }
 
                 // Static files artifact
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
-<<<<<<< HEAD
-=======
                     predeploy << { execute 'rm -rf /home/lvuser/deploy' }
->>>>>>> 8cf93f64d02ee4029910e2beff71a8f24825894f
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/lvuser/deploy'
                 }
@@ -90,14 +84,6 @@ def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 wpi.java.debugJni = false
 
 // Set this to true to enable desktop support.
-<<<<<<< HEAD
-def includeDesktopSupport = false
-
-// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
-// Also defines JUnit 5.
-dependencies {
-    annotationProcessor wpi.java.deps.wpilibAnnotations()
-=======
 def includeDesktopSupport = true
 
 // Configuration for AdvantageKit
@@ -174,7 +160,6 @@ createVersionFile.dependsOn(eventDeploy)
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
->>>>>>> 8cf93f64d02ee4029910e2beff71a8f24825894f
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
@@ -192,11 +177,8 @@ dependencies {
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
-<<<<<<< HEAD
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-=======
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+    // testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
 
     implementation 'gov.nist.math:jama:1.0.3'
 
@@ -209,7 +191,6 @@ dependencies {
 
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit.junction:junction-autolog:$akitJson.version"
->>>>>>> 8cf93f64d02ee4029910e2beff71a8f24825894f
 }
 
 test {
@@ -225,15 +206,11 @@ wpi.sim.addDriverstation()
 // in order to make them all available at runtime. Also adding the manifest so WPILib
 // knows where to look for our Robot Class.
 jar {
-<<<<<<< HEAD
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-=======
     from {
         configurations.runtimeClasspath.collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
->>>>>>> 8cf93f64d02ee4029910e2beff71a8f24825894f
     from sourceSets.main.allSource
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -248,8 +225,6 @@ wpi.java.configureTestTasks(test)
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
-<<<<<<< HEAD
-=======
 
 // Create version file
 project.compileJava.dependsOn(createVersionFile)
@@ -316,4 +291,3 @@ pmd {
     ruleSetFiles = files(file("$rootDir/pmd-ruleset.xml"))
     ruleSets = []
 }
->>>>>>> 8cf93f64d02ee4029910e2beff71a8f24825894f
