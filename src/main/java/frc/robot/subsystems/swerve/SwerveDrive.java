@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.Alert;
 import frc.robot.extras.util.DeviceCANBus;
 import frc.robot.extras.util.TimeUtil;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
@@ -36,6 +35,8 @@ import frc.robot.subsystems.swerve.odometryThread.OdometryThreadInputsAutoLogged
 import frc.robot.subsystems.vision.VisionConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import edu.wpi.first.wpilibj.Alert;
+
 
 public class SwerveDrive extends SubsystemBase {
   private final GyroInterface gyroIO;
@@ -49,8 +50,7 @@ public class SwerveDrive extends SubsystemBase {
 
   private final OdometryThread odometryThread;
   private final Alert
-      gyroDisconnectedAlert = new Alert("Gyro Hardware Fault", Alert.AlertType.ERROR),
-      visionNoResultAlert = new Alert("Vision No Result", Alert.AlertType.INFO);
+      gyroDisconnectedAlert = new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
 
   public SwerveDrive(
       GyroInterface gyroIO,
