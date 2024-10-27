@@ -6,7 +6,7 @@ import edu.wpi.first.units.measure.Angle;
 import frc.robot.Robot;
 import frc.robot.extras.util.DeviceCANBus;
 import frc.robot.extras.util.TimeUtil;
-import frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants;
+import frc.robot.subsystems.swerve.SwerveConstants.SimulationConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -21,7 +21,7 @@ public interface OdometryThread {
 
     public OdometryDoubleInput(Supplier<Angle> signal) {
       this.supplier = signal;
-      this.queue = new ArrayBlockingQueue<>(DriveTrainConstants.ODOMETRY_CACHE_CAPACITY);
+      this.queue = new ArrayBlockingQueue<>(SimulationConstants.ODOMETRY_CACHE_CAPACITY);
     }
 
     public void cacheInputToQueue() {
@@ -34,7 +34,7 @@ public interface OdometryThread {
 
   static Queue<Angle> registerSignalInput(StatusSignal<Angle> signal) {
     signal.setUpdateFrequency(
-        DriveTrainConstants.ODOMETRY_FREQUENCY, DriveTrainConstants.ODOMETRY_WAIT_TIMEOUT_SECONDS);
+        SimulationConstants.ODOMETRY_FREQUENCY, SimulationConstants.ODOMETRY_WAIT_TIMEOUT_SECONDS);
     registeredStatusSignals.add(signal);
     return registerInput(signal.asSupplier());
   }
@@ -73,11 +73,11 @@ public interface OdometryThread {
   final class OdometryThreadSim implements OdometryThread {
     @Override
     public void updateInputs(OdometryThreadInputs inputs) {
-      inputs.measurementTimeStamps = new double[DriveTrainConstants.SIMULATION_TICKS_IN_1_PERIOD];
+      inputs.measurementTimeStamps = new double[SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD];
       final double robotStartingTimeStamps = TimeUtil.getLogTimeSeconds(),
           iterationPeriodSeconds =
-              Robot.defaultPeriodSecs / DriveTrainConstants.SIMULATION_TICKS_IN_1_PERIOD;
-      for (int i = 0; i < DriveTrainConstants.SIMULATION_TICKS_IN_1_PERIOD; i++)
+              Robot.defaultPeriodSecs / SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD;
+      for (int i = 0; i < SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD; i++)
         inputs.measurementTimeStamps[i] = robotStartingTimeStamps + i * iterationPeriodSeconds;
     }
   }

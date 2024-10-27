@@ -4,7 +4,7 @@ package frc.robot.subsystems.swerve.odometryThread;
 import com.ctre.phoenix6.BaseStatusSignal;
 import frc.robot.extras.util.DeviceCANBus;
 import frc.robot.extras.util.TimeUtil;
-import frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants;
+import frc.robot.subsystems.swerve.SwerveConstants.SimulationConstants;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.locks.Lock;
@@ -23,7 +23,7 @@ public class OdometryThreadReal extends Thread implements OdometryThread {
       OdometryDoubleInput[] odometryDoubleInputs,
       BaseStatusSignal[] statusSignals) {
     this.canBus = canBus;
-    this.timeStampsQueue = new ArrayBlockingQueue<>(DriveTrainConstants.ODOMETRY_CACHE_CAPACITY);
+    this.timeStampsQueue = new ArrayBlockingQueue<>(SimulationConstants.ODOMETRY_CACHE_CAPACITY);
     this.odometryDoubleInputs = odometryDoubleInputs;
     this.statusSignals = statusSignals;
 
@@ -54,12 +54,12 @@ public class OdometryThreadReal extends Thread implements OdometryThread {
   private void refreshSignalsAndBlockThread() {
     switch (canBus) {
       case RIO -> {
-        TimeUtil.delay(1.0 / DriveTrainConstants.ODOMETRY_FREQUENCY);
+        TimeUtil.delay(1.0 / SimulationConstants.ODOMETRY_FREQUENCY);
         BaseStatusSignal.refreshAll();
       }
       case CANIVORE ->
           BaseStatusSignal.waitForAll(
-              DriveTrainConstants.ODOMETRY_WAIT_TIMEOUT_SECONDS, statusSignals);
+              SimulationConstants.ODOMETRY_WAIT_TIMEOUT_SECONDS, statusSignals);
     }
   }
 

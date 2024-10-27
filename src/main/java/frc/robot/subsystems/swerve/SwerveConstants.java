@@ -142,7 +142,7 @@ public class SwerveConstants {
    * stores the constants and PID configs for chassis because we want an all-real simulation for the
    * chassis, the numbers are required to be considerably precise
    */
-  public class DriveTrainConstants {
+  public class SimulationConstants {
     /**
      * numbers that needs to be changed to fit each robot TODO: change these numbers to match your
      * robot
