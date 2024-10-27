@@ -4,7 +4,12 @@ package frc.robot.subsystems.swerve.moduleIO;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
@@ -12,6 +17,8 @@ import frc.robot.extras.util.DeviceCANBus;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConfig;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
+
+import java.io.ObjectInputFilter.Status;
 import java.util.Queue;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -27,6 +34,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import static edu.wpi.first.units.Units.*;
 
 public class PhysicalModule implements ModuleInterface {
   private final TalonFX driveMotor;
@@ -40,13 +48,15 @@ public class PhysicalModule implements ModuleInterface {
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
   private final PositionVoltage mmPositionRequest = new PositionVoltage(0.0);
 
-  private final Queue<Double> drivePosition;
-  private final StatusSignal<Double> driveVelocity, driveMotorAppliedVoltage, driveMotorCurrent;
+  private final Queue<Angle> drivePosition;
+  private final StatusSignal<AngularVelocity> driveVelocity;
+  private final StatusSignal<Voltage> driveMotorAppliedVoltage;
+  private final StatusSignal<Current> driveMotorCurrent;
 
-  // private final Queue<Double> turnEncoderAbsolutePosition;
-  private final StatusSignal<Double> turnEncoderVelocityPerSecond,
-      turnMotorAppliedVolts,
-      turnMotorCurrent;
+  private final Queue<Angle> turnEncoderAbsolutePosition;
+  private final StatusSignal<AngularVelocity> turnEncoderVelocity;
+  private final StatusSignal<Voltage> turnMotorAppliedVolts;
+  private final StatusSignal<Current> turnMotorCurrent;
 
   private final BaseStatusSignal[] periodicallyRefreshedSignals;
 
@@ -105,9 +115,9 @@ public class PhysicalModule implements ModuleInterface {
     driveMotorAppliedVoltage = driveMotor.getMotorVoltage();
     driveMotorCurrent = driveMotor.getSupplyCurrent();
 
-    // turnEncoderAbsolutePosition =
-    //     OdometryThread.registerSignalInput(turnEncoder.getAbsolutePosition());
-    turnEncoderVelocityPerSecond = turnEncoder.getVelocity();
+    turnEncoderAbsolutePosition =
+        OdometryThread.registerSignalInput(turnEncoder.getAbsolutePosition());
+    turnEncoderVelocity = turnEncoder.getVelocity();
     turnMotorAppliedVolts = turnMotor.getMotorVoltage();
     turnMotorCurrent = turnMotor.getSupplyCurrent();
 
@@ -116,14 +126,14 @@ public class PhysicalModule implements ModuleInterface {
           driveVelocity,
           driveMotorAppliedVoltage,
           driveMotorCurrent,
-          turnEncoderVelocityPerSecond,
+          turnEncoderVelocity,
           turnMotorAppliedVolts,
           turnMotorCurrent,
           turnMotor.getPosition()
         };
 
     driveMotor.setPosition(0.0);
-    // turnMotor.setPosition(0.0);
+    turnMotor.setPosition(0.0);
 
     BaseStatusSignal.setUpdateFrequencyForAll(50.0, periodicallyRefreshedSignals);
     driveMotor.optimizeBusUtilization();
@@ -137,7 +147,7 @@ public class PhysicalModule implements ModuleInterface {
     inputs.driveVelocity = driveVelocity.getValueAsDouble();
     inputs.odometryDriveWheelRevolutions =
         drivePosition.stream()
-            .mapToDouble(value -> value / ModuleConstants.DRIVE_GEAR_RATIO)
+            .mapToDouble(value -> value.in(Rotations) / ModuleConstants.DRIVE_GEAR_RATIO)
             .toArray();
     drivePosition.clear();
     if (inputs.odometryDriveWheelRevolutions.length > 0)
@@ -160,7 +170,7 @@ public class PhysicalModule implements ModuleInterface {
     inputs.turnPosition = turnMotor.getPosition().getValueAsDouble();
 
     inputs.turnVelocityRadPerSec =
-        Units.rotationsToRadians(turnEncoderVelocityPerSecond.getValueAsDouble());
+        Units.rotationsToRadians(turnEncoderVelocity.getValueAsDouble());
     inputs.turnMotorAppliedVolts = turnMotorAppliedVolts.getValueAsDouble();
     inputs.turnMotorCurrentAmps = turnMotorCurrent.getValueAsDouble();
   }

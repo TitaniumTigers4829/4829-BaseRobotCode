@@ -35,7 +35,7 @@ import frc.robot.subsystems.swerve.odometryThread.OdometryThreadInputsAutoLogged
 import frc.robot.subsystems.vision.VisionConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.wpilibj.Alert;
+// import edu.wpi.first.wpilibj;;
 
 
 public class SwerveDrive extends SubsystemBase {
@@ -352,7 +352,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public Rotation2d getRawGyroYaw() {
-    return gyroInputs.yawDegrees;
+    return gyroInputs.yawDegreesRotation2d;
   }
 
   public void setPose(Pose2d pose) {
