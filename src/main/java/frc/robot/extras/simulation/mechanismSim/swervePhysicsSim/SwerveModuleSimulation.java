@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
@@ -16,7 +15,7 @@ import org.dyn4j.geometry.Vector2;
 
 public class SwerveModuleSimulation {
   private final DCMotor DRIVE_MOTOR;
-  private final DCMotorSim steerMotorSim;
+  private final BrushlessMotorSim steerMotorSim;
   private final double DRIVE_CURRENT_LIMIT,
       DRIVE_GEAR_RATIO,
       STEER_GEAR_RATIO,
@@ -63,7 +62,8 @@ public class SwerveModuleSimulation {
     WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
     WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
-    this.steerMotorSim = new DCMotorSim(steerMotor, STEER_GEAR_RATIO, steerRotationalInertia);
+    this.steerMotorSim =
+        new BrushlessMotorSim(steerMotor, STEER_GEAR_RATIO, steerRotationalInertia, 0.0);
 
     this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
     for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
