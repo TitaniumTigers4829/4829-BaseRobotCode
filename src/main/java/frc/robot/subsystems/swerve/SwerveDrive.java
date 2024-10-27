@@ -92,24 +92,25 @@ public class SwerveDrive extends SubsystemBase {
 
   /** Updates the pose estimator with the pose calculated from the swerve modules. */
   public void addPoseEstimatorSwerveMeasurement() {
-    // poseEstimator.updateWithTime(
-    //     Timer.getFPGATimestamp(), gyroInputs.yaw, getModuleLatestPositions());
+    for (int timeStampIndex = 0;
+        timeStampIndex < odometryThreadInputs.measurementTimeStamps.length;
+        timeStampIndex++) addPoseEstimatorSwerveMeasurement(timeStampIndex);
   }
 
-  // * Updates the pose estimator with the pose calculated from the april tags. How much it
-  // * contributes to the pose estimation is set by setPoseEstimatorVisionConfidence.
-  // *
-  // * @param visionMeasurement The pose calculated from the april tags
-  // * @param currentTimeStampSeconds The time stamp in seconds of when the pose from the april tags
-  // *     was calculated.
-  // */
+  /*
+   * Updates the pose estimator with the pose calculated from the april tags. How much it
+   * contributes to the pose estimation is set by setPoseEstimatorVisionConfidence.
+   *
+   * @param visionMeasurement The pose calculated from the april tags
+   * @param currentTimeStampSeconds The time stamp in seconds of when the pose from the april tags
+   *     was calculated.
+   */
   public void addPoseEstimatorVisionMeasurement(
       Pose2d visionMeasurement, double currentTimeStampSeconds) {
     poseEstimator.addVisionMeasurement(visionMeasurement, currentTimeStampSeconds);
   }
 
   public void setTurnPosition(double position) {
-    // SmartDashboard.putNumber("turn position", position);
     for (SwerveModule module : swerveModules) {
       module.setTurnPosition(position);
     }
@@ -131,14 +132,10 @@ public class SwerveDrive extends SubsystemBase {
 
   public void periodic() {
     final double t0 = TimeUtil.getRealTimeSeconds();
-    // fetchOdometryInputs();
+    fetchOdometryInputs();
     Logger.recordOutput(
         "SystemPerformance/OdometryFetchingTimeMS", (TimeUtil.getRealTimeSeconds() - t0) * 1000);
     modulesPeriodic();
-
-    // for (int timeStampIndex = 0;
-    //     timeStampIndex < odometryThreadInputs.measurementTimeStamps.length;
-    //     timeStampIndex++) feedSingleOdometryDataToPositionEstimator(timeStampIndex);
   }
 
   public void runCharacterization(double volts) {
@@ -156,19 +153,20 @@ public class SwerveDrive extends SubsystemBase {
     return velocity;
   }
 
-  // private void fetchOdometryInputs() {
-  //   odometryThread.lockOdometry();
-  //   odometryThread.updateInputs(odometryThreadInputs);
-  //   Logger.processInputs("Drive/OdometryThread", odometryThreadInputs);
+  /** Processes odometry inputs */
+  private void fetchOdometryInputs() {
+    odometryThread.lockOdometry();
+    odometryThread.updateInputs(odometryThreadInputs);
+    Logger.processInputs("Drive/OdometryThread", odometryThreadInputs);
 
-  //   for (SwerveModule module : swerveModules) module.updateOdometryInputs();
+    for (SwerveModule module : swerveModules) module.updateOdometryInputs();
 
-  //   gyroIO.updateInputs(gyroInputs);
-  //   Logger.processInputs("Drive/Gyro", gyroInputs);
-  //   gyroDisconnectedAlert.setActivated(!gyroInputs.isConnected);
+    gyroIO.updateInputs(gyroInputs);
+    Logger.processInputs("Drive/Gyro", gyroInputs);
+    // gyroDisconnectedAlert.setActivated(!gyroInputs.isConnected);
 
-  //   odometryThread.unlockOdometry();
-  // }
+    odometryThread.unlockOdometry();
+  }
 
   private void modulesPeriodic() {
     for (SwerveModule module : swerveModules) module.periodic();
@@ -216,7 +214,7 @@ public class SwerveDrive extends SubsystemBase {
     }
   }
 
-  private void feedSingleOdometryDataToPositionEstimator(int timeStampIndex) {
+  private void addPoseEstimatorSwerveMeasurement(int timeStampIndex) {
     final SwerveModulePosition[] modulePositions = getModulesPosition(timeStampIndex),
         moduleDeltas = getModulesDelta(modulePositions);
 
@@ -224,7 +222,7 @@ public class SwerveDrive extends SubsystemBase {
       rawGyroRotation = gyroInputs.odometryYawPositions[timeStampIndex];
     } else {
       Twist2d twist = DriveConstants.DRIVE_KINEMATICS.toTwist2d(moduleDeltas);
-      rawGyroRotation = rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+      rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
     }
 
     poseEstimator.updateWithTime(
