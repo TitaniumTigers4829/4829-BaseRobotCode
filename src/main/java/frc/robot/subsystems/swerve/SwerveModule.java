@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Alert;
+// import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,15 +21,15 @@ public class SwerveModule extends SubsystemBase {
 
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
-  private final Alert hardwareFaultAlert;
+  // private final Alert hardwareFaultAlert;
 
   public SwerveModule(ModuleInterface io, String name) {
     super("Module-" + name);
     this.io = io;
     this.name = name;
-    this.hardwareFaultAlert =
-        new Alert("Module-" + name + " Hardware Fault", Alert.AlertType.kError);
-    this.hardwareFaultAlert.set(false);
+    // this.hardwareFaultAlert =
+    //     new Alert("Module-" + name + " Hardware Fault", Alert.AlertType.kError);
+    // this.hardwareFaultAlert.set(false);
 
     CommandScheduler.getInstance().unregisterSubsystem(this);
   }
@@ -37,7 +37,7 @@ public class SwerveModule extends SubsystemBase {
   public void updateOdometryInputs() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module-" + name, inputs);
-    this.hardwareFaultAlert.setActivated(!inputs.isConnected);
+    // this.hardwareFaultAlert.setActivated(!inputs.isConnected);
   }
 
   @Override
@@ -122,7 +122,6 @@ public class SwerveModule extends SubsystemBase {
    * @return a SwerveModulePosition object containing position and rotation
    */
   public SwerveModulePosition getPosition() {
-    // driveMotorPosition.refresh();
     double position = ModuleConstants.DRIVE_TO_METERS * io.getDrivePosition();
     Rotation2d rotation = Rotation2d.fromRotations(io.getTurnAbsolutePosition());
     SmartDashboard.putString(name, new SwerveModulePosition(position, rotation).toString());

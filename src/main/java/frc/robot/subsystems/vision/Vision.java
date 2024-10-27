@@ -9,10 +9,6 @@ public class Vision extends SubsystemBase {
   private final VisionIO visionIO;
   private final VisionIOInputsAutoLogged inputs = new VisionIOInputsAutoLogged();
 
-  /**
-   * Contains information about the mounting of the limelight on the robot. This is required when
-   * calculating the horizontalDistanceToTargetMeters.
-   */
   public Vision(VisionIO visionIO) {
     // Initializing Fields
     this.visionIO = visionIO;

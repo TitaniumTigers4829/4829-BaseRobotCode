@@ -1,9 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import static frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants.CHASSIS_MAX_ACCELERATION_MPS_SQ;
-import static frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants.CHASSIS_MAX_ANGULAR_ACCELERATION_RAD_PER_SEC_SQ;
-import static frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants.CHASSIS_MAX_ANGULAR_VELOCITY_RAD_PER_SEC;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -13,7 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Alert;
+// import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,8 +37,8 @@ public class SwerveDrive extends SubsystemBase {
   private final SwerveDrivePoseEstimator poseEstimator;
 
   private final OdometryThread odometryThread;
-  private final Alert gyroDisconnectedAlert =
-      new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
+  // private final Alert gyroDisconnectedAlert =
+  //     new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
 
   public SwerveDrive(
       GyroInterface gyroIO,
@@ -86,7 +82,7 @@ public class SwerveDrive extends SubsystemBase {
     this.odometryThreadInputs = new OdometryThreadInputsAutoLogged();
     this.odometryThread.start();
 
-    gyroDisconnectedAlert.setActivated(false);
+    // gyroDisconnectedAlert.setActivated(false);
   }
 
   public double getGyroRate() {
@@ -145,21 +141,20 @@ public class SwerveDrive extends SubsystemBase {
     //     timeStampIndex++) feedSingleOdometryDataToPositionEstimator(timeStampIndex);
   }
 
-  /** // * Runs characterization based on volts // * // * @param volts // */
-  // public void runCharacterization(double volts) {
-  //   for (SwerveModule module : swerveModules) {
-  //     module.setVoltage(-volts);
-  //   }
-  // }
+  public void runCharacterization(double volts) {
+    for (SwerveModule module : swerveModules) {
+      module.setVoltage(-volts);
+    }
+  }
 
-  // /** Returns the average drive velocity in radians/sec. */
-  // public double getCharacterizationVelocity() {
-  //   double velocity = 0.0;
-  //   for (SwerveModule module : swerveModules) {
-  //     velocity += module.getCharacterizationVelocity();
-  //   }
-  //   return velocity;
-  // }
+  /** Returns the average drive velocity in radians/sec. */
+  public double getCharacterizationVelocity() {
+    double velocity = 0.0;
+    for (SwerveModule module : swerveModules) {
+      velocity += module.getCharacterizationVelocity();
+    }
+    return velocity;
+  }
 
   // private void fetchOdometryInputs() {
   //   odometryThread.lockOdometry();
@@ -175,9 +170,9 @@ public class SwerveDrive extends SubsystemBase {
   //   odometryThread.unlockOdometry();
   // }
 
-  // private void modulesPeriodic() {
-  //   for (var module : swerveModules) module.periodic();
-  // }
+  private void modulesPeriodic() {
+    for (SwerveModule module : swerveModules) module.periodic();
+  }
 
   /**
    * Tells the robot which way to move
@@ -288,20 +283,6 @@ public class SwerveDrive extends SubsystemBase {
     rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
   }
 
-  // public void runRawChassisSpeeds(ChassisSpeeds speeds) {
-  //   SwerveModuleState[] setpointStates =
-  //       DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(speeds);
-  //   SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, 4.5); // TODO: get actual value
-
-  //   // Send setpoints to modules
-  //   SwerveModuleState[] optimizedSetpointStates = new SwerveModuleState[4];
-  //   for (int i = 0; i < 4; i++)
-  //     // optimizedSetpointStates[i] = swerveModules[i].runSetPoint(setpointStates[i]);
-
-  //   Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-  //   Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
-  // }
-
   // public void stop() {
   //   Rotation2d[] swerveHeadings = new Rotation2d[swerveModules.length];
   //   for (int i = 0; i < swerveHeadings.length; i++) swerveHeadings[i] = new Rotation2d();
@@ -322,20 +303,20 @@ public class SwerveDrive extends SubsystemBase {
   //   HolonomicDriveSubsystem.super.stop();
   // }
 
-  // /** Returns the module states (turn angles and drive velocities) for all the modules. */
-  // @AutoLogOutput(key = "SwerveStates/Measured")
-  // private SwerveModuleState[] getModuleStates() {
-  //   SwerveModuleState[] states = new SwerveModuleState[swerveModules.length];
-  //   for (int i = 0; i < states.length; i++) states[i] = swerveModules[i].getMeasuredState();
-  //   return states;
-  // }
+  /** Returns the module states (turn angles and drive velocities) for all the modules. */
+  @AutoLogOutput(key = "SwerveStates/Measured")
+  private SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[swerveModules.length];
+    for (int i = 0; i < states.length; i++) states[i] = swerveModules[i].getMeasuredState();
+    return states;
+  }
 
-  // /** Returns the module positions (turn angles and drive positions) for all the modules. */
-  // private SwerveModulePosition[] getModuleLatestPositions() {
-  //   SwerveModulePosition[] states = new SwerveModulePosition[swerveModules.length];
-  //   for (int i = 0; i < states.length; i++) states[i] = swerveModules[i].getLatestPosition();
-  //   return states;
-  // }
+  /** Returns the module positions (turn angles and drive positions) for all the modules. */
+  private SwerveModulePosition[] getModuleLatestPositions() {
+    SwerveModulePosition[] states = new SwerveModulePosition[swerveModules.length];
+    for (int i = 0; i < states.length; i++) states[i] = swerveModules[i].getLatestPosition();
+    return states;
+  }
 
   @AutoLogOutput(key = "Odometry/RobotPosition")
   public Pose2d getPose() {
@@ -347,27 +328,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public void setPose(Pose2d pose) {
-    // poseEstimator.resetPosition(rawGyroRotation, getModulePosition(), pose);
+    poseEstimator.resetPosition(rawGyroRotation, getModuleLatestPositions(), pose);
   }
 
-  public ChassisSpeeds getMeasuredChassisSpeedsRobotRelative() {
-    // return DriveConstants.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates());
-    return null;
-  }
-
-  public double getChassisMaxLinearVelocityMetersPerSec() {
-    return 4.5;
-  }
-
-  public double getChassisMaxAccelerationMetersPerSecSq() {
-    return CHASSIS_MAX_ACCELERATION_MPS_SQ;
-  }
-
-  public double getChassisMaxAngularVelocity() {
-    return CHASSIS_MAX_ANGULAR_VELOCITY_RAD_PER_SEC;
-  }
-
-  public double getChassisMaxAngularAccelerationRadPerSecSq() {
-    return CHASSIS_MAX_ANGULAR_ACCELERATION_RAD_PER_SEC_SQ;
-  }
 }
