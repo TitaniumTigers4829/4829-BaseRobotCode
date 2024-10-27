@@ -2,6 +2,7 @@ package frc.robot.extras.simulation;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Robot;
+import frc.robot.extras.simulation.field.SimulatedField;
 
 public class OdometryTimestampsSim {
   public static double[] getTimeStamps() {

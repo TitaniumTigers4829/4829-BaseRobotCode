@@ -1,4 +1,4 @@
-package frc.robot.extras.simulation.physicsSim;
+package frc.robot.extras.simulation.mechanismSim.swervePhysicsSim;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.extras.simulation.SimulatedField;
+import frc.robot.extras.simulation.field.SimulatedField;
 import frc.robot.extras.util.GeomUtil;
 import java.util.Arrays;
 import java.util.function.Supplier;

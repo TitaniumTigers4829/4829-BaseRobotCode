@@ -1,10 +1,13 @@
-package frc.robot.extras.simulation;
+package frc.robot.extras.simulation.field;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.extras.simulation.field.SimulatedField.FieldMap;
+import frc.robot.extras.simulation.gamePiece.CrescendoNoteSimulation;
+import frc.robot.extras.simulation.gamePiece.GamePieceSimulation;
 import frc.robot.extras.util.AllianceFlipper;
 
 public class CrescendoFieldSimulation extends SimulatedField {

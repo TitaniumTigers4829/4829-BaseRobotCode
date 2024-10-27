@@ -1,7 +1,4 @@
-package frc.robot.extras.simulation.physicsSim;
-
-import static frc.robot.extras.simulation.SimulatedField.SIMULATION_DT;
-import static frc.robot.extras.simulation.SimulatedField.SIMULATION_SUB_TICKS_IN_1_PERIOD;
+package frc.robot.extras.simulation.mechanismSim.swervePhysicsSim;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,6 +6,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+
+import static frc.robot.extras.simulation.field.SimulatedField.SIMULATION_DT;
+import static frc.robot.extras.simulation.field.SimulatedField.SIMULATION_SUB_TICKS_IN_1_PERIOD;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;

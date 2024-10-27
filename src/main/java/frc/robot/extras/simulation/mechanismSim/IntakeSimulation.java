@@ -1,7 +1,9 @@
-package frc.robot.extras.simulation;
+package frc.robot.extras.simulation.mechanismSim;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.extras.simulation.physicsSim.AbstractDriveTrainSimulation;
+import frc.robot.extras.simulation.field.SimulatedField;
+import frc.robot.extras.simulation.gamePiece.GamePieceSimulation;
+import frc.robot.extras.simulation.mechanismSim.swervePhysicsSim.AbstractDriveTrainSimulation;
 import frc.robot.extras.util.GeomUtil;
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -116,7 +118,7 @@ public abstract class IntakeSimulation extends BodyFixture {
 
     this.intakeRunning = false;
     this.driveTrainSimulation = driveTrainSimulation;
-    arena.addIntakeSimulation(this);
+    // arena.addIntakeSimulation(this);
   }
 
   protected void startIntake() {

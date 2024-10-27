@@ -1,10 +1,11 @@
-package frc.robot.extras.simulation;
+package frc.robot.extras.simulation.gamePiece;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.extras.simulation.mechanismSim.IntakeSimulation;
 import frc.robot.extras.util.GeomUtil;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
