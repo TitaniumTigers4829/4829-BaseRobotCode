@@ -177,8 +177,8 @@ public abstract class SimulatedField {
    * part of its collision space.
    *
    * <p>This method immediately starts the {@link
-   * frc.robot.extras.simulation.mechanismSim.ironmaple.simulation.IntakeSimulation.GamePieceContactListener}, which listens for contact
-   * between the intake and any game piece.
+   * frc.robot.extras.simulation.mechanismSim.ironmaple.simulation.IntakeSimulation.GamePieceContactListener},
+   * which listens for contact between the intake and any game piece.
    *
    * @param intakeSimulation the intake simulation to be registered
    */

@@ -1,10 +1,9 @@
 package frc.robot.extras.simulation.mechanismSim.swervePhysicsSim;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.extras.util.MathUtil;
-
 import static frc.robot.extras.simulation.field.SimulatedField.*;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.extras.util.MathUtil;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 

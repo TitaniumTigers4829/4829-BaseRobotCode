@@ -37,6 +37,7 @@ public class SwerveDrive extends SubsystemBase {
   private final SwerveDrivePoseEstimator poseEstimator;
 
   private final OdometryThread odometryThread;
+
   // private final Alert gyroDisconnectedAlert =
   //     new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
 
@@ -111,7 +112,6 @@ public class SwerveDrive extends SubsystemBase {
     // SmartDashboard.putNumber("turn position", position);
     for (SwerveModule module : swerveModules) {
       module.setTurnPosition(position);
-
     }
   }
 
@@ -330,5 +330,4 @@ public class SwerveDrive extends SubsystemBase {
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModuleLatestPositions(), pose);
   }
-
 }
