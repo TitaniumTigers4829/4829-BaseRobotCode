@@ -134,7 +134,7 @@ public class SwerveDrive extends SubsystemBase {
     // fetchOdometryInputs();
     Logger.recordOutput(
         "SystemPerformance/OdometryFetchingTimeMS", (TimeUtil.getRealTimeSeconds() - t0) * 1000);
-    // modulesPeriodic();
+    modulesPeriodic();
 
     // for (int timeStampIndex = 0;
     //     timeStampIndex < odometryThreadInputs.measurementTimeStamps.length;
@@ -216,71 +216,42 @@ public class SwerveDrive extends SubsystemBase {
     }
   }
 
-  // private void feedSingleOdometryDataToPositionEstimator(int timeStampIndex) {
-  //   final SwerveModulePosition[] modulePositions = getModulePosition(),
-  //       moduleDeltas = getModulesDelta(modulePositions);
+  private void feedSingleOdometryDataToPositionEstimator(int timeStampIndex) {
+    final SwerveModulePosition[] modulePositions = getModulesPosition(timeStampIndex),
+        moduleDeltas = getModulesDelta(modulePositions);
 
-  //   if (!updateRobotFacingWithGyroReading(timeStampIndex))
-  //     updateRobotFacingWithOdometry(moduleDeltas);
+    if (gyroInputs.isConnected) {
+      rawGyroRotation = gyroInputs.odometryYawPositions[timeStampIndex];
+    } else {
+      Twist2d twist = DriveConstants.DRIVE_KINEMATICS.toTwist2d(moduleDeltas);
+      rawGyroRotation = rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+    }
 
-  //   poseEstimator.updateWithTime(
-  //       odometryThreadInputs.measurementTimeStamps[timeStampIndex],
-  //       rawGyroRotation,
-  //       modulePositions);
-  // }
-
-  // private SwerveModulePosition[] getModulesPosition(int timeStampIndex) {
-  //   SwerveModulePosition[] swerveModulePositions = new
-  // SwerveModulePosition[swerveModules.length];
-  //   for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++)
-  //     swerveModulePositions[moduleIndex] =
-  //         swerveModules[moduleIndex].getOdometryPositions()[];
-  //   return swerveModulePositions;
-  // }
-
-  // private SwerveModulePosition[] getModulePosition() {
-  //   SwerveModulePosition[] swerveModulePositions = new
-  // SwerveModulePosition[swerveModules.length];
-  //   for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-  //     swerveModulePositions[moduleIndex] = swerveModules[moduleIndex].getPosition();
-  //   }
-
-  //   return swerveModulePositions;
-  // }
-
-  // private SwerveModulePosition[] getModulesDelta(SwerveModulePosition[] freshModulesPosition) {
-  //   SwerveModulePosition[] deltas = new SwerveModulePosition[swerveModules.length];
-  //   for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-  //     final double deltaDistanceMeters =
-  //         freshModulesPosition[moduleIndex].distanceMeters
-  //             - lastModulePositions[moduleIndex].distanceMeters;
-  //     deltas[moduleIndex] =
-  //         new SwerveModulePosition(deltaDistanceMeters, freshModulesPosition[moduleIndex].angle);
-  //     lastModulePositions[moduleIndex] = freshModulesPosition[moduleIndex];
-  //   }
-  //   return deltas;
-  // }
-
-  /**
-   * updates the robot facing using the reading from the gyro
-   *
-   * @param timeStampIndex the index of the time stamp
-   * @return whether the update is success
-   */
-  private boolean updateRobotFacingWithGyroReading(int timeStampIndex) {
-    if (!gyroInputs.isConnected) return false;
-    rawGyroRotation = gyroInputs.odometryYawPositions[timeStampIndex];
-    return true;
+    poseEstimator.updateWithTime(
+        odometryThreadInputs.measurementTimeStamps[timeStampIndex],
+        rawGyroRotation,
+        modulePositions);
   }
 
-  /**
-   * updates the robot facing using the reading from the gyro
-   *
-   * @param modulesDelta the delta of the swerve modules calculated from the odometry
-   */
-  private void updateRobotFacingWithOdometry(SwerveModulePosition[] modulesDelta) {
-    Twist2d twist = DriveConstants.DRIVE_KINEMATICS.toTwist2d(modulesDelta);
-    rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+  private SwerveModulePosition[] getModulesPosition(int timeStampIndex) {
+    SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[swerveModules.length];
+    for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++)
+      swerveModulePositions[moduleIndex] =
+          swerveModules[moduleIndex].getOdometryPositions()[timeStampIndex];
+    return swerveModulePositions;
+  }
+
+  private SwerveModulePosition[] getModulesDelta(SwerveModulePosition[] freshModulesPosition) {
+    SwerveModulePosition[] deltas = new SwerveModulePosition[swerveModules.length];
+    for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+      final double deltaDistanceMeters =
+          freshModulesPosition[moduleIndex].distanceMeters
+              - lastModulePositions[moduleIndex].distanceMeters;
+      deltas[moduleIndex] =
+          new SwerveModulePosition(deltaDistanceMeters, freshModulesPosition[moduleIndex].angle);
+      lastModulePositions[moduleIndex] = freshModulesPosition[moduleIndex];
+    }
+    return deltas;
   }
 
   // public void stop() {

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.swerve.SwerveConstants.*;
 
 public final class Constants {
@@ -36,8 +37,10 @@ public final class Constants {
     public static final double DEADBAND_VALUE = 0.05;
   }
 
-  // This should contain information about the game specific field
-  public static final class FieldConstants {}
+  public static final class FieldConstants {
+    public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(0 - 9);
+    public static final double FIELD_WIDTH_METERS = Units.inchesToMeters(0 - 9);
+  }
 
   public static final class JoystickConstants {
     public static final int DRIVER_JOYSTICK_ID = 0;
