@@ -63,7 +63,7 @@ public class SwerveModuleSimulation {
     WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
     this.steerMotorSim =
-        new BrushlessMotorSim(steerMotor, STEER_GEAR_RATIO, steerRotationalInertia, 0.0);
+        new BrushlessMotorSim(steerMotor, STEER_GEAR_RATIO, steerRotationalInertia, STEER_FRICTION_VOLTAGE);
 
     this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
     for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
@@ -85,7 +85,7 @@ public class SwerveModuleSimulation {
 
   public void requestTurnVoltageOut(double volts) {
     this.steerMotorAppliedVolts = volts;
-    this.steerMotorSim.setInputVoltage(MathUtil.applyDeadband(volts, STEER_FRICTION_VOLTAGE, 12));
+    // this.steerMotorSim.setInputVoltage(MathUtil.applyDeadband(volts, STEER_FRICTION_VOLTAGE, 12));
   }
 
   public double getDriveMotorAppliedVolts() {
