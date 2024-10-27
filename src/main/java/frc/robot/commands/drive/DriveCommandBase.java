@@ -39,7 +39,7 @@ public abstract class DriveCommandBase extends Command {
   public void execute() {
     swerveDrive.addPoseEstimatorSwerveMeasurement();
     vision.setHeadingInfo(
-        swerveDrive.getPose().getRotation().getDegrees(), swerveDrive.getGyroRate().in(DegreesPerSecond));
+        swerveDrive.getPose().getRotation().getDegrees(), swerveDrive.getGyroRate());
     calculatePoseFromLimelight(VisionConstants.SHOOTER_LIMELIGHT_NUMBER);
     calculatePoseFromLimelight(VisionConstants.FRONT_LEFT_LIMELIGHT_NUMBER);
     calculatePoseFromLimelight(VisionConstants.FRONT_RIGHT_LIMELIGHT_NUMBER);

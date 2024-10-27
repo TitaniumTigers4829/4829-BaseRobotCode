@@ -96,7 +96,7 @@ public class SwerveDrive extends SubsystemBase {
     gyroDisconnectedAlert.setActivated(false);
   }
 
-  public AngularVelocity getGyroRate() {
+  public double getGyroRate() {
     return gyroInputs.yawVelocity;
   }
 

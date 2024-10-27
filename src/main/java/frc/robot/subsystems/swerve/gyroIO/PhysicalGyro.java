@@ -22,7 +22,7 @@ public class PhysicalGyro implements GyroInterface {
   public void updateInputs(GyroInputs inputs) {
     inputs.isConnected = gyro.isConnected();
     inputs.yawDegreesRotation2d = getGyroRotation2d();
-    inputs.yawVelocity = getRate();
+    inputs.yawVelocity = getRate().in(DegreesPerSecond);
   }
 
   public void zeroHeading() {
