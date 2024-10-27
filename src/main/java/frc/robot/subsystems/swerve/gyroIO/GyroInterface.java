@@ -1,14 +1,11 @@
 package frc.robot.subsystems.swerve.gyroIO;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.AutoLog;
-
-import com.google.common.base.Optional;
 
 public interface GyroInterface {
   @AutoLog

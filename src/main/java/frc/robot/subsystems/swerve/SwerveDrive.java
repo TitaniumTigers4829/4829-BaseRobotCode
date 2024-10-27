@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -28,14 +29,13 @@ import frc.robot.extras.util.TimeUtil;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
 import frc.robot.subsystems.swerve.gyroIO.GyroInputsAutoLogged;
 import frc.robot.subsystems.swerve.gyroIO.GyroInterface;
-import frc.robot.subsystems.swerve.gyroIO.GyroInputsAutoLogged;
 import frc.robot.subsystems.swerve.moduleIO.ModuleInterface;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThreadInputsAutoLogged;
 import frc.robot.subsystems.vision.VisionConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-// import edu.wpi.first.wpilibj;;
+import edu.wpi.first.wpilibj.Alert;
 
 
 public class SwerveDrive extends SubsystemBase {
@@ -94,17 +94,16 @@ public class SwerveDrive extends SubsystemBase {
     this.odometryThread.start();
 
     gyroDisconnectedAlert.setActivated(false);
-    visionNoResultAlert.setActivated(false);
   }
 
-  public double getGyroRate() {
+  public AngularVelocity getGyroRate() {
     return gyroInputs.yawVelocity;
   }
 
   /** Updates the pose estimator with the pose calculated from the swerve modules. */
   public void addPoseEstimatorSwerveMeasurement() {
     // poseEstimator.updateWithTime(
-    //     Timer.getFPGATimestamp(), gyroInputs.yawDegrees, getModuleLatestPositions());
+    //     Timer.getFPGATimestamp(), gyroInputs.yaw, getModuleLatestPositions());
   }
 
   // * Updates the pose estimator with the pose calculated from the april tags. How much it
