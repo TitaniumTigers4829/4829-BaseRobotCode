@@ -213,9 +213,6 @@ public class SwerveConstants {
     public static final double NORMAL_GYRO_DRIFT_IN_1_MIN_Std_Dev_RAD = Math.toRadians(1.2);
     public static final double AVERAGE_VELOCITY_RAD_PER_SEC_DURING_TEST = Math.toRadians(60);
 
-    public static final int ODOMETRY_CACHE_CAPACITY = 10;
-    public static final double ODOMETRY_FREQUENCY = 250;
-    public static final double ODOMETRY_WAIT_TIMEOUT_SECONDS = 0.02;
     public static final int SIMULATION_TICKS_IN_1_PERIOD = 5;
   }
 

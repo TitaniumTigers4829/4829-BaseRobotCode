@@ -24,7 +24,7 @@ public final class Constants {
   }
 
   public static final class HardwareConstants {
-    public static final double TIMEOUT_S = 0.05;
+    public static final double TIMEOUT_S = 0.02;
 
     public static final double SIGNAL_FREQUENCY = 250;
 

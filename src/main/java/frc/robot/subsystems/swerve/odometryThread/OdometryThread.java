@@ -3,6 +3,7 @@ package frc.robot.subsystems.swerve.odometryThread;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.units.measure.Angle;
+import frc.robot.Constants.HardwareConstants;
 import frc.robot.Robot;
 import frc.robot.extras.util.DeviceCANBus;
 import frc.robot.extras.util.TimeUtil;
@@ -21,7 +22,8 @@ public interface OdometryThread {
 
     public OdometryDoubleInput(Supplier<Angle> signal) {
       this.supplier = signal;
-      this.queue = new ArrayBlockingQueue<>(SimulationConstants.ODOMETRY_CACHE_CAPACITY);
+      // Create a queue with a capacity of 10
+      this.queue = new ArrayBlockingQueue<>(10);
     }
 
     public void cacheInputToQueue() {
@@ -33,8 +35,7 @@ public interface OdometryThread {
   List<BaseStatusSignal> registeredStatusSignals = new ArrayList<>();
 
   static Queue<Angle> registerSignalInput(StatusSignal<Angle> signal) {
-    signal.setUpdateFrequency(
-        SimulationConstants.ODOMETRY_FREQUENCY, SimulationConstants.ODOMETRY_WAIT_TIMEOUT_SECONDS);
+    signal.setUpdateFrequency(HardwareConstants.SIGNAL_FREQUENCY, HardwareConstants.TIMEOUT_S);
     registeredStatusSignals.add(signal);
     return registerInput(signal.asSupplier());
   }
