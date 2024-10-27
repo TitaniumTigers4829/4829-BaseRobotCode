@@ -4,9 +4,6 @@ import static frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants.CH
 import static frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants.CHASSIS_MAX_ANGULAR_ACCELERATION_RAD_PER_SEC_SQ;
 import static frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants.CHASSIS_MAX_ANGULAR_VELOCITY_RAD_PER_SEC;
 
-import java.util.Optional;
-
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,13 +13,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.extras.util.DeviceCANBus;
 import frc.robot.extras.util.TimeUtil;
@@ -33,10 +26,9 @@ import frc.robot.subsystems.swerve.moduleIO.ModuleInterface;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThreadInputsAutoLogged;
 import frc.robot.subsystems.vision.VisionConstants;
+import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.wpilibj.Alert;
-
 
 public class SwerveDrive extends SubsystemBase {
   private final GyroInterface gyroIO;
@@ -49,8 +41,8 @@ public class SwerveDrive extends SubsystemBase {
   private final SwerveDrivePoseEstimator poseEstimator;
 
   private final OdometryThread odometryThread;
-  private final Alert
-      gyroDisconnectedAlert = new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
+  private final Alert gyroDisconnectedAlert =
+      new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
 
   public SwerveDrive(
       GyroInterface gyroIO,
@@ -62,12 +54,13 @@ public class SwerveDrive extends SubsystemBase {
     this.gyroInputs = new GyroInputsAutoLogged();
     this.rawGyroRotation = new Rotation2d();
 
-    swerveModules = new SwerveModule[] {
-      new SwerveModule(frontLeftModuleIO, "FrontLeft"),
-      new SwerveModule(frontRightModuleIO, "FrontRight"),
-      new SwerveModule(backLeftModuleIO, "BackLeft"),
-      new SwerveModule(backRightModuleIO, "BackRight")
-    };
+    swerveModules =
+        new SwerveModule[] {
+          new SwerveModule(frontLeftModuleIO, "FrontLeft"),
+          new SwerveModule(frontRightModuleIO, "FrontRight"),
+          new SwerveModule(backLeftModuleIO, "BackLeft"),
+          new SwerveModule(backRightModuleIO, "BackRight")
+        };
 
     lastModulePositions =
         new SwerveModulePosition[] {
@@ -122,7 +115,7 @@ public class SwerveDrive extends SubsystemBase {
   //   // SmartDashboard.putNumber("turn position", position);
   //   for (SwerveModule module : swerveModules) {
   //     module.setTurnPosition(position);
-      
+
   //   }
   // }
 
@@ -152,11 +145,7 @@ public class SwerveDrive extends SubsystemBase {
     //     timeStampIndex++) feedSingleOdometryDataToPositionEstimator(timeStampIndex);
   }
 
-  /**
-  //  * Runs characterization based on volts
-  //  *
-  //  * @param volts
-  //  */
+  /** // * Runs characterization based on volts // * // * @param volts // */
   // public void runCharacterization(double volts) {
   //   for (SwerveModule module : swerveModules) {
   //     module.setVoltage(-volts);
@@ -207,12 +196,12 @@ public class SwerveDrive extends SubsystemBase {
                 : new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.MAX_SPEED_METERS_PER_SECOND);
-        
-    setModuleStates(swerveModuleStates); 
+
+    setModuleStates(swerveModuleStates);
     Logger.recordOutput("SwerveStates/SwerveModuleStates", swerveModuleStates);
   }
 
-   /** Returns 0 degrees if the robot is on the blue alliance, 180 if on the red alliance. */
+  /** Returns 0 degrees if the robot is on the blue alliance, 180 if on the red alliance. */
   public double getAllianceAngleOffset() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
     double offset =
@@ -220,14 +209,14 @@ public class SwerveDrive extends SubsystemBase {
     return offset;
   }
 
- /**
+  /**
    * Sets the modules to the specified states.
    *
    * @param desiredStates The desired states for the swerve modules. The order is: frontLeft,
    *     frontRight, backLeft, backRight (should be the same as the kinematics).
    */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
-    for (int i = 0; i < 4; i ++) {
+    for (int i = 0; i < 4; i++) {
       swerveModules[i].runSetPoint(desiredStates[i]);
     }
   }
@@ -246,7 +235,8 @@ public class SwerveDrive extends SubsystemBase {
   // }
 
   // private SwerveModulePosition[] getModulesPosition(int timeStampIndex) {
-  //   SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[swerveModules.length];
+  //   SwerveModulePosition[] swerveModulePositions = new
+  // SwerveModulePosition[swerveModules.length];
   //   for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++)
   //     swerveModulePositions[moduleIndex] =
   //         swerveModules[moduleIndex].getOdometryPositions()[];
@@ -254,7 +244,8 @@ public class SwerveDrive extends SubsystemBase {
   // }
 
   // private SwerveModulePosition[] getModulePosition() {
-  //   SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[swerveModules.length];
+  //   SwerveModulePosition[] swerveModulePositions = new
+  // SwerveModulePosition[swerveModules.length];
   //   for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
   //     swerveModulePositions[moduleIndex] = swerveModules[moduleIndex].getPosition();
   //   }
@@ -319,7 +310,8 @@ public class SwerveDrive extends SubsystemBase {
   // }
 
   // /**
-  //  * Locks the chassis and turns the modules to an X formation to resist movement. The lock will be
+  //  * Locks the chassis and turns the modules to an X formation to resist movement. The lock will
+  // be
   //  * cancelled the next time a nonzero velocity is requested.
   //  */
   // public void lockChassisWithXFormation() {
@@ -379,4 +371,3 @@ public class SwerveDrive extends SubsystemBase {
     return CHASSIS_MAX_ANGULAR_ACCELERATION_RAD_PER_SEC_SQ;
   }
 }
-

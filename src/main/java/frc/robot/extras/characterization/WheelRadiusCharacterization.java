@@ -57,7 +57,8 @@
 
 //     // Get yaw and wheel positions
 //     accumGyroYawRads = swerveSubsystem.getGyroRotation2d().getRadians() - lastGyroYawRads;
-//     // accumGyroYawRads += MathUtil.angleModulus(driveSubsystem.getPose().getRotation().getRadians()
+//     // accumGyroYawRads +=
+// MathUtil.angleModulus(driveSubsystem.getPose().getRotation().getRadians()
 //     // - lastGyroYawRads);
 //     double averageWheelPosition = 0.0;
 //     double[] wheelPositiions = swerveSubsystem.getWheelRadiusCharacterizationPosition();
@@ -85,7 +86,8 @@
 //               + Units.metersToInches(currentEffectiveWheelRadius)
 //               + " inches");
 //       SmartDashboard.putNumber(
-//           "Effective Wheel Radius (inches): ", Units.metersToInches(currentEffectiveWheelRadius));
+//           "Effective Wheel Radius (inches): ",
+// Units.metersToInches(currentEffectiveWheelRadius));
 //     }
 //   }
 // }

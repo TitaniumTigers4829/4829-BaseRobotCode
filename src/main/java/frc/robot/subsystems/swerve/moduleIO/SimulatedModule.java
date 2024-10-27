@@ -3,16 +3,11 @@ package frc.robot.subsystems.swerve.moduleIO;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import frc.robot.extras.simulation.OdometryTimestampsSim;
 import frc.robot.extras.simulation.physicsSim.SwerveModuleSimulation;
-import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
 import java.util.Arrays;
-
-import org.dyn4j.geometry.Rotation;
 
 /** Wrapper class around {@link SwerveModuleSimulation} that implements ModuleIO */
 public class SimulatedModule implements ModuleInterface {
@@ -67,14 +62,14 @@ public class SimulatedModule implements ModuleInterface {
 
   @Override
   public void setTurnPosition(double position) {
-      // TODO Auto-generated method stub
-      // return 0;
+    // TODO Auto-generated method stub
+    // return 0;
   }
 
   @Override
   public double getTurnAbsolutePosition() {
-      // TODO Auto-generated method stub
-      return 0;
+    // TODO Auto-generated method stub
+    return 0;
   }
 
   @Override

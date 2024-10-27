@@ -4,15 +4,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.Alert;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveTrainConstants;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
-import frc.robot.subsystems.swerve.moduleIO.ModuleInterface;
 import frc.robot.subsystems.swerve.moduleIO.ModuleInputsAutoLogged;
-
+import frc.robot.subsystems.swerve.moduleIO.ModuleInterface;
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveModule extends SubsystemBase {
@@ -47,8 +46,8 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometryPositions();
-    SmartDashboard.putNumber("turn pos"+ name , io.getTurnAbsolutePosition());
-    SmartDashboard.putNumber("relative" +name, inputs.turnPosition);
+    SmartDashboard.putNumber("turn pos" + name, io.getTurnAbsolutePosition());
+    SmartDashboard.putNumber("relative" + name, inputs.turnPosition);
   }
 
   public void setVoltage(double volts) {
@@ -71,8 +70,7 @@ public class SwerveModule extends SubsystemBase {
   private void updateOdometryPositions() {
     odometryPositions = new SwerveModulePosition[inputs.odometryDriveWheelRevolutions.length];
     for (int i = 0; i < odometryPositions.length; i++) {
-      double positionMeters =
-          driveWheelRevolutionsToMeters(inputs.drivePosition);
+      double positionMeters = driveWheelRevolutionsToMeters(inputs.drivePosition);
       Rotation2d angle = inputs.turnAbsolutePosition;
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }
@@ -123,7 +121,9 @@ public class SwerveModule extends SubsystemBase {
   }
 
   /**
-   * Gets the module position consisting of the distance it has traveled and the angle it is rotated.
+   * Gets the module position consisting of the distance it has traveled and the angle it is
+   * rotated.
+   *
    * @return a SwerveModulePosition object containing position and rotation
    */
   public SwerveModulePosition getPosition() {
@@ -133,5 +133,4 @@ public class SwerveModule extends SubsystemBase {
     SmartDashboard.putString(name, new SwerveModulePosition(position, rotation).toString());
     return new SwerveModulePosition(position, rotation);
   }
-
 }

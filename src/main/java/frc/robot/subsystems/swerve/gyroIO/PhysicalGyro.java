@@ -1,8 +1,9 @@
 package frc.robot.subsystems.swerve.gyroIO;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
-import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.SPI;
@@ -40,7 +41,6 @@ public class PhysicalGyro implements GyroInterface {
   public Angle getYaw() {
     return Degrees.of(-gyro.getAngle());
   }
-
 
   public Rotation2d getGyroRotation2d() {
     return gyro.getRotation2d();

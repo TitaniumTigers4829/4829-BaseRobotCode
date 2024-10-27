@@ -9,8 +9,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
@@ -39,20 +37,20 @@ public class SwerveConstants {
     public static final SwerveDriveKinematics DRIVE_KINEMATICS =
         new SwerveDriveKinematics(MODULE_TRANSLATIONS);
 
-    public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 0-9;
-    public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 0-9;
-    public static final int REAR_LEFT_DRIVE_MOTOR_ID = 0-9;
-    public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 0-9;
+    public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 0 - 9;
+    public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 0 - 9;
+    public static final int REAR_LEFT_DRIVE_MOTOR_ID = 0 - 9;
+    public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 0 - 9;
 
-    public static final int FRONT_LEFT_TURN_MOTOR_ID = 0-9;
-    public static final int FRONT_RIGHT_TURN_MOTOR_ID = 0-9;
-    public static final int REAR_LEFT_TURN_MOTOR_ID = 0-9;
-    public static final int REAR_RIGHT_TURN_MOTOR_ID = 0-9;
+    public static final int FRONT_LEFT_TURN_MOTOR_ID = 0 - 9;
+    public static final int FRONT_RIGHT_TURN_MOTOR_ID = 0 - 9;
+    public static final int REAR_LEFT_TURN_MOTOR_ID = 0 - 9;
+    public static final int REAR_RIGHT_TURN_MOTOR_ID = 0 - 9;
 
-    public static final int FRONT_LEFT_CANCODER_ID = 0-9;
-    public static final int FRONT_RIGHT_CANCODER_ID = 0-9;
-    public static final int REAR_LEFT_CANCODER_ID = 0-9;
-    public static final int REAR_RIGHT_CANCODER_ID = 0-9;
+    public static final int FRONT_LEFT_CANCODER_ID = 0 - 9;
+    public static final int FRONT_RIGHT_CANCODER_ID = 0 - 9;
+    public static final int REAR_LEFT_CANCODER_ID = 0 - 9;
+    public static final int REAR_RIGHT_CANCODER_ID = 0 - 9;
 
     public static final double FRONT_LEFT_ZERO_ANGLE = 0;
     public static final double FRONT_RIGHT_ZERO_ANGLE = 0;
@@ -86,15 +84,15 @@ public class SwerveConstants {
     public static final InvertedValue REAR_RIGHT_DRIVE_ENCODER_REVERSED =
         InvertedValue.CounterClockwise_Positive;
 
-    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 0-9;
-    public static final double LOW_ANGULAR_SPEED_RADIANS_PER_SECOND = 0-9;
+    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 0 - 9;
+    public static final double LOW_ANGULAR_SPEED_RADIANS_PER_SECOND = 0 - 9;
 
-    public static final double MAX_SPEED_METERS_PER_SECOND = 0-9;
+    public static final double MAX_SPEED_METERS_PER_SECOND = 0 - 9;
   }
 
   public class ModuleConstants {
-    public static final double DRIVE_GEAR_RATIO = 0-9;
-    public static final double TURN_GEAR_RATIO = 0-9;
+    public static final double DRIVE_GEAR_RATIO = 0 - 9;
+    public static final double TURN_GEAR_RATIO = 0 - 9;
     // Use the wheel diamer characterization periodically to find this
     public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
 
@@ -106,39 +104,38 @@ public class SwerveConstants {
     public static final double DRIVE_SUPPLY_LIMIT = 45.0;
     public static final double DRIVE_STATOR_LIMIT = 50.0;
 
-    public static final double TURN_P = 0-9;
-    public static final double TURN_I = 0-9;
-    public static final double TURN_D = 0-9;
+    public static final double TURN_P = 0 - 9;
+    public static final double TURN_I = 0 - 9;
+    public static final double TURN_D = 0 - 9;
 
-    public static final double TURN_S = 0-9;   
-    public static final double TURN_V = 0-9;  
-    public static final double TURN_A = 0-9;   
+    public static final double TURN_S = 0 - 9;
+    public static final double TURN_V = 0 - 9;
+    public static final double TURN_A = 0 - 9;
 
-    public static final double MAX_ANGULAR_SPEED_ROTATIONS_PER_SECOND = 0-9;
-    public static final double MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED = 0-9;
+    public static final double MAX_ANGULAR_SPEED_ROTATIONS_PER_SECOND = 0 - 9;
+    public static final double MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED = 0 - 9;
 
-    public static final double DRIVE_P = 0-9;
-    public static final double DRIVE_I = 0-9;
-    public static final double DRIVE_D = 0-9;
+    public static final double DRIVE_P = 0 - 9;
+    public static final double DRIVE_I = 0 - 9;
+    public static final double DRIVE_D = 0 - 9;
     // Use recalc to find the feedfoward values
     // https://www.reca.lc/drive?appliedVoltageRamp=%7B%22s%22%3A1200%2C%22u%22%3A%22V%2Fs%22%7D&batteryAmpHours=%7B%22s%22%3A18%2C%22u%22%3A%22A%2Ah%22%7D&batteryResistance=%7B%22s%22%3A0.018%2C%22u%22%3A%22Ohm%22%7D&batteryVoltageAtRest=%7B%22s%22%3A12.6%2C%22u%22%3A%22V%22%7D&efficiency=97&filtering=1&gearRatioMax=%7B%22magnitude%22%3A15%2C%22ratioType%22%3A%22Reduction%22%7D&gearRatioMin=%7B%22magnitude%22%3A3%2C%22ratioType%22%3A%22Reduction%22%7D&maxSimulationTime=%7B%22s%22%3A4%2C%22u%22%3A%22s%22%7D&maxSpeedAccelerationThreshold=%7B%22s%22%3A0.15%2C%22u%22%3A%22ft%2Fs2%22%7D&motor=%7B%22quantity%22%3A4%2C%22name%22%3A%22Kraken%20X60%2A%22%7D&motorCurrentLimit=%7B%22s%22%3A60%2C%22u%22%3A%22A%22%7D&numCyclesPerMatch=24&peakBatteryDischarge=20&ratio=%7B%22magnitude%22%3A4.59%2C%22ratioType%22%3A%22Reduction%22%7D&sprintDistance=%7B%22s%22%3A25%2C%22u%22%3A%22ft%22%7D&swerve=1&targetTimeToGoal=%7B%22s%22%3A2%2C%22u%22%3A%22s%22%7D&throttleResponseMax=0.99&throttleResponseMin=0.5&weightAuxilliary=%7B%22s%22%3A24%2C%22u%22%3A%22lbs%22%7D&weightDistributionFrontBack=0.5&weightDistributionLeftRight=0.5&weightInspected=%7B%22s%22%3A125%2C%22u%22%3A%22lbs%22%7D&wheelBaseLength=%7B%22s%22%3A27%2C%22u%22%3A%22in%22%7D&wheelBaseWidth=%7B%22s%22%3A20%2C%22u%22%3A%22in%22%7D&wheelCOFDynamic=0.9&wheelCOFLateral=1.1&wheelCOFStatic=1.1&wheelDiameter=%7B%22s%22%3A4%2C%22u%22%3A%22in%22%7D
-    public static final double DRIVE_S = 0-9;
-    public static final double DRIVE_V = 0-9;
-    public static final double DRIVE_A = 0-9;
+    public static final double DRIVE_S = 0 - 9;
+    public static final double DRIVE_V = 0 - 9;
+    public static final double DRIVE_A = 0 - 9;
   }
 
   public static final class TrajectoryConstants {
 
     public static final double DRIVE_BASE_DIAMETER =
         Math.sqrt(Math.pow(DriveConstants.TRACK_WIDTH, 2) + Math.pow(DriveConstants.WHEEL_BASE, 2));
-    public static final double MAX_SPEED = 0-9;
-    public static final double MAX_ACCELERATION = 0-9;
+    public static final double MAX_SPEED = 0 - 9;
+    public static final double MAX_ACCELERATION = 0 - 9;
 
-    public static final double AUTO_TRANSLATION_P = 0-9;
-    public static final double AUTO_TRANSLATION_D = 0-9;
-    public static final double AUTO_THETA_P = 0-9;
-    public static final double AUTO_THETA_D = 0-9;
-
+    public static final double AUTO_TRANSLATION_P = 0 - 9;
+    public static final double AUTO_TRANSLATION_D = 0 - 9;
+    public static final double AUTO_THETA_P = 0 - 9;
+    public static final double AUTO_THETA_D = 0 - 9;
   }
 
   /**

@@ -1,25 +1,6 @@
 package frc.robot.subsystems.swerve.moduleIO;
 
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.VoltageUnit;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.HardwareConstants;
-import frc.robot.extras.util.DeviceCANBus;
-import frc.robot.subsystems.swerve.SwerveConstants.ModuleConfig;
-import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
-import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
-
-import java.io.ObjectInputFilter.Status;
-import java.util.Queue;
+import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -34,7 +15,20 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.HardwareConstants;
+import frc.robot.extras.util.DeviceCANBus;
+import frc.robot.subsystems.swerve.SwerveConstants.ModuleConfig;
+import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
+import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
+import java.util.Queue;
 
 public class PhysicalModule implements ModuleInterface {
   private final TalonFX driveMotor;
@@ -160,7 +154,8 @@ public class PhysicalModule implements ModuleInterface {
     //         .toArray(Rotation2d[]::new);
     // turnEncoderAbsolutePosition.clear();
     // if (inputs.odometryTurnPositions.length > 0)
-    //   inputs.turnRotation = inputs.odometryTurnPositions[inputs.odometryTurnPositions.length - 1];
+    //   inputs.turnRotation = inputs.odometryTurnPositions[inputs.odometryTurnPositions.length -
+    // 1];
 
     inputs.driveWheelFinalVelocityPerSec =
         driveVelocity.getValueAsDouble() / ModuleConstants.DRIVE_GEAR_RATIO;
@@ -169,8 +164,7 @@ public class PhysicalModule implements ModuleInterface {
 
     inputs.turnPosition = turnMotor.getPosition().getValueAsDouble();
 
-    inputs.turnVelocityRadPerSec =
-        Units.rotationsToRadians(turnEncoderVelocity.getValueAsDouble());
+    inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnEncoderVelocity.getValueAsDouble());
     inputs.turnMotorAppliedVolts = turnMotorAppliedVolts.getValueAsDouble();
     inputs.turnMotorCurrentAmps = turnMotorCurrent.getValueAsDouble();
   }
@@ -198,7 +192,7 @@ public class PhysicalModule implements ModuleInterface {
 
   @Override
   public double getTurnAbsolutePosition() {
-      return turnEncoder.getAbsolutePosition().refresh().getValueAsDouble();
+    return turnEncoder.getAbsolutePosition().refresh().getValueAsDouble();
   }
 
   @Override
@@ -215,7 +209,8 @@ public class PhysicalModule implements ModuleInterface {
   public void setDesiredState(SwerveModuleState desiredState) {
     double turnRadians = getTurnRotations();
     // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState setpoint = new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
+    SwerveModuleState setpoint =
+        new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
 
     setpoint.optimize(Rotation2d.fromRotations(turnRadians));
     setpoint.cosineScale(Rotation2d.fromRotations(turnRadians));
@@ -233,8 +228,7 @@ public class PhysicalModule implements ModuleInterface {
             / ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
 
     driveMotor.setControl(velocityRequest.withVelocity(desiredDriveRPS));
-    turnMotor.setControl(
-        mmPositionRequest.withPosition(setpoint.angle.getRotations()));
+    turnMotor.setControl(mmPositionRequest.withPosition(setpoint.angle.getRotations()));
 
     SmartDashboard.putNumber("desired State", desiredDriveRPS);
     SmartDashboard.putNumber("desired turn pos", setpoint.angle.getRotations());
@@ -247,7 +241,8 @@ public class PhysicalModule implements ModuleInterface {
 
   public double getTurnRotations() {
     turnEncoder.getAbsolutePosition().refresh();
-    return Rotation2d.fromRotations(turnEncoder.getAbsolutePosition().getValueAsDouble()).getRotations();
+    return Rotation2d.fromRotations(turnEncoder.getAbsolutePosition().getValueAsDouble())
+        .getRotations();
   }
 
   @Override
@@ -263,6 +258,6 @@ public class PhysicalModule implements ModuleInterface {
 
   @Override
   public double getDrivePosition() {
-      return driveMotor.getPosition().refresh().getValueAsDouble();
+    return driveMotor.getPosition().refresh().getValueAsDouble();
   }
 }

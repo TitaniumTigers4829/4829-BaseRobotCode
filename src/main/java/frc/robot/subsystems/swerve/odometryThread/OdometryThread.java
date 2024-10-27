@@ -2,7 +2,6 @@ package frc.robot.subsystems.swerve.odometryThread;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.Robot;
 import frc.robot.extras.util.DeviceCANBus;
