@@ -111,13 +111,13 @@ public class SwerveDrive extends SubsystemBase {
     poseEstimator.addVisionMeasurement(visionMeasurement, currentTimeStampSeconds);
   }
 
-  // public void setTurnPosition(double position) {
-  //   // SmartDashboard.putNumber("turn position", position);
-  //   for (SwerveModule module : swerveModules) {
-  //     module.setTurnPosition(position);
+  public void setTurnPosition(double position) {
+    // SmartDashboard.putNumber("turn position", position);
+    for (SwerveModule module : swerveModules) {
+      module.setTurnPosition(position);
 
-  //   }
-  // }
+    }
+  }
 
   /**
    * Sets the standard deviations of model states, or how much the april tags contribute to the pose

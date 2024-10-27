@@ -32,9 +32,6 @@ public class SwerveModule extends SubsystemBase {
     this.hardwareFaultAlert.set(false);
 
     CommandScheduler.getInstance().unregisterSubsystem(this);
-
-    io.setDriveBrake(true);
-    io.setTurnBrake(true);
   }
 
   public void updateOdometryInputs() {
@@ -46,13 +43,11 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometryPositions();
-    SmartDashboard.putNumber("turn pos" + name, io.getTurnAbsolutePosition());
-    SmartDashboard.putNumber("relative" + name, inputs.turnPosition);
   }
 
   public void setVoltage(double volts) {
     io.setDriveVoltage(volts);
-    // io.setTurnVoltage(0.0);
+    io.setTurnVoltage(0.0);
   }
 
   public double getDriveVoltage() {
