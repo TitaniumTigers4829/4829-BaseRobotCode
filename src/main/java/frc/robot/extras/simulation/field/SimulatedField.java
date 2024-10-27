@@ -177,8 +177,8 @@ public abstract class SimulatedField {
    * part of its collision space.
    *
    * <p>This method immediately starts the {@link
-   * frc.robot.extras.simulation.mechanismSim.ironmaple.simulation.IntakeSimulation.GamePieceContactListener},
-   * which listens for contact between the intake and any game piece.
+   * frc.robot.extras.simulation.mechanismSim.IntakeSimulation.GamePieceContactListener}, which
+   * listens for contact between the intake and any game piece.
    *
    * @param intakeSimulation the intake simulation to be registered
    */
@@ -320,9 +320,8 @@ public abstract class SimulatedField {
    *
    * <ul>
    *   <li>The type is determined in the constructor of {@link GamePieceOnFieldSimulation}.
-   *   <li>For example, {@link
-   *       org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnField} has the type
-   *       "Note".
+   *   <li>For example, {@link frc.robot.extras.simulation.gamePiece.CrescendoNoteSimulation} has
+   *       the type "Note".
    * </ul>
    *
    * @param type the type of game piece, as determined by the constructor of {@link
