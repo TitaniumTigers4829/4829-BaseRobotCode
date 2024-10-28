@@ -5,20 +5,17 @@ import static edu.wpi.first.units.Units.*;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.SPI;
-import frc.robot.extras.util.AllianceFlipper;
 import frc.robot.subsystems.swerve.gyroIO.GyroInterface.GyroInputs;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
 import java.util.Queue;
-import java.util.function.Supplier;
 
 public class PhysicalGyro implements GyroInterface {
   private final AHRS gyro = new AHRS(SPI.Port.kMXP, (byte) 250);
   private final Queue<Angle> yawPositionInput;
 
   public PhysicalGyro() {
-    yawPositionInput = OdometryThread.registerInput(()->Degrees.of(gyro.getAngle()));
+    yawPositionInput = OdometryThread.registerInput(() -> Degrees.of(gyro.getAngle()));
   }
 
   @Override
