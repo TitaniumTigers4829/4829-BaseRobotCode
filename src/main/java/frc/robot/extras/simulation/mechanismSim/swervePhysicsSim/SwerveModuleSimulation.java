@@ -1,5 +1,6 @@
 package frc.robot.extras.simulation.mechanismSim.swervePhysicsSim;
 
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.extras.simulation.field.SimulatedField.SIMULATION_DT;
 import static frc.robot.extras.simulation.field.SimulatedField.SIMULATION_SUB_TICKS_IN_1_PERIOD;
 
@@ -8,6 +9,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Voltage;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
@@ -86,6 +89,16 @@ public class SwerveModuleSimulation {
 
   public void requestTurnVoltageOut(double volts) {
     this.steerMotorAppliedVolts = volts;
+    // this.steerMotorSim.setInputVoltage(MathUtil.applyDeadband(volts, STEER_FRICTION_VOLTAGE,
+    // 12));
+  }
+
+  public void requestDriveVoltageOut(Voltage volts) {
+    this.driveMotorRequestedVolts = volts.in(Volts);
+  }
+
+  public void requestTurnVoltageOut(Voltage volts) {
+    this.steerMotorAppliedVolts = volts.in(Volts);
     // this.steerMotorSim.setInputVoltage(MathUtil.applyDeadband(volts, STEER_FRICTION_VOLTAGE,
     // 12));
   }
