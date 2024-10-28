@@ -7,6 +7,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -34,12 +35,9 @@ public class PhysicalModule implements ModuleInterface {
   private final TalonFX turnMotor;
   private final CANcoder turnEncoder;
 
-  private String canBus = "";
-
-  private final VoltageOut voltageOut = new VoltageOut(0.0); // test: .withUpdateFreqHz(0.0);
-  private final DutyCycleOut percentOut = new DutyCycleOut(0.0);
+  private final VoltageOut voltageOut = new VoltageOut(0.0);
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
-  private final PositionVoltage mmPositionRequest = new PositionVoltage(0.0);
+  private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
 
   private final Queue<Angle> drivePosition;
   private final StatusSignal<AngularVelocity> driveVelocity;
@@ -94,10 +92,10 @@ public class PhysicalModule implements ModuleInterface {
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     turnConfig.MotorOutput.Inverted = moduleConfig.turnReversed();
     turnConfig.MotorOutput.DutyCycleNeutralDeadband = HardwareConstants.MIN_FALCON_DEADBAND;
-    // turnConfig.MotionMagic.MotionMagicCruiseVelocity =
-    //     ModuleConstants.MAX_ANGULAR_SPEED_ROTATIONS_PER_SECOND;
-    // turnConfig.MotionMagic.MotionMagicAcceleration =
-    //     ModuleConstants.MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
+    turnConfig.MotionMagic.MotionMagicCruiseVelocity =
+        ModuleConstants.MAX_ANGULAR_SPEED_ROTATIONS_PER_SECOND;
+    turnConfig.MotionMagic.MotionMagicAcceleration =
+        ModuleConstants.MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
     turnConfig.CurrentLimits.SupplyCurrentLimit = 20;
     turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -147,11 +145,17 @@ public class PhysicalModule implements ModuleInterface {
       inputs.drivePosition =
           inputs.odometryDriveWheelRevolutions[inputs.odometryDriveWheelRevolutions.length - 1];
 
-    inputs.odometryTurnPositions =
-        turnEncoderAbsolutePosition.stream()
-            .map(this::getTurnAbsolutePosition)
-            .toArray(Rotation2d[]::new);
-    turnEncoderAbsolutePosition.clear();
+          
+    // Handle odometry yaw positions
+    if (!turnEncoderAbsolutePosition.isEmpty()) {
+      Rotation2d odometryYawPositions = new Rotation2d();
+      for (Angle angle : turnEncoderAbsolutePosition) {
+        odometryYawPositions = Rotation2d.fromRotations(angle.in(Rotations));
+      }
+      inputs.turnAbsolutePosition = odometryYawPositions;
+      turnEncoderAbsolutePosition.clear();
+    }
+
     if (inputs.odometryTurnPositions.length > 0)
       inputs.turnPosition = inputs.odometryTurnPositions[inputs.odometryTurnPositions.length - 1].getRotations();
 
