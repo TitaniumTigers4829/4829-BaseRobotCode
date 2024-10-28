@@ -14,7 +14,7 @@ public interface ModuleInterface {
     public double steerMotorAppliedVolts = 0.0;
     public double steerMotorCurrentAmps = 0.0;
 
-    public double[] odometryDriveWheelRevolutions = new double[];;
+    public double[] odometryDriveWheelRevolutions = new double[] {};
 
     public double driveVelocity = 0.0;
     public double driveAppliedVolts = 0.0;
@@ -24,8 +24,8 @@ public interface ModuleInterface {
     public double turnVelocityRadPerSec = 0.0;
     public double turnAppliedVolts = 0.0;
     public double turnCurrentAmps = 0.0;
-    public double[] odometryTimestamps = new double[];;
-    public double[] odometryDrivePositionsRad = new double[];;
+    public double[] odometryTimestamps = new double[] {};
+    public double[] odometryDrivePositionsRad = new double[] {};
     // public Rotation2d[] odometryTurnPositions = new Rotation2d[];;
     public double driveWheelFinalVelocityPerSec = 0.0;
     public double turnMotorAppliedVolts = 0.0;
