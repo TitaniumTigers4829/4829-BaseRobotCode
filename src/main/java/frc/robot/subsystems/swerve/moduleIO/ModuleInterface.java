@@ -9,7 +9,7 @@ public interface ModuleInterface {
   class ModuleInputs {
 
     public boolean isConnected = false;
-    // public Rotation2d turnRotation = new Rotation2d();
+    
     public double steerVelocityRadPerSec = 0.0;
     public double steerMotorAppliedVolts = 0.0;
     public double steerMotorCurrentAmps = 0.0;

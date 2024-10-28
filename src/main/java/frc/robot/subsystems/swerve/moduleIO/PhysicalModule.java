@@ -224,9 +224,6 @@ public class PhysicalModule implements ModuleInterface {
 
     driveMotor.setControl(velocityRequest.withVelocity(desiredDriveRPS));
     turnMotor.setControl(mmPositionRequest.withPosition(setpoint.angle.getRotations()));
-
-    SmartDashboard.putNumber("desired State", desiredDriveRPS);
-    SmartDashboard.putNumber("desired turn pos", setpoint.angle.getRotations());
   }
 
   @Override
