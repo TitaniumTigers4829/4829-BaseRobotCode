@@ -24,16 +24,15 @@ public class PhysicalGyro implements GyroInterface {
     inputs.isConnected = gyro.isConnected();
     inputs.yawDegreesRotation2d = getGyroRotation2d();
     inputs.yawVelocity = getRate().in(DegreesPerSecond);
+    inputs.rollDegrees = getRoll().in(Degrees);
+    inputs.pitchDegrees = getPitch().in(Degrees);
+    inputs.yawDegrees = getYaw().in(Degrees);
   }
 
   public void zeroHeading() {
     gyro.reset();
   }
-
-  public void setOffset(double offset) {
-    gyro.setAngleAdjustment(offset);
-  }
-
+  
   public Supplier<Angle> getAngle() {
     return () -> Degrees.of(-gyro.getAngle());
   }
@@ -42,12 +41,24 @@ public class PhysicalGyro implements GyroInterface {
     return Degrees.of(-gyro.getAngle());
   }
 
+  public Angle getWrappedYaw() {
+    return Degrees.of(-gyro.getYaw());
+  }
+
   public Rotation2d getGyroRotation2d() {
     return gyro.getRotation2d();
   }
 
   public AngularVelocity getRate() {
     return DegreesPerSecond.of(-gyro.getRate());
+  }
+
+  public Angle getPitch() {
+    return Degrees.of(gyro.getPitch());
+  }
+
+  public Angle getRoll() {
+    return Degrees.of(gyro.getRoll());
   }
 
   public Rotation2d getGyroFieldRelativeRotation2d() {

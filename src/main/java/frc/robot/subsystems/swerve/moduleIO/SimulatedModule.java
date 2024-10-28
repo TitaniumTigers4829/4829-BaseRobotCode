@@ -44,7 +44,7 @@ public class SimulatedModule implements ModuleInterface {
     inputs.turnAppliedVolts = moduleSimulation.getTurnMotorAppliedVolts();
     inputs.turnCurrentAmps = Math.abs(moduleSimulation.getTurnMotorSupplyCurrentAmps());
 
-    inputs.odometryTimestamps = OdometryTimestampsSim.getTimeStamps();
+    inputs.odometryTimestamps = OdometryTimestampsSim.getTimestamps();
     inputs.odometryDrivePositionsRad = moduleSimulation.getCachedDriveWheelFinalPositionsRad();
     inputs.odometryTurnPositions = moduleSimulation.getCachedTurnAbsolutePositions();
 
@@ -77,8 +77,7 @@ public class SimulatedModule implements ModuleInterface {
 
   @Override
   public double getDrivePosition() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getDrivePosition'");
+    return Radians.of(moduleSimulation.getDriveEncoderFinalPositionRad()).in(Degrees);
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
