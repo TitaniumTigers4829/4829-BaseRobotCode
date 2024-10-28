@@ -1,4 +1,4 @@
-package frc.robot.extras.simulation.mechanismSim.swervePhysicsSim;
+package frc.robot.extras.simulation.mechanismSim.swerve;
 
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.extras.simulation.field.SimulatedField.SIMULATION_DT;
@@ -20,9 +20,9 @@ public class SwerveModuleSimulation {
   private final BrushlessMotorSim turnMotorSim;
   private final double DRIVE_CURRENT_LIMIT,
       DRIVE_GEAR_RATIO,
-      turn_GEAR_RATIO,
+      TURN_GEAR_RATIO,
       DRIVE_FRICTION_VOLTAGE,
-      turn_FRICTION_VOLTAGE,
+      TURN_FRICTION_VOLTAGE,
       WHEELS_COEFFICIENT_OF_FRICTION,
       WHEEL_RADIUS_METERS,
       DRIVE_WHEEL_INERTIA = 0.01;
@@ -58,15 +58,15 @@ public class SwerveModuleSimulation {
     DRIVE_MOTOR = driveMotor;
     DRIVE_CURRENT_LIMIT = driveCurrentLimit;
     DRIVE_GEAR_RATIO = driveGearRatio;
-    turn_GEAR_RATIO = turnGearRatio;
+    TURN_GEAR_RATIO = turnGearRatio;
     DRIVE_FRICTION_VOLTAGE = driveFrictionVoltage;
-    turn_FRICTION_VOLTAGE = turnFrictionVoltage;
+    TURN_FRICTION_VOLTAGE = turnFrictionVoltage;
     WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
     WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
     this.turnMotorSim =
         new BrushlessMotorSim(
-            turnMotor, turn_GEAR_RATIO, turnRotationalInertia, turn_FRICTION_VOLTAGE);
+            turnMotor, TURN_GEAR_RATIO, turnRotationalInertia, TURN_FRICTION_VOLTAGE);
 
     this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
     for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
@@ -207,7 +207,7 @@ public class SwerveModuleSimulation {
     this.turnRelativeEncoderPositionRad =
         turnMotorSim.getAngularPositionRad() + turnRelativeEncoderOffSet;
     this.turnAbsoluteEncoderSpeedRadPerSec = turnMotorSim.getAngularVelocityRadPerSec();
-    this.turnRelativeEncoderSpeedRadPerSec = turnAbsoluteEncoderSpeedRadPerSec * turn_GEAR_RATIO;
+    this.turnRelativeEncoderSpeedRadPerSec = turnAbsoluteEncoderSpeedRadPerSec * TURN_GEAR_RATIO;
 
     /* cache sensor readings to queue for high-frequency odometry */
     this.cachedTurnAbsolutePositions.poll();

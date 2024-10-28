@@ -1,4 +1,4 @@
-package frc.robot.extras.simulation.mechanismSim.swervePhysicsSim;
+package frc.robot.extras.simulation.mechanismSim.swerve;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;

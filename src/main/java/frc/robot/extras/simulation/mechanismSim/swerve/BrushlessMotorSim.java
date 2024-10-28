@@ -22,7 +22,7 @@
 // Original source:
 // https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/src/main/java/org/ironmaple/simulation/drivesims/BrushlessMotorSim.java
 
-package frc.robot.extras.simulation.mechanismSim.swervePhysicsSim;
+package frc.robot.extras.simulation.mechanismSim.swerve;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;

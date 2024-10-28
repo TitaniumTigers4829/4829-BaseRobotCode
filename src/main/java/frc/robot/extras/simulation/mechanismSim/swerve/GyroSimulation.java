@@ -1,4 +1,4 @@
-package frc.robot.extras.simulation.mechanismSim.swervePhysicsSim;
+package frc.robot.extras.simulation.mechanismSim.swerve;
 
 import static frc.robot.extras.simulation.field.SimulatedField.*;
 

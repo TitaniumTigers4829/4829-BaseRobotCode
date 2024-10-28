@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import frc.robot.extras.simulation.OdometryTimestampsSim;
-import frc.robot.extras.simulation.mechanismSim.swervePhysicsSim.GyroSimulation;
+import frc.robot.extras.simulation.mechanismSim.swerve.GyroSimulation;
 
 public class SimulatedGyro implements GyroInterface {
   private final GyroSimulation gyroSimulation;
