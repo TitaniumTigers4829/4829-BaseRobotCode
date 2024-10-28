@@ -1,8 +1,11 @@
 package frc.robot.subsystems.swerve;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,9 +45,9 @@ public class SwerveModule extends SubsystemBase {
     updateOdometryPositions();
   }
 
-  public void setVoltage(double volts) {
+  public void setVoltage(Voltage volts) {
     io.setDriveVoltage(volts);
-    io.setTurnVoltage(0.0);
+    io.setTurnVoltage(Volts.zero());
   }
 
   public double getDriveVoltage() {

@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve.moduleIO;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ModuleInterface {
@@ -33,7 +34,11 @@ public interface ModuleInterface {
     public double turnPosition = 0.0;
   }
 
-  /** Updates the inputs */
+  /**
+   * Updates the inputs
+   *
+   * @param inputs the inputs to update
+   */
   void updateInputs(ModuleInputs inputs);
 
   String getCANBus();
@@ -65,15 +70,9 @@ public interface ModuleInterface {
    */
   void setTurnSpeed(double powerPercent);
 
-  /** Enable or disable brake mode on the drive motor. */
-  void setDriveBrake(boolean enable);
+  void setDriveVoltage(Voltage voltage);
 
-  /** Enable or disable brake mode on the turn motor. */
-  void setTurnBrake(boolean enable);
-
-  void setDriveVoltage(double voltage);
-
-  void setTurnVoltage(double voltage);
+  void setTurnVoltage(Voltage voltage);
 
   void stopModule();
 

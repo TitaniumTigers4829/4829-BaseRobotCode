@@ -9,12 +9,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.extras.simulation.OdometryTimestampsSim;
 import frc.robot.extras.simulation.mechanismSim.swervePhysicsSim.SwerveModuleSimulation;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
 import java.util.Arrays;
 
-/** Wrapper class around {@link SwerveModuleSimulation} that implements ModuleIO */
+/** Wrapper class around {@link SwerveModuleSimulation} */
 public class SimulatedModule implements ModuleInterface {
   private final SwerveModuleSimulation moduleSimulation;
 
@@ -55,7 +56,7 @@ public class SimulatedModule implements ModuleInterface {
   }
 
   @Override
-  public void setDriveVoltage(double volts) {
+  public void setDriveVoltage(Voltage volts) {
     moduleSimulation.requestDriveVoltageOut(volts);
   }
 
@@ -78,7 +79,7 @@ public class SimulatedModule implements ModuleInterface {
   }
 
   @Override
-  public void setTurnVoltage(double volts) {
+  public void setTurnVoltage(Voltage volts) {
     moduleSimulation.requestTurnVoltageOut(volts);
   }
 
@@ -143,18 +144,6 @@ public class SimulatedModule implements ModuleInterface {
   public void setTurnSpeed(double powerPercent) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'setTurnSpeed'");
-  }
-
-  @Override
-  public void setDriveBrake(boolean enable) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setDriveBrake'");
-  }
-
-  @Override
-  public void setTurnBrake(boolean enable) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setTurnBrake'");
   }
 
   @Override

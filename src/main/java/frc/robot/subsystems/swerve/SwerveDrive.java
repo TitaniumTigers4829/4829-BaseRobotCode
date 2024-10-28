@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -86,6 +88,11 @@ public class SwerveDrive extends SubsystemBase {
     gyroDisconnectedAlert.set(false);
   }
 
+  /**
+   * Gets the current velocity of the gyro's yaw
+   *
+   * @return the yaw velocity
+   */
   public double getGyroRate() {
     return gyroInputs.yawVelocity;
   }
@@ -108,12 +115,6 @@ public class SwerveDrive extends SubsystemBase {
   public void addPoseEstimatorVisionMeasurement(
       Pose2d visionMeasurement, double currentTimeStampSeconds) {
     poseEstimator.addVisionMeasurement(visionMeasurement, currentTimeStampSeconds);
-  }
-
-  public void setTurnPosition(double position) {
-    for (SwerveModule module : swerveModules) {
-      module.setTurnPosition(position);
-    }
   }
 
   /**
@@ -145,7 +146,7 @@ public class SwerveDrive extends SubsystemBase {
    */
   public void runCharacterization(double volts) {
     for (SwerveModule module : swerveModules) {
-      module.setVoltage(-volts);
+      module.setVoltage(Volts.of(-volts));
     }
   }
 

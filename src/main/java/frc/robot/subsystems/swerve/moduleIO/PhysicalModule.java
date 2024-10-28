@@ -180,12 +180,12 @@ public class PhysicalModule implements ModuleInterface {
   }
 
   @Override
-  public void setDriveVoltage(double volts) {
+  public void setDriveVoltage(Voltage volts) {
     driveMotor.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
-  public void setTurnVoltage(double volts) {
+  public void setTurnVoltage(Voltage volts) {
     turnMotor.setControl(voltageOut.withOutput(volts));
   }
 
@@ -221,24 +221,15 @@ public class PhysicalModule implements ModuleInterface {
             * ModuleConstants.DRIVE_GEAR_RATIO
             / ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
 
-    driveMotor.setControl(velocityRequest.withVelocity(desiredDriveRPS));
-    turnMotor.setControl(mmPositionRequest.withPosition(setpoint.angle.getRotations()));
-  }
-
-  @Override
-  public void setDriveBrake(boolean enable) {
-    driveMotor.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+    driveMotor.setControl(velocityRequest.withVelocity(RotationsPerSecond.of(desiredDriveRPS)));
+    turnMotor.setControl(
+        mmPositionRequest.withPosition(Rotations.of(setpoint.angle.getRotations())));
   }
 
   public double getTurnRotations() {
     turnEncoder.getAbsolutePosition().refresh();
     return Rotation2d.fromRotations(turnEncoder.getAbsolutePosition().getValueAsDouble())
         .getRotations();
-  }
-
-  @Override
-  public void setTurnBrake(boolean enable) {
-    turnMotor.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
   @Override
