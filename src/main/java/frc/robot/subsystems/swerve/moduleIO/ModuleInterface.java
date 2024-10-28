@@ -35,7 +35,7 @@ public interface ModuleInterface {
   }
 
   /**
-   * Updates the inputs
+   * Updates the inputs created in ModuleInputs
    *
    * @param inputs the inputs to update
    */
