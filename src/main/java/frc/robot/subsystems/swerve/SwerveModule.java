@@ -77,7 +77,7 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public double getSteerVelocityRadPerSec() {
-    return inputs.steerVelocityRadPerSec;
+    return inputs.turnVelocityRadPerSec;
   }
 
   /** Returns the current drive position of the module in meters. */

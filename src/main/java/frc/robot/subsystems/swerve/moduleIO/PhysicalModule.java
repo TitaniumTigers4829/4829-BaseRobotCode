@@ -156,16 +156,16 @@ public class PhysicalModule implements ModuleInterface {
     //   inputs.turnRotation = inputs.odometryTurnPositions[inputs.odometryTurnPositions.length -
     // 1];
 
-    inputs.driveWheelFinalVelocityPerSec =
-        driveVelocity.getValueAsDouble() / ModuleConstants.DRIVE_GEAR_RATIO;
+    // inputs.driveWheelFinalVelocityPerSec =
+    //     driveVelocity.getValueAsDouble() / ModuleConstants.DRIVE_GEAR_RATIO;
     inputs.driveAppliedVolts = driveMotorAppliedVoltage.getValueAsDouble();
     inputs.driveCurrentAmps = driveMotorCurrent.getValueAsDouble();
 
     inputs.turnPosition = turnMotor.getPosition().getValueAsDouble();
 
     inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnEncoderVelocity.getValueAsDouble());
-    inputs.turnMotorAppliedVolts = turnMotorAppliedVolts.getValueAsDouble();
-    inputs.turnMotorCurrentAmps = turnMotorCurrent.getValueAsDouble();
+    inputs.turnAppliedVolts = turnMotorAppliedVolts.getValueAsDouble();
+    inputs.turnCurrentAmps = turnMotorCurrent.getValueAsDouble();
   }
 
   @Override
