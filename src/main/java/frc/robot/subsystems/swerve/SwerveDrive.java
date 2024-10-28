@@ -92,9 +92,9 @@ public class SwerveDrive extends SubsystemBase {
 
   /** Updates the pose estimator with the pose calculated from the swerve modules. */
   public void addPoseEstimatorSwerveMeasurement() {
-    for (int timeStampIndex = 0;
-        timeStampIndex < odometryThreadInputs.measurementTimeStamps.length;
-        timeStampIndex++) addPoseEstimatorSwerveMeasurement(timeStampIndex);
+    for (int timestampIndex = 0;
+        timestampIndex < odometryThreadInputs.measurementTimeStamps.length;
+        timestampIndex++) addPoseEstimatorSwerveMeasurement(timestampIndex);
   }
 
   /*
@@ -138,13 +138,17 @@ public class SwerveDrive extends SubsystemBase {
     modulesPeriodic();
   }
 
+  /**
+   * Runs characterization on voltage
+   * @param volts voltage to set
+   */
   public void runCharacterization(double volts) {
     for (SwerveModule module : swerveModules) {
       module.setVoltage(-volts);
     }
   }
 
-  /** Returns the average drive velocity in radians/sec. */
+  /** Returns the average drive velocity in rotations/sec. */
   public double getCharacterizationVelocity() {
     double velocity = 0.0;
     for (SwerveModule module : swerveModules) {
@@ -173,12 +177,12 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   /**
-   * Tells the robot which way to move
+   * Drives the robot using the joysticks.
    *
-   * @param xSpeed meters per second, max is 5.0
-   * @param ySpeed meters per second, max is 5.0
-   * @param rotationSpeed radians per second, max is 2
-   * @param fieldRelative is the robot field relative
+   * @param xSpeed Speed of the robot in the x direction, positive being forwards.
+   * @param ySpeed Speed of the robot in the y direction, positive being left.
+   * @param rotationSpeed Angular rate of the robot in radians per second.
+   * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
   public void drive(double xSpeed, double ySpeed, double rotationSpeed, boolean fieldRelative) {
     SwerveModuleState[] swerveModuleStates =
@@ -214,28 +218,37 @@ public class SwerveDrive extends SubsystemBase {
     }
   }
 
-  private void addPoseEstimatorSwerveMeasurement(int timeStampIndex) {
-    final SwerveModulePosition[] modulePositions = getModulesPosition(timeStampIndex),
+  /** 
+   * Updates the pose estimator with the pose calculated from the swerve modules.
+   * @param timestampIndex index of the timestamp to sample the pose at
+   */
+  private void addPoseEstimatorSwerveMeasurement(int timestampIndex) {
+    final SwerveModulePosition[] modulePositions = getModulesPosition(timestampIndex),
         moduleDeltas = getModulesDelta(modulePositions);
 
     if (gyroInputs.isConnected) {
-      rawGyroRotation = gyroInputs.odometryYawPositions[timeStampIndex];
+      rawGyroRotation = gyroInputs.odometryYawPositions[timestampIndex];
     } else {
       Twist2d twist = DriveConstants.DRIVE_KINEMATICS.toTwist2d(moduleDeltas);
       rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
     }
 
     poseEstimator.updateWithTime(
-        odometryThreadInputs.measurementTimeStamps[timeStampIndex],
+        odometryThreadInputs.measurementTimeStamps[timestampIndex],
         rawGyroRotation,
         modulePositions);
   }
 
-  private SwerveModulePosition[] getModulesPosition(int timeStampIndex) {
+  /**
+   * Gets the modules positions, sampled at the indexed timestamp.
+   * @param timestampIndex the timestamp index to sample.
+   * @return a list of SwerveModulePosition, containing relative drive position and absolute turn rotation at the sampled timestamp.
+   */
+  private SwerveModulePosition[] getModulesPosition(int timestampIndex) {
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[swerveModules.length];
     for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++)
       swerveModulePositions[moduleIndex] =
-          swerveModules[moduleIndex].getOdometryPositions()[timeStampIndex];
+          swerveModules[moduleIndex].getOdometryPositions()[timestampIndex];
     return swerveModulePositions;
   }
 
@@ -252,26 +265,6 @@ public class SwerveDrive extends SubsystemBase {
     return deltas;
   }
 
-  // public void stop() {
-  //   Rotation2d[] swerveHeadings = new Rotation2d[swerveModules.length];
-  //   for (int i = 0; i < swerveHeadings.length; i++) swerveHeadings[i] = new Rotation2d();
-  //   DriveConstants.DRIVE_KINEMATICS.resetHeadings(swerveHeadings);
-  //   HolonomicDriveSubsystem.super.stop();
-  // }
-
-  // /**
-  //  * Locks the chassis and turns the modules to an X formation to resist movement. The lock will
-  // be
-  //  * cancelled the next time a nonzero velocity is requested.
-  //  */
-  // public void lockChassisWithXFormation() {
-  //   Rotation2d[] swerveHeadings = new Rotation2d[swerveModules.length];
-  //   for (int i = 0; i < swerveHeadings.length; i++)
-  //     swerveHeadings[i] = DriveConstants.MODULE_TRANSLATIONS[i].getAngle();
-  //   DriveConstants.DRIVE_KINEMATICS.resetHeadings(swerveHeadings);
-  //   HolonomicDriveSubsystem.super.stop();
-  // }
-
   /** Returns the module states (turn angles and drive velocities) for all the modules. */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
@@ -281,22 +274,32 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   /** Returns the module positions (turn angles and drive positions) for all the modules. */
-  private SwerveModulePosition[] getModuleLatestPositions() {
-    SwerveModulePosition[] states = new SwerveModulePosition[swerveModules.length];
-    for (int i = 0; i < states.length; i++) states[i] = swerveModules[i].getLatestPosition();
-    return states;
+  private SwerveModulePosition[] getModulePositions() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[swerveModules.length];
+    for (int i = 0; i < positions.length; i++) positions[i] = swerveModules[i].getPosition();
+    return positions;
   }
 
+  /**
+   * Gets the fused pose from the pose estimator.
+   */
   @AutoLogOutput(key = "Odometry/RobotPosition")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
+  /**
+   * Gets the current gyro yaw
+   */
   public Rotation2d getRawGyroYaw() {
     return gyroInputs.yawDegreesRotation2d;
   }
 
+  /**
+   * Sets the pose
+   * @param pose pose to set
+   */
   public void setPose(Pose2d pose) {
-    poseEstimator.resetPosition(rawGyroRotation, getModuleLatestPositions(), pose);
+    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 }

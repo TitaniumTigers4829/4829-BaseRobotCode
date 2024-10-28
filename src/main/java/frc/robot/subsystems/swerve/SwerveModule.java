@@ -91,11 +91,6 @@ public class SwerveModule extends SubsystemBase {
     return ModuleConstants.DRIVE_TO_METERS_PER_SECOND * inputs.driveVelocity;
   }
 
-  /** Returns the module position (turn angle and drive position). */
-  public SwerveModulePosition getLatestPosition() {
-    return new SwerveModulePosition(getDrivePositionMeters(), getTurnRotation());
-  }
-
   /** Returns the module state (turn angle and drive velocity). */
   public SwerveModuleState getMeasuredState() {
     return new SwerveModuleState(getDriveVelocityMetersPerSec(), getTurnRotation());
