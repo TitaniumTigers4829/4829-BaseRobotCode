@@ -10,13 +10,15 @@ import edu.wpi.first.wpilibj.SPI;
 import frc.robot.extras.util.AllianceFlipper;
 import frc.robot.subsystems.swerve.gyroIO.GyroInterface.GyroInputs;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
+import java.util.Queue;
 import java.util.function.Supplier;
 
 public class PhysicalGyro implements GyroInterface {
   private final AHRS gyro = new AHRS(SPI.Port.kMXP, (byte) 250);
+  private final Queue<Angle> yawPositionInput;
 
   public PhysicalGyro() {
-    OdometryThread.registerInput(getAngle());
+    yawPositionInput = OdometryThread.registerInput(getAngle());
   }
 
   @Override
@@ -27,12 +29,23 @@ public class PhysicalGyro implements GyroInterface {
     inputs.rollDegrees = getRoll().in(Degrees);
     inputs.pitchDegrees = getPitch().in(Degrees);
     inputs.yawDegrees = getYaw().in(Degrees);
+
+    // Handle odometry yaw positions
+    if (!yawPositionInput.isEmpty()) {
+      Rotation2d[] odometryYawPositions = new Rotation2d[yawPositionInput.size()];
+      int index = 0;
+      for (Angle angle : yawPositionInput) {
+        odometryYawPositions[index++] = Rotation2d.fromDegrees(angle.in(Degrees));
+      }
+      inputs.odometryYawPositions = odometryYawPositions;
+      yawPositionInput.clear();
+    }
   }
 
   public void zeroHeading() {
     gyro.reset();
   }
-  
+
   public Supplier<Angle> getAngle() {
     return () -> Degrees.of(-gyro.getAngle());
   }
