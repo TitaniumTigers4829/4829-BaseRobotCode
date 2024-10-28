@@ -3,10 +3,14 @@ package frc.robot.subsystems.swerve.moduleIO;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import frc.robot.extras.simulation.OdometryTimestampsSim;
 import frc.robot.extras.simulation.mechanismSim.swervePhysicsSim.SwerveModuleSimulation;
+import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
+
 import java.util.Arrays;
 
 /** Wrapper class around {@link SwerveModuleSimulation} that implements ModuleIO */
@@ -84,12 +88,15 @@ public class SimulatedModule implements ModuleInterface {
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
-    Rotation2d turnRotations = getTurnRotations();
+    double turnRotations = getTurnRotations();
     // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState optimizedDesiredState =
-        SwerveModuleState.optimize(desiredState, turnRotations);
+    SwerveModuleState setpoint =
+        new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
 
-    if (Math.abs(optimizedDesiredState.speedMetersPerSecond) < 0.01) {
+    setpoint.optimize(Rotation2d.fromRotations(turnRotations));
+    setpoint.cosineScale(Rotation2d.fromRotations(turnRotations));
+
+    if (Math.abs(setpoint.speedMetersPerSecond) < 0.01) {
       moduleSimulation.requestDriveVoltageOut(0);
       moduleSimulation.requestTurnVoltageOut(0);
       return;
@@ -97,23 +104,65 @@ public class SimulatedModule implements ModuleInterface {
 
     // Converts meters per second to rotations per second
     double desiredDriveRPS =
-        optimizedDesiredState.speedMetersPerSecond
+        setpoint.speedMetersPerSecond
             * ModuleConstants.DRIVE_GEAR_RATIO
             / ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
 
     moduleSimulation.requestDriveVoltageOut(
         drivePID.calculate(
                 Units.radiansToRotations(moduleSimulation.getDriveWheelFinalSpeedRadPerSec()),
-                desiredDriveRPS)
-            + driveFF.calculate(desiredDriveRPS));
+                desiredDriveRPS));
+            // + driveFF.calculate(desiredDriveRPS));
     moduleSimulation.requestTurnVoltageOut(
         turnPID.calculate(
                 moduleSimulation.getTurnAbsolutePosition().getRotations(),
-                desiredState.angle.getRotations())
-            + turnFF.calculate(turnPID.getSetpoint().velocity));
+                desiredState.angle.getRotations()));
+            // + turnFF.calculate(turnPID.getSetpoint().velocity));
   }
 
-  public Rotation2d getTurnRotations() {
-    return Rotation2d.fromRotations(moduleSimulation.getTurnAbsolutePosition());
+  public double getTurnRotations() {
+    return moduleSimulation.getTurnAbsolutePosition().getRotations();
+  }
+
+  @Override
+  public String getCANBus() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getCANBus'");
+  }
+
+  @Override
+  public void setDriveSpeed(double speedPercent) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setDriveSpeed'");
+  }
+
+  @Override
+  public void setTurnSpeed(double powerPercent) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setTurnSpeed'");
+  }
+
+  @Override
+  public void setDriveBrake(boolean enable) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setDriveBrake'");
+  }
+
+  @Override
+  public void setTurnBrake(boolean enable) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setTurnBrake'");
+  }
+
+  @Override
+  public void stopModule() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'stopModule'");
+  }
+
+  @Override
+  public double getDriveVoltage() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getDriveVoltage'");
   }
 }

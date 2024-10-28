@@ -202,13 +202,13 @@ public class PhysicalModule implements ModuleInterface {
 
   @Override
   public void setDesiredState(SwerveModuleState desiredState) {
-    double turnRadians = getTurnRotations();
+    double turnRotations = getTurnRotations();
     // Optimize the reference state to avoid spinning further than 90 degrees
     SwerveModuleState setpoint =
         new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
 
-    setpoint.optimize(Rotation2d.fromRotations(turnRadians));
-    setpoint.cosineScale(Rotation2d.fromRotations(turnRadians));
+    setpoint.optimize(Rotation2d.fromRotations(turnRotations));
+    setpoint.cosineScale(Rotation2d.fromRotations(turnRotations));
 
     if (Math.abs(setpoint.speedMetersPerSecond) < 0.01) {
       driveMotor.set(0);
@@ -251,5 +251,23 @@ public class PhysicalModule implements ModuleInterface {
   @Override
   public double getDrivePosition() {
     return driveMotor.getPosition().refresh().getValueAsDouble();
+  }
+
+  @Override
+  public String getCANBus() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getCANBus'");
+  }
+
+  @Override
+  public void setDriveSpeed(double speedPercent) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setDriveSpeed'");
+  }
+
+  @Override
+  public void setTurnSpeed(double powerPercent) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setTurnSpeed'");
   }
 }
