@@ -147,17 +147,14 @@ public class PhysicalModule implements ModuleInterface {
       inputs.drivePosition =
           inputs.odometryDriveWheelRevolutions[inputs.odometryDriveWheelRevolutions.length - 1];
 
-    // inputs.odometryTurnPositions =
-    //     turnEncoderAbsolutePosition.stream()
-    //         .map(this::getTurnAbsolutePosition)
-    //         .toArray(Rotation2d[]::new);
-    // turnEncoderAbsolutePosition.clear();
-    // if (inputs.odometryTurnPositions.length > 0)
-    //   inputs.turnRotation = inputs.odometryTurnPositions[inputs.odometryTurnPositions.length -
-    // 1];
+    inputs.odometryTurnPositions =
+        turnEncoderAbsolutePosition.stream()
+            .map(this::getTurnAbsolutePosition)
+            .toArray(Rotation2d[]::new);
+    turnEncoderAbsolutePosition.clear();
+    if (inputs.odometryTurnPositions.length > 0)
+      inputs.turnPosition = inputs.odometryTurnPositions[inputs.odometryTurnPositions.length - 1].getRotations();
 
-    // inputs.driveWheelFinalVelocityPerSec =
-    //     driveVelocity.getValueAsDouble() / ModuleConstants.DRIVE_GEAR_RATIO;
     inputs.driveAppliedVolts = driveMotorAppliedVoltage.getValueAsDouble();
     inputs.driveCurrentAmps = driveMotorCurrent.getValueAsDouble();
 
