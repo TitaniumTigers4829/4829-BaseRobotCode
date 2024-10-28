@@ -6,7 +6,6 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.SPI;
-import frc.robot.subsystems.swerve.gyroIO.GyroInterface.GyroInputs;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
 import java.util.Queue;
 

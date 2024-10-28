@@ -1,7 +1,5 @@
 package frc.robot.subsystems.swerve.gyroIO;
 
-import static edu.wpi.first.units.Units.*;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
