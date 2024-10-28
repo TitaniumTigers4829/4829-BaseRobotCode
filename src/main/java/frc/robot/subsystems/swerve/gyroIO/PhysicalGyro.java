@@ -18,17 +18,18 @@ public class PhysicalGyro implements GyroInterface {
   private final Queue<Angle> yawPositionInput;
 
   public PhysicalGyro() {
-    yawPositionInput = OdometryThread.registerInput(getAngle());
+    yawPositionInput = OdometryThread.registerInput(()->Degrees.of(gyro.getAngle()));
   }
 
   @Override
   public void updateInputs(GyroInputs inputs) {
     inputs.isConnected = gyro.isConnected();
-    inputs.yawDegreesRotation2d = getGyroRotation2d();
-    inputs.yawVelocity = getRate().in(DegreesPerSecond);
-    inputs.rollDegrees = getRoll().in(Degrees);
-    inputs.pitchDegrees = getPitch().in(Degrees);
-    inputs.yawDegrees = getYaw().in(Degrees);
+    inputs.yawDegreesRotation2d = gyro.getRotation2d();
+    inputs.yawVelocity = gyro.getRate();
+    inputs.rollDegrees = gyro.getRoll();
+    inputs.pitchDegrees = gyro.getPitch();
+    inputs.yawDegrees = gyro.getAngle();
+    // inputs.wrappedYaw = gyro.getYaw();
 
     // Handle odometry yaw positions
     if (!yawPositionInput.isEmpty()) {
@@ -40,44 +41,5 @@ public class PhysicalGyro implements GyroInterface {
       inputs.odometryYawPositions = odometryYawPositions;
       yawPositionInput.clear();
     }
-  }
-
-  public void zeroHeading() {
-    gyro.reset();
-  }
-
-  public Supplier<Angle> getAngle() {
-    return () -> Degrees.of(-gyro.getAngle());
-  }
-
-  public Angle getYaw() {
-    return Degrees.of(-gyro.getAngle());
-  }
-
-  public Angle getWrappedYaw() {
-    return Degrees.of(-gyro.getYaw());
-  }
-
-  public Rotation2d getGyroRotation2d() {
-    return gyro.getRotation2d();
-  }
-
-  public AngularVelocity getRate() {
-    return DegreesPerSecond.of(-gyro.getRate());
-  }
-
-  public Angle getPitch() {
-    return Degrees.of(gyro.getPitch());
-  }
-
-  public Angle getRoll() {
-    return Degrees.of(gyro.getRoll());
-  }
-
-  public Rotation2d getGyroFieldRelativeRotation2d() {
-    if (AllianceFlipper.isBlue()) {
-      return getGyroRotation2d();
-    }
-    return AllianceFlipper.flipRotation(getGyroRotation2d());
   }
 }
