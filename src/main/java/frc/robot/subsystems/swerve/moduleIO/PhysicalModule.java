@@ -200,11 +200,6 @@ public class PhysicalModule implements ModuleInterface {
     return driveMotorAppliedVoltage.refresh().getValueAsDouble();
   }
 
-  /**
-   * Sets the desired state for the module and sends calculated output from controller to the motor.
-   *
-   * @param desiredState Desired state with speed and angle.
-   */
   @Override
   public void setDesiredState(SwerveModuleState desiredState) {
     double turnRadians = getTurnRotations();

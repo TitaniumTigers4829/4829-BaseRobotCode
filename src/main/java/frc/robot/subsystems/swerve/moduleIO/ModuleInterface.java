@@ -14,7 +14,7 @@ public interface ModuleInterface {
     public double steerMotorAppliedVolts = 0.0;
     public double steerMotorCurrentAmps = 0.0;
 
-    public double[] odometryDriveWheelRevolutions = new double[] {};
+    public double[] odometryDriveWheelRevolutions = new double[];;
 
     public double driveVelocity = 0.0;
     public double driveAppliedVolts = 0.0;
@@ -24,9 +24,9 @@ public interface ModuleInterface {
     public double turnVelocityRadPerSec = 0.0;
     public double turnAppliedVolts = 0.0;
     public double turnCurrentAmps = 0.0;
-    public double[] odometryTimestamps = new double[] {};
-    public double[] odometryDrivePositionsRad = new double[] {};
-    // public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
+    public double[] odometryTimestamps = new double[];;
+    public double[] odometryDrivePositionsRad = new double[];;
+    // public Rotation2d[] odometryTurnPositions = new Rotation2d[];;
     public double driveWheelFinalVelocityPerSec = 0.0;
     public double turnMotorAppliedVolts = 0.0;
     public double turnMotorCurrentAmps = 0.0;
@@ -34,15 +34,16 @@ public interface ModuleInterface {
   }
 
   /** Updates the inputs */
-  default void updateInputs(ModuleInputs inputs) {}
+  void updateInputs(ModuleInputs inputs);
 
-  default String getCANBus() {
-    return "";
-  }
+  String getCANBus();
 
-  default void calibrate() {}
-
-  default void setDesiredState(SwerveModuleState desiredState) {}
+  /**
+   * Sets the desired state for the module and sends calculated output from controller to the motor.
+   *
+   * @param desiredState Desired state with speed and angle.
+   */
+  void setDesiredState(SwerveModuleState desiredState);
 
   double getDriveVelocity();
 
@@ -55,34 +56,30 @@ public interface ModuleInterface {
    *
    * @param speedPercent from -1 to 1, where 1 is the forward direction of the wheel
    */
-  default void setDriveSpeed(double speedPercent) {}
+  void setDriveSpeed(double speedPercent);
 
   /**
    * Run the turn motor at the specified percent power.
    *
    * @param powerPercent from -1 to 1, where 1 is counter-clockwise
    */
-  default void setTurnSpeed(double powerPercent) {}
+  void setTurnSpeed(double powerPercent);
 
   /** Enable or disable brake mode on the drive motor. */
-  default void setDriveBrake(boolean enable) {}
+  void setDriveBrake(boolean enable);
 
   /** Enable or disable brake mode on the turn motor. */
-  default void setTurnBrake(boolean enable) {}
+  void setTurnBrake(boolean enable);
 
-  default void setDriveVoltage(double voltage) {}
+  void setDriveVoltage(double voltage);
 
-  default void setTurnVoltage(double voltage) {}
+  void setTurnVoltage(double voltage);
 
-  default void stopModule() {}
+  void stopModule();
 
-  default double getTurnRotations() {
-    return 0.0;
-  }
+  double getTurnRotations();
 
-  default double getDriveVoltage() {
-    return 0.0;
-  }
+  double getDriveVoltage();
 
   double getDrivePosition();
 }
