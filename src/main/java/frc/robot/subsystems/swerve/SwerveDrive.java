@@ -140,6 +140,7 @@ public class SwerveDrive extends SubsystemBase {
 
   /**
    * Runs characterization on voltage
+   *
    * @param volts voltage to set
    */
   public void runCharacterization(double volts) {
@@ -218,8 +219,9 @@ public class SwerveDrive extends SubsystemBase {
     }
   }
 
-  /** 
+  /**
    * Updates the pose estimator with the pose calculated from the swerve modules.
+   *
    * @param timestampIndex index of the timestamp to sample the pose at
    */
   private void addPoseEstimatorSwerveMeasurement(int timestampIndex) {
@@ -241,8 +243,10 @@ public class SwerveDrive extends SubsystemBase {
 
   /**
    * Gets the modules positions, sampled at the indexed timestamp.
+   *
    * @param timestampIndex the timestamp index to sample.
-   * @return a list of SwerveModulePosition, containing relative drive position and absolute turn rotation at the sampled timestamp.
+   * @return a list of SwerveModulePosition, containing relative drive position and absolute turn
+   *     rotation at the sampled timestamp.
    */
   private SwerveModulePosition[] getModulesPosition(int timestampIndex) {
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[swerveModules.length];
@@ -280,23 +284,20 @@ public class SwerveDrive extends SubsystemBase {
     return positions;
   }
 
-  /**
-   * Gets the fused pose from the pose estimator.
-   */
+  /** Gets the fused pose from the pose estimator. */
   @AutoLogOutput(key = "Odometry/RobotPosition")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
-  /**
-   * Gets the current gyro yaw
-   */
+  /** Gets the current gyro yaw */
   public Rotation2d getRawGyroYaw() {
     return gyroInputs.yawDegreesRotation2d;
   }
 
   /**
    * Sets the pose
+   *
    * @param pose pose to set
    */
   public void setPose(Pose2d pose) {

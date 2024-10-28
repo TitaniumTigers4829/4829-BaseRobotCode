@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve.moduleIO;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -10,10 +12,6 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.extras.simulation.OdometryTimestampsSim;
 import frc.robot.extras.simulation.mechanismSim.swervePhysicsSim.SwerveModuleSimulation;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
-
-import static edu.wpi.first.units.Units.*;
-
-
 import java.util.Arrays;
 
 /** Wrapper class around {@link SwerveModuleSimulation} that implements ModuleIO */
@@ -112,13 +110,17 @@ public class SimulatedModule implements ModuleInterface {
             / ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
 
     moduleSimulation.requestDriveVoltageOut(
-        Volts.of(drivePID.calculate(
-                Units.radiansToRotations(moduleSimulation.getDriveWheelFinalSpeedRadPerSec()),
-                desiredDriveRPS)).plus(driveFF.calculate(RotationsPerSecond.of(desiredDriveRPS))));
+        Volts.of(
+                drivePID.calculate(
+                    Units.radiansToRotations(moduleSimulation.getDriveWheelFinalSpeedRadPerSec()),
+                    desiredDriveRPS))
+            .plus(driveFF.calculate(RotationsPerSecond.of(desiredDriveRPS))));
     moduleSimulation.requestTurnVoltageOut(
-        Volts.of(turnPID.calculate(
-                moduleSimulation.getTurnAbsolutePosition().getRotations(),
-                desiredState.angle.getRotations())).plus(turnFF.calculate(RotationsPerSecond.of(turnPID.getSetpoint().velocity))));
+        Volts.of(
+                turnPID.calculate(
+                    moduleSimulation.getTurnAbsolutePosition().getRotations(),
+                    desiredState.angle.getRotations()))
+            .plus(turnFF.calculate(RotationsPerSecond.of(turnPID.getSetpoint().velocity))));
   }
 
   public double getTurnRotations() {
