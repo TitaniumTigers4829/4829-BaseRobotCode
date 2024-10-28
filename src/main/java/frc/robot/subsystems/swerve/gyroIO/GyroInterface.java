@@ -20,9 +20,5 @@ public interface GyroInterface {
     public double[] odometryYawTimestamps = new double[] {};
   }
 
-  default void updateInputs(GyroInputs inputs) {}
-
-  default void reset() {}
-
-  default void addOffset(Rotation2d offset) {}
+  void updateInputs(GyroInputs inputs);
 }
