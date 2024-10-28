@@ -27,7 +27,7 @@ public interface ModuleInterface {
     public double turnCurrentAmps = 0.0;
     public double[] odometryTimestamps = new double[] {};
     public double[] odometryDrivePositionsRad = new double[] {};
-    // public Rotation2d[] odometryTurnPositions = new Rotation2d[];;
+    public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
     public double driveWheelFinalVelocityPerSec = 0.0;
     public double turnMotorAppliedVolts = 0.0;
     public double turnMotorCurrentAmps = 0.0;
@@ -41,8 +41,6 @@ public interface ModuleInterface {
    */
   void updateInputs(ModuleInputs inputs);
 
-  String getCANBus();
-
   /**
    * Sets the desired state for the module and sends calculated output from controller to the motor.
    *
@@ -52,23 +50,7 @@ public interface ModuleInterface {
 
   double getDriveVelocity();
 
-  void setTurnPosition(double position);
-
   double getTurnAbsolutePosition();
-
-  /**
-   * Run the drive motor at the specified percent speed.
-   *
-   * @param speedPercent from -1 to 1, where 1 is the forward direction of the wheel
-   */
-  void setDriveSpeed(double speedPercent);
-
-  /**
-   * Run the turn motor at the specified percent power.
-   *
-   * @param powerPercent from -1 to 1, where 1 is counter-clockwise
-   */
-  void setTurnSpeed(double powerPercent);
 
   void setDriveVoltage(Voltage voltage);
 

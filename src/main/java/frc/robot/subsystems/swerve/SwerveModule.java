@@ -58,10 +58,6 @@ public class SwerveModule extends SubsystemBase {
     return io.getDriveVelocity();
   }
 
-  public void setTurnPosition(double position) {
-    io.setTurnPosition(position);
-  }
-
   private void updateOdometryPositions() {
     odometryPositions = new SwerveModulePosition[inputs.odometryDriveWheelRevolutions.length];
     for (int i = 0; i < odometryPositions.length; i++) {

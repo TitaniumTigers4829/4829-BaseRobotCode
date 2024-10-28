@@ -39,15 +39,14 @@ public class SimulatedModule implements ModuleInterface {
     inputs.driveCurrentAmps = Math.abs(moduleSimulation.getDriveMotorSupplyCurrentAmps());
 
     inputs.turnAbsolutePosition = moduleSimulation.getTurnAbsolutePosition();
-    // inputs.turnPosition =
-    //     Rotation2d.fromRadians(moduleSimulation.getSteerRelativeEncoderPositionRad());
-    inputs.turnVelocityRadPerSec = moduleSimulation.getSteerRelativeEncoderSpeedRadPerSec();
-    inputs.turnAppliedVolts = moduleSimulation.getSteerMotorAppliedVolts();
-    inputs.turnCurrentAmps = Math.abs(moduleSimulation.getSteerMotorSupplyCurrentAmps());
+    inputs.turnPosition = moduleSimulation.getTurnRelativeEncoderPositionRad();
+    inputs.turnVelocityRadPerSec = moduleSimulation.getTurnRelativeEncoderSpeedRadPerSec();
+    inputs.turnAppliedVolts = moduleSimulation.getTurnMotorAppliedVolts();
+    inputs.turnCurrentAmps = Math.abs(moduleSimulation.getTurnMotorSupplyCurrentAmps());
 
     inputs.odometryTimestamps = OdometryTimestampsSim.getTimeStamps();
     inputs.odometryDrivePositionsRad = moduleSimulation.getCachedDriveWheelFinalPositionsRad();
-    // inputs.odometryTurnPositions = moduleSimulation.getCachedSteerAbsolutePositions();
+    inputs.odometryTurnPositions = moduleSimulation.getCachedTurnAbsolutePositions();
 
     inputs.odometryDriveWheelRevolutions =
         Arrays.stream(moduleSimulation.getCachedDriveWheelFinalPositionsRad())
@@ -62,20 +61,13 @@ public class SimulatedModule implements ModuleInterface {
 
   @Override
   public double getDriveVelocity() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public void setTurnPosition(double position) {
-    // TODO Auto-generated method stub
-    // return 0;
+    return RadiansPerSecond.of(moduleSimulation.getDriveWheelFinalSpeedRadPerSec())
+        .in(RotationsPerSecond);
   }
 
   @Override
   public double getTurnAbsolutePosition() {
-    // TODO Auto-generated method stub
-    return 0;
+    return moduleSimulation.getTurnAbsolutePosition().getRotations();
   }
 
   @Override
@@ -129,32 +121,13 @@ public class SimulatedModule implements ModuleInterface {
   }
 
   @Override
-  public String getCANBus() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getCANBus'");
-  }
-
-  @Override
-  public void setDriveSpeed(double speedPercent) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setDriveSpeed'");
-  }
-
-  @Override
-  public void setTurnSpeed(double powerPercent) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setTurnSpeed'");
-  }
-
-  @Override
   public void stopModule() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'stopModule'");
+    moduleSimulation.requestDriveVoltageOut(Volts.zero());
+    moduleSimulation.requestTurnVoltageOut(Volts.zero());
   }
 
   @Override
   public double getDriveVoltage() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getDriveVoltage'");
+    return moduleSimulation.getDriveMotorAppliedVolts();
   }
 }

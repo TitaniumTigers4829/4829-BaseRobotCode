@@ -169,12 +169,6 @@ public class PhysicalModule implements ModuleInterface {
   }
 
   @Override
-  public void setTurnPosition(double position) {
-    position = Units.degreesToRotations(position);
-    turnMotor.setControl(mmPositionRequest.withPosition(position));
-  }
-
-  @Override
   public double getDriveVelocity() {
     return driveVelocity.refresh().getValueAsDouble();
   }
@@ -241,23 +235,5 @@ public class PhysicalModule implements ModuleInterface {
   @Override
   public double getDrivePosition() {
     return driveMotor.getPosition().refresh().getValueAsDouble();
-  }
-
-  @Override
-  public String getCANBus() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getCANBus'");
-  }
-
-  @Override
-  public void setDriveSpeed(double speedPercent) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setDriveSpeed'");
-  }
-
-  @Override
-  public void setTurnSpeed(double powerPercent) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setTurnSpeed'");
   }
 }
