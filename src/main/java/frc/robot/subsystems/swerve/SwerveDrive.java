@@ -9,7 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-// import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,8 +38,8 @@ public class SwerveDrive extends SubsystemBase {
 
   private final OdometryThread odometryThread;
 
-  // private final Alert gyroDisconnectedAlert =
-  //     new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
+  private final Alert gyroDisconnectedAlert =
+      new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
 
   public SwerveDrive(
       GyroInterface gyroIO,
@@ -83,7 +83,7 @@ public class SwerveDrive extends SubsystemBase {
     this.odometryThreadInputs = new OdometryThreadInputsAutoLogged();
     this.odometryThread.start();
 
-    // gyroDisconnectedAlert.setActivated(false);
+    gyroDisconnectedAlert.set(false);
   }
 
   public double getGyroRate() {
@@ -163,7 +163,7 @@ public class SwerveDrive extends SubsystemBase {
 
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
-    // gyroDisconnectedAlert.setActivated(!gyroInputs.isConnected);
+    gyroDisconnectedAlert.set(!gyroInputs.isConnected);
 
     odometryThread.unlockOdometry();
   }
