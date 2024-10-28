@@ -22,10 +22,7 @@ public class PhysicalGyro implements GyroInterface {
     inputs.isConnected = gyro.isConnected();
     inputs.yawDegreesRotation2d = gyro.getRotation2d();
     inputs.yawVelocity = -gyro.getRate();
-    inputs.rollDegrees = gyro.getRoll();
-    inputs.pitchDegrees = gyro.getPitch();
     inputs.yawDegrees = -gyro.getAngle();
-    // inputs.wrappedYaw = gyro.getYaw();
 
     // Handle odometry yaw positions
     if (!yawPositionInput.isEmpty()) {

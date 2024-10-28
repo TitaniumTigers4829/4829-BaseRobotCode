@@ -11,14 +11,14 @@ public interface GyroInterface {
     public double yawDegrees = 0.0;
     public Rotation2d yawDegreesRotation2d = new Rotation2d();
     public double yawVelocity = 0.0;
-    public double pitchDegrees = 0.0;
-    public double rollDegrees = 0.0;
-
-    public double[] accel = new double[] {0, 0, 0};
 
     public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
     public double[] odometryYawTimestamps = new double[] {};
   }
 
+  /**
+   * Updates the inputs created in GyroInputs
+   * @param inputs inputs to update
+   */
   void updateInputs(GyroInputs inputs);
 }
