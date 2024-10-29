@@ -3,6 +3,7 @@ package frc.robot.extras.util;
 import org.littletonrobotics.junction.Logger;
 
 public class TimeUtil {
+  private TimeUtil(){}
   public static void delay(double seconds) {
     try {
       // Convert seconds to total milliseconds

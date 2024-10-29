@@ -9,21 +9,21 @@ public interface ModuleInterface {
   @AutoLog
   class ModuleInputs {
 
-    public boolean isConnected = false;
+    public boolean isConnected;
 
-    public double driveVelocity = 0.0;
-    public double driveAppliedVolts = 0.0;
-    public double driveCurrentAmps = 0.0;
-    public double drivePosition = 0.0;
+    public double driveVelocity;
+    public double driveAppliedVolts;
+    public double driveCurrentAmps;
+    public double drivePosition;
 
-    public Rotation2d turnAbsolutePosition = new Rotation2d();
-    public double turnVelocity = 0.0;
-    public double turnAppliedVolts = 0.0;
-    public double turnCurrentAmps = 0.0;
+    public Rotation2d turnAbsolutePosition;
+    public double turnVelocity;
+    public double turnAppliedVolts;
+    public double turnCurrentAmps;
 
-    public double[] odometryTimestamps = new double[] {};
+    public double[] odometryTimestamps;
 
-    public double turnPosition = 0.0;
+    public double turnPosition;
   }
 
   /**

@@ -11,7 +11,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class OdometryThreadReal extends Thread implements OdometryThread {
-  DeviceCANBus canBus;
+  private final DeviceCANBus canBus;
 
   private final OdometryDoubleInput[] odometryDoubleInputs;
   private final BaseStatusSignal[] statusSignals;
@@ -53,17 +53,18 @@ public class OdometryThreadReal extends Thread implements OdometryThread {
   }
 
   private void refreshSignalsAndBlockThread() {
-    switch (canBus) {
-      case RIO -> {
+    if (canBus == DeviceCANBus.RIO) {
         TimeUtil.delay(1.0 / HardwareConstants.SIGNAL_FREQUENCY);
         BaseStatusSignal.refreshAll();
       }
-      case CANIVORE -> BaseStatusSignal.waitForAll(HardwareConstants.TIMEOUT_S, statusSignals);
+      else { 
+        BaseStatusSignal.waitForAll(HardwareConstants.TIMEOUT_S, statusSignals);
     }
   }
 
   private double estimateAverageTimeStamps() {
-    double currentTime = TimeUtil.getRealTimeSeconds(), totalLatency = 0;
+    double currentTime = TimeUtil.getRealTimeSeconds();
+    double totalLatency = 0.0;
     for (BaseStatusSignal signal : statusSignals)
       totalLatency += signal.getTimestamp().getLatency();
 

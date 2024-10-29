@@ -6,7 +6,7 @@
 
   <description>PMD Ruleset for WPILib</description>
 
-  <exclude-pattern>.*/LimeligtHelpers.java</exclude-pattern>
+  <exclude-pattern>.*/frc/robot/extras/vision/LimeligtHelpers.java.*</exclude-pattern>
 
   <rule ref="category/java/bestpractices.xml">
     <exclude name="AccessorClassGeneration" />
@@ -29,19 +29,6 @@
     <exclude name="SwitchStmtsShouldHaveDefault" />
     <exclude name="SystemPrintln" />
     <exclude name="UseVarargs" />
-  </rule>
-
-  <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod">
-    <properties>
-      <property name="violationSuppressRegex"
-        value=".*'.*Arguments\(\)'.*" />
-    </properties>
-  </rule>
-
-  <rule ref="category/java/bestpractices.xml/UnusedLocalVariable">
-    <properties>
-      <property name="violationSuppressXPath" value="//Resource" />
-    </properties>
   </rule>
 
   <rule ref="category/java/design.xml">
@@ -89,6 +76,7 @@
 
   <rule ref="category/java/performance.xml">
     <exclude name="AvoidInstantiatingObjectsInLoops" />
+    <exclude name="AvoidArrayLoops"/>
   </rule>
 
 </ruleset>

@@ -118,7 +118,7 @@ public abstract class IntakeSimulation extends BodyFixture {
 
     this.intakeRunning = false;
     this.driveTrainSimulation = driveTrainSimulation;
-    // arena.addIntakeSimulation(this);
+    arena.addIntakeSimulation(this);
   }
 
   protected void startIntake() {
@@ -134,17 +134,22 @@ public abstract class IntakeSimulation extends BodyFixture {
   public final class GamePieceContactListener implements ContactListener<Body> {
     @Override
     public void begin(ContactCollisionData collision, Contact contact) {
-      if (!intakeRunning) return;
-      if (gamePieceCount == capacity) return;
+        if (!intakeRunning || gamePieceCount >= capacity) return;
 
-      final CollisionBody<?> collisionBody1 = collision.getBody1(),
-          collisionBody2 = collision.getBody2();
-      final Fixture fixture1 = collision.getFixture1(), fixture2 = collision.getFixture2();
+        final CollisionBody<?> collisionBody1 = collision.getBody1();
+        final CollisionBody<?> collisionBody2 = collision.getBody2();
+        final Fixture fixture1 = collision.getFixture1();
+        final Fixture fixture2 = collision.getFixture2();
 
-      if (collisionBody1 instanceof GamePieceSimulation && fixture2 == IntakeSimulation.this)
-        flagGamePieceForRemoval((GamePieceSimulation) collisionBody1);
-      else if (collisionBody2 instanceof GamePieceSimulation && fixture1 == IntakeSimulation.this)
-        flagGamePieceForRemoval((GamePieceSimulation) collisionBody2);
+        if (isGamePiece(collisionBody1) && fixture2.equals(IntakeSimulation.this)) {
+            flagGamePieceForRemoval((GamePieceSimulation) collisionBody1);
+        } else if (isGamePiece(collisionBody2) && fixture1.equals(IntakeSimulation.this)) {
+            flagGamePieceForRemoval((GamePieceSimulation) collisionBody2);
+        }
+    }
+
+    private boolean isGamePiece(CollisionBody<?> body) {
+        return body != null && body instanceof GamePieceSimulation;
     }
 
     private void flagGamePieceForRemoval(GamePieceSimulation gamePiece) {

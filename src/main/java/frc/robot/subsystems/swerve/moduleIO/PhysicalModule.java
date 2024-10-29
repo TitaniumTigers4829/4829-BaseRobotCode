@@ -202,6 +202,7 @@ public class PhysicalModule implements ModuleInterface {
         mmPositionRequest.withPosition(Rotations.of(setpoint.angle.getRotations())));
   }
 
+  @Override
   public double getTurnRotations() {
     turnEncoder.getAbsolutePosition().refresh();
     return Rotation2d.fromRotations(turnEncoder.getAbsolutePosition().getValueAsDouble())

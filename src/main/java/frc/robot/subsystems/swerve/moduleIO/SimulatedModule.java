@@ -60,6 +60,7 @@ public class SimulatedModule implements ModuleInterface {
     moduleSimulation.requestTurnVoltageOut(volts);
   }
 
+  @Override
   public void setDesiredState(SwerveModuleState desiredState) {
     double turnRotations = getTurnRotations();
     // Optimize the reference state to avoid spinning further than 90 degrees
@@ -95,6 +96,7 @@ public class SimulatedModule implements ModuleInterface {
             .plus(turnFF.calculate(RotationsPerSecond.of(turnPID.getSetpoint().velocity))));
   }
 
+  @Override
   public double getTurnRotations() {
     return moduleSimulation.getTurnAbsolutePosition().getRotations();
   }

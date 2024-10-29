@@ -63,7 +63,7 @@ public class DriveCommand extends DriveCommandBase {
         rightJoystickX.getAsDouble() * angularSpeed,
         isFieldRelative.getAsBoolean());
 
-    // Runs all the code from DriveCommand that estimates pose
+    // Runs all the code from DriveCommandBase that estimates pose
     super.execute();
   }
 

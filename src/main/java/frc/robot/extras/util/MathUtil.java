@@ -5,6 +5,7 @@ import frc.robot.BuildConstants;
 import java.util.Random;
 
 public class MathUtil {
+  private MathUtil() {}
   /**
    * random object that generates random variables the seed is the hash of GIT_SHA this way when you
    * do log-replay even the generated random numbers are the same

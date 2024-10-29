@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class AllianceFlipper {
+  private AllianceFlipper(){}
   private static final double FIELD_LENGTH = 16.58112;
 
   public static boolean isBlue() {

@@ -182,7 +182,7 @@ public abstract class SimulatedField {
    *
    * @param intakeSimulation the intake simulation to be registered
    */
-  protected void addIntakeSimulation(IntakeSimulation intakeSimulation) {
+  public void addIntakeSimulation(IntakeSimulation intakeSimulation) {
     this.intakeSimulations.add(intakeSimulation);
     this.physicsWorld.addContactListener(intakeSimulation.getGamePieceContactListener());
   }
