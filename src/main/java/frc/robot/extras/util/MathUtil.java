@@ -1,10 +1,9 @@
 package frc.robot.extras.util;
 
-import edu.wpi.first.math.geometry.Rotation3d;
 import frc.robot.BuildConstants;
 import java.util.Random;
 
-public class MathUtil {
+public final class MathUtil {
   private MathUtil() {}
   /**
    * random object that generates random variables the seed is the hash of GIT_SHA this way when you
@@ -14,7 +13,8 @@ public class MathUtil {
 
   public static double linearInterpretationWithBounding(
       double x1, double y1, double x2, double y2, double x) {
-    final double minX = Math.min(x1, x2), maxX = Math.max(x1, x2);
+    final double minX = Math.min(x1, x2);
+    final double maxX = Math.max(x1, x2);
     return linearInterpretation(x1, y1, x2, y2, Math.min(maxX, Math.max(minX, x)));
   }
 
@@ -39,15 +39,5 @@ public class MathUtil {
 
   public static double constrainMagnitude(double value, double maxMagnitude) {
     return Math.copySign(Math.min(Math.abs(value), Math.abs(maxMagnitude)), value);
-  }
-
-  public static String printRotation3d(Rotation3d rotation3d) {
-    return "rotation 3d object with value: "
-        + rotation3d.getQuaternion()
-        + String.format(
-            "\nand roll %.2f deg, pitch %.2f deg, yaw %.2f deg",
-            Math.toDegrees(rotation3d.getX()),
-            Math.toDegrees(rotation3d.getY()),
-            Math.toDegrees(rotation3d.getZ()));
   }
 }

@@ -25,7 +25,6 @@ import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThreadInputsAutoLogged;
 import frc.robot.subsystems.vision.VisionConstants;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;

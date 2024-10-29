@@ -13,7 +13,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-public class AllianceFlipper {
+public final class AllianceFlipper {
   private AllianceFlipper(){}
   private static final double FIELD_LENGTH = 16.58112;
 

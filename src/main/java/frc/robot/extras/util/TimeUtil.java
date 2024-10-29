@@ -2,7 +2,7 @@ package frc.robot.extras.util;
 
 import org.littletonrobotics.junction.Logger;
 
-public class TimeUtil {
+public final class TimeUtil {
   private TimeUtil(){}
   public static void delay(double seconds) {
     try {
