@@ -41,9 +41,7 @@ public class SwerveModule extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    updateOdometryPositions();
-  }
+  public void periodic() {}
 
   public void setVoltage(Voltage volts) {
     io.setDriveVoltage(volts);
@@ -51,19 +49,11 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public double getDriveVoltage() {
-    return io.getDriveVoltage();
+    return inputs.driveAppliedVolts;
   }
 
   public double getCharacterizationVelocity() {
-    return io.getDriveVelocity();
-  }
-
-  private void updateOdometryPositions() {
-    odometryPositions = new SwerveModulePosition[inputs.odometryDriveWheelRevolutions.length];
-    for (int i = 0; i < odometryPositions.length; i++) {
-      odometryPositions[i] =
-          new SwerveModulePosition(getPosition().distanceMeters, getPosition().angle);
-    }
+    return inputs.driveVelocity;
   }
 
   /** Runs the module with the specified setpoint state. Returns the optimized state. */
@@ -76,8 +66,8 @@ public class SwerveModule extends SubsystemBase {
     return inputs.turnAbsolutePosition;
   }
 
-  public double getSteerVelocityRadPerSec() {
-    return inputs.turnVelocityRadPerSec;
+  public double getTurnVelocity() {
+    return inputs.turnVelocity;
   }
 
   /** Returns the current drive position of the module in meters. */

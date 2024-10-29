@@ -23,6 +23,7 @@ public abstract class DriveCommandBase extends Command {
 
   /**
    * An abstract class that handles pose estimation while driving.
+   *
    * @param driveSubsystem The subsystem for the swerve drive
    * @param vision The subsystem for vision measurements
    */
@@ -56,7 +57,8 @@ public abstract class DriveCommandBase extends Command {
       // Depending on how many april tags we see, we change our confidence as more april tags
       // results in a much more accurate pose estimate
       // TODO: check if this is necessary anymore with MT2, also we might want to set the limelight
-      //  so it only uses 1 april tag, if they set up the field wrong (they can set april tags +-1 inch I believe)
+      //  so it only uses 1 april tag, if they set up the field wrong (they can set april tags +-1
+      // inch I believe)
       //  using multiple *could* really mess things up.
       if (vision.getNumberOfAprilTags(limelightNumber) == 1) {
         double[] standardDeviations =

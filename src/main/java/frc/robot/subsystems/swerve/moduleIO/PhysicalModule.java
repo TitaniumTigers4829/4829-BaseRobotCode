@@ -16,7 +16,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -117,8 +116,7 @@ public class PhysicalModule implements ModuleInterface {
           driveMotorCurrent,
           turnEncoderVelocity,
           turnMotorAppliedVolts,
-          turnMotorCurrent,
-          turnMotor.getPosition()
+          turnMotorCurrent
         };
 
     driveMotor.setPosition(0.0);
@@ -134,42 +132,37 @@ public class PhysicalModule implements ModuleInterface {
     inputs.isConnected = BaseStatusSignal.isAllGood(periodicallyRefreshedSignals);
 
     inputs.driveVelocity = driveVelocity.getValueAsDouble();
-    inputs.odometryDriveWheelRevolutions =
-        drivePosition.stream()
-            .mapToDouble(value -> value.in(Rotations) / ModuleConstants.DRIVE_GEAR_RATIO)
-            .toArray();
-    drivePosition.clear();
-    if (inputs.odometryDriveWheelRevolutions.length > 0)
-      inputs.drivePosition =
-          inputs.odometryDriveWheelRevolutions[inputs.odometryDriveWheelRevolutions.length - 1];
 
-          
-    // Handle odometry yaw positions
-    if (!turnEncoderAbsolutePosition.isEmpty()) {
-      Rotation2d odometryYawPositions = new Rotation2d();
-      for (Angle angle : turnEncoderAbsolutePosition) {
-        odometryYawPositions = Rotation2d.fromRotations(angle.in(Rotations));
+    // Handle drive positions
+    if (!drivePosition.isEmpty()) {
+      Angle driveRelativePosition = Rotations.zero();
+      for (Angle angle : drivePosition) {
+        driveRelativePosition = angle;
       }
-      inputs.turnAbsolutePosition = odometryYawPositions;
+      inputs.drivePosition = driveRelativePosition.in(Rotations);
+      drivePosition.clear();
+    }
+
+    // Handle turn absolute positions
+    if (!turnEncoderAbsolutePosition.isEmpty()) {
+      Rotation2d turnPosition = new Rotation2d();
+      for (Angle angle : turnEncoderAbsolutePosition) {
+        turnPosition = Rotation2d.fromRotations(angle.in(Rotations));
+      }
+      inputs.turnAbsolutePosition = turnPosition;
       turnEncoderAbsolutePosition.clear();
     }
 
-    if (inputs.odometryTurnPositions.length > 0)
-      inputs.turnPosition = inputs.odometryTurnPositions[inputs.odometryTurnPositions.length - 1].getRotations();
+    inputs.turnPosition = turnMotor.getPosition().getValueAsDouble();
 
     inputs.driveAppliedVolts = driveMotorAppliedVoltage.getValueAsDouble();
     inputs.driveCurrentAmps = driveMotorCurrent.getValueAsDouble();
 
     inputs.turnPosition = turnMotor.getPosition().getValueAsDouble();
 
-    inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnEncoderVelocity.getValueAsDouble());
+    inputs.turnVelocity = turnEncoderVelocity.getValueAsDouble();
     inputs.turnAppliedVolts = turnMotorAppliedVolts.getValueAsDouble();
     inputs.turnCurrentAmps = turnMotorCurrent.getValueAsDouble();
-  }
-
-  @Override
-  public double getDriveVelocity() {
-    return driveVelocity.refresh().getValueAsDouble();
   }
 
   @Override
@@ -180,16 +173,6 @@ public class PhysicalModule implements ModuleInterface {
   @Override
   public void setTurnVoltage(Voltage volts) {
     turnMotor.setControl(voltageOut.withOutput(volts));
-  }
-
-  @Override
-  public double getTurnAbsolutePosition() {
-    return turnEncoder.getAbsolutePosition().refresh().getValueAsDouble();
-  }
-
-  @Override
-  public double getDriveVoltage() {
-    return driveMotorAppliedVoltage.refresh().getValueAsDouble();
   }
 
   @Override
@@ -229,10 +212,5 @@ public class PhysicalModule implements ModuleInterface {
   public void stopModule() {
     driveMotor.stopMotor();
     turnMotor.stopMotor();
-  }
-
-  @Override
-  public double getDrivePosition() {
-    return driveMotor.getPosition().refresh().getValueAsDouble();
   }
 }

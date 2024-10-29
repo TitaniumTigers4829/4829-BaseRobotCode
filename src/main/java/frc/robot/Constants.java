@@ -22,8 +22,8 @@ public final class Constants {
   }
 
   /**
-   * This is where we place constants related to hardware on a robot that aren't
-   * specific to any singular subsystem.
+   * This is where we place constants related to hardware on a robot that aren't specific to any
+   * singular subsystem.
    */
   public static final class HardwareConstants {
     public static final double TIMEOUT_S = 0.02;
@@ -34,21 +34,20 @@ public final class Constants {
     public static final String RIO_CAN_BUS_STRING = "rio";
 
     /**
-     * For some reason, falcons normally have a deadband threshold of 4%. This is
-     * incredibly high! It makes it very hard to do precise movements, so with this
-     * constant we set the threshold to the lowest possible value.
+     * For some reason, falcons normally have a deadband threshold of 4%. This is incredibly high!
+     * It makes it very hard to do precise movements, so with this constant we set the threshold to
+     * the lowest possible value.
      */
     public static final double MIN_FALCON_DEADBAND = 0.001;
-
   }
 
   /**
-   * This is where constants used to describe the game's field go. This will have the
-   * dimensions of the field, but also the coordinates of obstacles, game pieces, or other
-   * places of interest.
+   * This is where constants used to describe the game's field go. This will have the dimensions of
+   * the field, but also the coordinates of obstacles, game pieces, or other places of interest.
    */
   public static final class FieldConstants {
-    // TODO: Now that I think about it, I'm pretty sure these measurements stay the same every year, so consider setting them in the base code
+    // TODO: Now that I think about it, I'm pretty sure these measurements stay the same every year,
+    // so consider setting them in the base code
     public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(0 - 9);
     public static final double FIELD_WIDTH_METERS = Units.inchesToMeters(0 - 9);
   }

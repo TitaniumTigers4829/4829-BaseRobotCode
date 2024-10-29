@@ -13,7 +13,6 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.extras.simulation.OdometryTimestampsSim;
 import frc.robot.extras.simulation.mechanismSim.swerve.SwerveModuleSimulation;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
-import java.util.Arrays;
 
 /** Wrapper class around {@link SwerveModuleSimulation} */
 public class SimulatedModule implements ModuleInterface {
@@ -32,26 +31,23 @@ public class SimulatedModule implements ModuleInterface {
   @Override
   public void updateInputs(ModuleInputs inputs) {
     inputs.drivePosition =
-        Units.radiansToRotations(moduleSimulation.getDriveEncoderFinalPositionRad());
+        Radians.of(moduleSimulation.getDriveEncoderFinalPositionRad()).in(Rotations);
     inputs.driveVelocity =
-        Units.radiansToRotations(moduleSimulation.getDriveWheelFinalSpeedRadPerSec());
+        RadiansPerSecond.of(moduleSimulation.getDriveWheelFinalSpeedRadPerSec())
+            .in(RotationsPerSecond);
     inputs.driveAppliedVolts = moduleSimulation.getDriveMotorAppliedVolts();
     inputs.driveCurrentAmps = Math.abs(moduleSimulation.getDriveMotorSupplyCurrentAmps());
-    
+
     // inputs.turnAbsolutePosition = moduleSimulation.getTurnAbsolutePosition();
-    inputs.turnPosition = moduleSimulation.getTurnRelativeEncoderPositionRad();
-    inputs.turnVelocityRadPerSec = moduleSimulation.getTurnRelativeEncoderSpeedRadPerSec();
+    inputs.turnPosition =
+        Radians.of(moduleSimulation.getTurnRelativeEncoderPositionRad()).in(Rotations);
+    inputs.turnVelocity =
+        RadiansPerSecond.of(moduleSimulation.getTurnRelativeEncoderSpeedRadPerSec())
+            .in(RotationsPerSecond);
     inputs.turnAppliedVolts = moduleSimulation.getTurnMotorAppliedVolts();
     inputs.turnCurrentAmps = Math.abs(moduleSimulation.getTurnMotorSupplyCurrentAmps());
 
     inputs.odometryTimestamps = OdometryTimestampsSim.getTimestamps();
-    inputs.odometryDrivePositionsRad = moduleSimulation.getCachedDriveWheelFinalPositionsRad();
-    inputs.odometryTurnPositions = moduleSimulation.getCachedTurnAbsolutePositions();
-
-    inputs.odometryDriveWheelRevolutions =
-        Arrays.stream(moduleSimulation.getCachedDriveWheelFinalPositionsRad())
-            .map(Units::radiansToRotations)
-            .toArray();
   }
 
   @Override
@@ -60,24 +56,8 @@ public class SimulatedModule implements ModuleInterface {
   }
 
   @Override
-  public double getDriveVelocity() {
-    return RadiansPerSecond.of(moduleSimulation.getDriveWheelFinalSpeedRadPerSec())
-        .in(RotationsPerSecond);
-  }
-
-  @Override
-  public double getTurnAbsolutePosition() {
-    return moduleSimulation.getTurnAbsolutePosition().getRotations();
-  }
-
-  @Override
   public void setTurnVoltage(Voltage volts) {
     moduleSimulation.requestTurnVoltageOut(volts);
-  }
-
-  @Override
-  public double getDrivePosition() {
-    return Radians.of(moduleSimulation.getDriveEncoderFinalPositionRad()).in(Degrees);
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
@@ -123,10 +103,5 @@ public class SimulatedModule implements ModuleInterface {
   public void stopModule() {
     moduleSimulation.requestDriveVoltageOut(Volts.zero());
     moduleSimulation.requestTurnVoltageOut(Volts.zero());
-  }
-
-  @Override
-  public double getDriveVoltage() {
-    return moduleSimulation.getDriveMotorAppliedVolts();
   }
 }

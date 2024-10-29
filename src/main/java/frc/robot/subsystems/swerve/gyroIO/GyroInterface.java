@@ -18,6 +18,7 @@ public interface GyroInterface {
 
   /**
    * Updates the inputs created in GyroInputs
+   *
    * @param inputs inputs to update
    */
   void updateInputs(GyroInputs inputs);

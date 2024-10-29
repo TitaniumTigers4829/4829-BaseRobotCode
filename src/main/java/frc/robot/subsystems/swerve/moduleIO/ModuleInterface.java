@@ -11,22 +11,18 @@ public interface ModuleInterface {
 
     public boolean isConnected = false;
 
-    public double[] odometryDriveWheelRevolutions = new double[] {};
-
     public double driveVelocity = 0.0;
     public double driveAppliedVolts = 0.0;
     public double driveCurrentAmps = 0.0;
     public double drivePosition = 0.0;
 
     public Rotation2d turnAbsolutePosition = new Rotation2d();
-    public double turnVelocityRadPerSec = 0.0;
+    public double turnVelocity = 0.0;
     public double turnAppliedVolts = 0.0;
     public double turnCurrentAmps = 0.0;
 
     public double[] odometryTimestamps = new double[] {};
-    public double[] odometryDrivePositionsRad = new double[] {};
-    public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
-    
+
     public double turnPosition = 0.0;
   }
 
@@ -44,11 +40,6 @@ public interface ModuleInterface {
    */
   void setDesiredState(SwerveModuleState desiredState);
 
-  // TODO: all of these methods need to be commented
-  double getDriveVelocity();
-
-  double getTurnAbsolutePosition();
-
   void setDriveVoltage(Voltage voltage);
 
   void setTurnVoltage(Voltage voltage);
@@ -56,8 +47,4 @@ public interface ModuleInterface {
   void stopModule();
 
   double getTurnRotations();
-
-  double getDriveVoltage();
-
-  double getDrivePosition();
 }
