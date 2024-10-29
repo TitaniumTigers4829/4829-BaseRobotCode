@@ -44,6 +44,7 @@ public interface ModuleInterface {
    */
   void setDesiredState(SwerveModuleState desiredState);
 
+  // TODO: all of these methods need to be commented
   double getDriveVelocity();
 
   double getTurnAbsolutePosition();

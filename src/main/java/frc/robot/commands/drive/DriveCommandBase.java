@@ -2,8 +2,6 @@
 
 package frc.robot.commands.drive;
 
-import static edu.wpi.first.units.Units.*;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.extras.interpolators.MultiLinearInterpolator;
@@ -25,7 +23,6 @@ public abstract class DriveCommandBase extends Command {
 
   /**
    * An abstract class that handles pose estimation while driving.
-   *
    * @param driveSubsystem The subsystem for the swerve drive
    * @param vision The subsystem for vision measurements
    */
@@ -34,6 +31,7 @@ public abstract class DriveCommandBase extends Command {
     this.vision = vision;
     // It is important that you do addRequirements(driveSubsystem, vision) in whatever
     // command extends this
+    // DO NOT do addRequirements here, it will break things
   }
 
   @Override
@@ -55,6 +53,11 @@ public abstract class DriveCommandBase extends Command {
 
       double distanceFromClosestAprilTag = vision.getLimelightAprilTagDistance(limelightNumber);
 
+      // Depending on how many april tags we see, we change our confidence as more april tags
+      // results in a much more accurate pose estimate
+      // TODO: check if this is necessary anymore with MT2, also we might want to set the limelight
+      //  so it only uses 1 april tag, if they set up the field wrong (they can set april tags +-1 inch I believe)
+      //  using multiple *could* really mess things up.
       if (vision.getNumberOfAprilTags(limelightNumber) == 1) {
         double[] standardDeviations =
             oneAprilTagLookupTable.getLookupValue(distanceFromClosestAprilTag);
