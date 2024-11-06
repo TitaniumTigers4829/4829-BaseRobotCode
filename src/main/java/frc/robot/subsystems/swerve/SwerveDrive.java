@@ -160,7 +160,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   /** Processes odometry inputs */
-  private void fetchOdometryInputs() {
+   void fetchOdometryInputs() {
     odometryThread.lockOdometry();
     odometryThread.updateInputs(odometryThreadInputs);
     Logger.processInputs("Drive/OdometryThread", odometryThreadInputs);

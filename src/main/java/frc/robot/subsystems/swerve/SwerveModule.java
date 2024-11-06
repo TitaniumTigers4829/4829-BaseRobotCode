@@ -19,7 +19,7 @@ public class SwerveModule extends SubsystemBase {
   private final String name;
   private final ModuleInputsAutoLogged inputs = new ModuleInputsAutoLogged();
 
-  private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
+   SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
   private final Alert hardwareFaultAlert;
 

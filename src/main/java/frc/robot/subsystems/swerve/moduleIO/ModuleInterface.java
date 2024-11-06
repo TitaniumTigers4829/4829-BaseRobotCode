@@ -31,20 +31,20 @@ public interface ModuleInterface {
    *
    * @param inputs the inputs to update
    */
-  void updateInputs(ModuleInputs inputs);
+  default void updateInputs(ModuleInputs inputs) {}
 
   /**
    * Sets the desired state for the module and sends calculated output from controller to the motor.
    *
    * @param desiredState Desired state with speed and angle.
    */
-  void setDesiredState(SwerveModuleState desiredState);
+  default void setDesiredState(SwerveModuleState desiredState) {}
 
-  void setDriveVoltage(Voltage voltage);
+  default void setDriveVoltage(Voltage voltage) {}
 
-  void setTurnVoltage(Voltage voltage);
+  default void setTurnVoltage(Voltage voltage) {}
 
-  void stopModule();
+  default void stopModule() {}
 
-  double getTurnRotations();
+  default double getTurnRotations() {return 0.0;}
 }
