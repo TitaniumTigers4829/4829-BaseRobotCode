@@ -46,5 +46,7 @@ public interface ModuleInterface {
 
   default void stopModule() {}
 
-  default double getTurnRotations() {return 0.0;}
+  default double getTurnRotations() {
+    return 0.0;
+  }
 }
