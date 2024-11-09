@@ -43,6 +43,7 @@ public class SwerveDrive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
   private SwerveDriveKinematics kinematics;
+  private boolean isTest;
 
   public SwerveDrive(
       GyroInterface gyroIO,
@@ -88,7 +89,6 @@ public class SwerveDrive extends SubsystemBase {
     this.odometryThread.start();
 
     gyroDisconnectedAlert.set(false);
-    setKinematics(kinematics);
   }
 
   public SwerveDriveKinematics getKinematics() {
@@ -199,11 +199,12 @@ public class SwerveDrive extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rotationSpeed, boolean fieldRelative) {
     SwerveModuleState[] swerveModuleStates =
-        getKinematics().toSwerveModuleStates(
-            fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeed, ySpeed, rotationSpeed, getPose().getRotation())
-                : new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed));
+        getKinematics()
+            .toSwerveModuleStates(
+                fieldRelative
+                    ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                        xSpeed, ySpeed, rotationSpeed, getPose().getRotation())
+                    : new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.MAX_SPEED_METERS_PER_SECOND);
 

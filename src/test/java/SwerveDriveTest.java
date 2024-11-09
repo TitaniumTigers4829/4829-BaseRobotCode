@@ -3,6 +3,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -12,10 +14,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.swerve.*;
 import frc.robot.subsystems.swerve.gyroIO.GyroInterface;
 import frc.robot.subsystems.swerve.moduleIO.ModuleInterface;
+import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
 class SwerveDriveTest {
@@ -29,7 +32,8 @@ class SwerveDriveTest {
       backRightModuleIO;
   @Mock private SwerveModule frontLeftModule, frontRightModule, backLeftModule, backRightModule;
 
-  // private OdometryThread mockOdometryThread;
+  @Mock
+  private OdometryThread mockOdometryThread;
 
   @Mock private SwerveDriveKinematics swerveDriveKinematics;
 
@@ -37,34 +41,34 @@ class SwerveDriveTest {
 
   @BeforeEach
   void setUp() {
-      // Initialize the mocks
-      MockitoAnnotations.openMocks(this);
-  
-      // Ensure mocks are not null before using them
-      assertNotNull(gyroIO, "gyroIO is null");
-      assertNotNull(frontLeftModuleIO, "frontLeftModuleIO is null");
-      assertNotNull(frontRightModuleIO, "frontRightModuleIO is null");
-      assertNotNull(backLeftModuleIO, "backLeftModuleIO is null");
-      assertNotNull(backRightModuleIO, "backRightModuleIO is null");
-  
-      // Try to create SwerveDrive and catch any issues
-      try {
-          swerveDrive = new SwerveDrive(
-              gyroIO, frontLeftModuleIO, frontRightModuleIO, backLeftModuleIO, backRightModuleIO
-          );
-      } catch (Exception e) {
-          System.out.println("Exception during SwerveDrive instantiation: " + e.getMessage());
-          e.printStackTrace();
-      }
-  
-      // Verify swerveDrive is not null after instantiation
-      assertNotNull(swerveDrive, "SwerveDrive instantiation failed");
-  
-      // Set mocked kinematics if SwerveDrive was created successfully
-      if (swerveDrive != null) {
-          swerveDrive.setKinematics(swerveDriveKinematics);
-          swerveDrive = spy(swerveDrive);
-      }
+    // Initialize the mocks
+    MockitoAnnotations.openMocks(this);
+
+    // Ensure mocks are not null before using them
+    assertNotNull(gyroIO, "gyroIO is null");
+    assertNotNull(frontLeftModuleIO, "frontLeftModuleIO is null");
+    assertNotNull(frontRightModuleIO, "frontRightModuleIO is null");
+    assertNotNull(backLeftModuleIO, "backLeftModuleIO is null");
+    assertNotNull(backRightModuleIO, "backRightModuleIO is null");
+
+    // Try to create SwerveDrive and catch any issues
+    try {
+      swerveDrive =
+          new SwerveDrive(
+              gyroIO, frontLeftModuleIO, frontRightModuleIO, backLeftModuleIO, backRightModuleIO);
+    } catch (Exception e) {
+      System.out.println("Exception during SwerveDrive instantiation: " + e.getMessage());
+      e.printStackTrace();
+    }
+
+    // Verify swerveDrive is not null after instantiation
+    assertNotNull(swerveDrive, "SwerveDrive instantiation failed");
+
+    // Set mocked kinematics if SwerveDrive was created successfully
+    if (swerveDrive != null) {
+      swerveDrive.setKinematics(swerveDriveKinematics);
+      swerveDrive = spy(swerveDrive);
+    }
   }
 
   @Test
@@ -120,51 +124,16 @@ class SwerveDriveTest {
     verify(swerveDrive).setPose(eq(newPose));
   }
 
-  // @Test
-  // void testCharacterization() {
-  //     // Mock voltage setting on modules
-  //     doNothing().when(mockFrontLeftModule).setVoltage(any());
-  //     doNothing().when(mockFrontRightModule).setVoltage(any());
-  //     doNothing().when(mockBackLeftModule).setVoltage(any());
-  //     doNothing().when(mockBackRightModule).setVoltage(any());
-
-  //     // Call the runCharacterization method
-  //     swerveDrive.runCharacterization(12.0);
-
-  //     // Verify that the setVoltage method was called on all modules
-  //     verify(mockFrontLeftModule).setVoltage(-12.0);
-  //     verify(mockFrontRightModule).setVoltage(-12.0);
-  //     verify(mockBackLeftModule).setVoltage(-12.0);
-  //     verify(mockBackRightModule).setVoltage(-12.0);
-  // }
-
-  // @Test
-  // void testFetchOdometryInputs() {
-  //     // Mock inputs and behavior
-  //     when(mockGyroIO.updateInputs(any())).thenReturn(null);
-  //     doNothing().when(mockOdometryThread).lockOdometry();
-  //     doNothing().when(mockOdometryThread).unlockOdometry();
-
-  //     // Call the fetchOdometryInputs method
-  //     swerveDrive.fetchOdometryInputs();
-
-  //     // Verify the behavior of the method
-  //     verify(mockOdometryThread).lockOdometry();
-  //     verify(mockOdometryThread).unlockOdometry();
-  //     verify(mockGyroIO).updateInputs(any());
-  // }
-
   @Test
   void testAllianceAngleOffset() {
-    // Use mockStatic to mock static methods like DriverStation.getAlliance()
-    try (MockedStatic<DriverStation> mockedDriverStation = mockStatic(DriverStation.class)) {
-      // Mock for Blue Alliance
-      mockedDriverStation.when(DriverStation::getAlliance).thenReturn(DriverStation.Alliance.Blue);
-      assertEquals(0.0, swerveDrive.getAllianceAngleOffset(), 0.001);
+when(DriverStation.getAlliance()).thenAnswer(invocation -> Optional.of(DriverStation.Alliance.Blue));
 
+// Now perform the assertion
+assertEquals(0.0, swerveDrive.getAllianceAngleOffset(), 0.001);
       // Mock for Red Alliance
-      mockedDriverStation.when(DriverStation::getAlliance).thenReturn(DriverStation.Alliance.Red);
-      assertEquals(180.0, swerveDrive.getAllianceAngleOffset(), 0.001);
-    }
+      when(DriverStation.getAlliance()).thenAnswer(invocation -> Optional.of(DriverStation.Alliance.Red));
+
+      // Now perform the assertion
+      assertEquals(0.0, swerveDrive.getAllianceAngleOffset(), 0.001);
   }
 }

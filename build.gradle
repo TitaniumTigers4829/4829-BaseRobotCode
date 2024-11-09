@@ -176,10 +176,8 @@ dependencies {
 
 
     // Mockito for mocking objects in unit tests
-    testImplementation 'org.mockito:mockito-core:4.8.1' // Use the latest version
-
-    // Optional: If you need Mockito extensions for JUnit5
-    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.1' // Or the latest version
+    testImplementation 'org.mockito:mockito-core:4.8.1'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.1' 
 
     implementation 'gov.nist.math:jama:1.0.3'
 
