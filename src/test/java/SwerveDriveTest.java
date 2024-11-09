@@ -10,52 +10,61 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.swerve.*;
-import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
-import frc.robot.subsystems.swerve.gyroIO.GyroInputsAutoLogged;
 import frc.robot.subsystems.swerve.gyroIO.GyroInterface;
 import frc.robot.subsystems.swerve.moduleIO.ModuleInterface;
-import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import static org.mockito.Mockito.mockStatic;
+import org.mockito.MockitoAnnotations;
 
 class SwerveDriveTest {
 
+  @Mock private GyroInterface gyroIO;
+
+  @Mock
+  private ModuleInterface frontLeftModuleIO,
+      frontRightModuleIO,
+      backLeftModuleIO,
+      backRightModuleIO;
+  @Mock private SwerveModule frontLeftModule, frontRightModule, backLeftModule, backRightModule;
+
+  // private OdometryThread mockOdometryThread;
+
+  @Mock private SwerveDriveKinematics swerveDriveKinematics;
+
   private SwerveDrive swerveDrive;
-  private GyroInterface mockGyroIO;
-  private ModuleInterface mockFrontLeftModule;
-  private ModuleInterface mockFrontRightModule;
-  private ModuleInterface mockBackLeftModule;
-  private ModuleInterface mockBackRightModule;
-  private OdometryThread mockOdometryThread;
 
   @BeforeEach
   void setUp() {
-    // Mock the dependencies
-    mockGyroIO = mock(GyroInterface.class);
-    mockFrontLeftModule = mock(ModuleInterface.class);
-    mockFrontRightModule = mock(ModuleInterface.class);
-    mockBackLeftModule = mock(ModuleInterface.class);
-    mockBackRightModule = mock(ModuleInterface.class);
-    mockOdometryThread = mock(OdometryThread.class);
-
-    // Initialize the SwerveDrive with the mocked dependencies
-    swerveDrive =
-        new SwerveDrive(
-            mockGyroIO,
-            mockFrontLeftModule,
-            mockFrontRightModule,
-            mockBackLeftModule,
-            mockBackRightModule);
-    swerveDrive = spy(swerveDrive);
-  }
-
-  @Test
-  void testConstructorInitialization() {
-    // Ensure that the constructor correctly initializes the pose estimator and modules
-    assertNotNull(swerveDrive);
+      // Initialize the mocks
+      MockitoAnnotations.openMocks(this);
+  
+      // Ensure mocks are not null before using them
+      assertNotNull(gyroIO, "gyroIO is null");
+      assertNotNull(frontLeftModuleIO, "frontLeftModuleIO is null");
+      assertNotNull(frontRightModuleIO, "frontRightModuleIO is null");
+      assertNotNull(backLeftModuleIO, "backLeftModuleIO is null");
+      assertNotNull(backRightModuleIO, "backRightModuleIO is null");
+  
+      // Try to create SwerveDrive and catch any issues
+      try {
+          swerveDrive = new SwerveDrive(
+              gyroIO, frontLeftModuleIO, frontRightModuleIO, backLeftModuleIO, backRightModuleIO
+          );
+      } catch (Exception e) {
+          System.out.println("Exception during SwerveDrive instantiation: " + e.getMessage());
+          e.printStackTrace();
+      }
+  
+      // Verify swerveDrive is not null after instantiation
+      assertNotNull(swerveDrive, "SwerveDrive instantiation failed");
+  
+      // Set mocked kinematics if SwerveDrive was created successfully
+      if (swerveDrive != null) {
+          swerveDrive.setKinematics(swerveDriveKinematics);
+          swerveDrive = spy(swerveDrive);
+      }
   }
 
   @Test
@@ -70,27 +79,23 @@ class SwerveDriveTest {
 
   @Test
   void testDrive() {
-      // Prepare mock module states
-      SwerveModuleState[] mockStates = new SwerveModuleState[4];
-      for (int i = 0; i < 4; i++) {
-          mockStates[i] = mock(SwerveModuleState.class); // Mock each SwerveModuleState
-      }
-  
+    // Prepare mock module states
+    SwerveModuleState[] mockStates = new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
+      mockStates[i] = mock(SwerveModuleState.class); // Mock each SwerveModuleState
+    }
 
-    // Use MockedStatic to mock the static toSwerveModuleStates method
-    try (MockedStatic<SwerveDriveKinematics> mockedKinematics =  mockStatic(DriveConstants.DRIVE_KINEMATICS)) {
-      // Mock the toSwerveModuleStates method to return mock states
-      mockedKinematics.when(() -> DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(any(ChassisSpeeds.class)))
-                      .thenReturn(mockStates);
+    // Mock the toSwerveModuleStates method to return mock states
+    when(swerveDriveKinematics.toSwerveModuleStates(any(ChassisSpeeds.class)))
+        .thenReturn(mockStates);
 
-      // Now when the drive method calls toSwerveModuleStates, it will return mockStates
-      swerveDrive.drive(1.0, 1.0, 0.5, true);
+    // Now when the drive method calls toSwerveModuleStates, it will return mockStates
+    swerveDrive.drive(1.0, 1.0, 0.5, true);
 
-      // Verify that setModuleStates was called with mockStates
-      verify(swerveDrive).setModuleStates(mockStates);
+    // Verify that setModuleStates was called with mockStates
+    verify(swerveDrive).setModuleStates(mockStates);
+    verify(swerveDrive.getKinematics()).toSwerveModuleStates(any(ChassisSpeeds.class));
   }
-
-  }  
 
   @Test
   void testGetPose() {
@@ -149,17 +154,17 @@ class SwerveDriveTest {
   //     verify(mockGyroIO).updateInputs(any());
   // }
 
-@Test
-void testAllianceAngleOffset() {
+  @Test
+  void testAllianceAngleOffset() {
     // Use mockStatic to mock static methods like DriverStation.getAlliance()
     try (MockedStatic<DriverStation> mockedDriverStation = mockStatic(DriverStation.class)) {
-        // Mock for Blue Alliance
-        mockedDriverStation.when(DriverStation::getAlliance).thenReturn(DriverStation.Alliance.Blue);
-        assertEquals(0.0, swerveDrive.getAllianceAngleOffset(), 0.001);
+      // Mock for Blue Alliance
+      mockedDriverStation.when(DriverStation::getAlliance).thenReturn(DriverStation.Alliance.Blue);
+      assertEquals(0.0, swerveDrive.getAllianceAngleOffset(), 0.001);
 
-        // Mock for Red Alliance
-        mockedDriverStation.when(DriverStation::getAlliance).thenReturn(DriverStation.Alliance.Red);
-        assertEquals(180.0, swerveDrive.getAllianceAngleOffset(), 0.001);
+      // Mock for Red Alliance
+      mockedDriverStation.when(DriverStation::getAlliance).thenReturn(DriverStation.Alliance.Red);
+      assertEquals(180.0, swerveDrive.getAllianceAngleOffset(), 0.001);
     }
-}
+  }
 }
