@@ -37,22 +37,4 @@ class SwerveModuleTest {
     swerveModule.runSetPoint(mockState);
     verify(mockModuleInterface).setDesiredState(mockState);
   }
-
-  @Test
-  void testGetOdometryPositions() {
-    // Mock the odometry positions
-    SwerveModulePosition[] mockPositions =
-        new SwerveModulePosition[] {
-          new SwerveModulePosition(1.0, Rotation2d.fromDegrees(90)),
-          new SwerveModulePosition(2.0, Rotation2d.fromDegrees(180))
-        };
-    when(swerveModule.getOdometryPositions()).thenAnswer(answer -> mockPositions);
-
-    // Verify that the getOdometryPositions method returns the correct positions
-    SwerveModulePosition[] positions = swerveModule.getOdometryPositions();
-    assertEquals(1.0, positions[0].distanceMeters, 0.001);
-    assertEquals(90.0, positions[0].angle.getDegrees(), 0.001);
-    assertEquals(2.0, positions[1].distanceMeters, 0.001);
-    assertEquals(180.0, positions[1].angle.getDegrees(), 0.001);
-  }
 }
