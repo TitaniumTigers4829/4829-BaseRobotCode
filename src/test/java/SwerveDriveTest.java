@@ -100,7 +100,7 @@ class SwerveDriveTest {
     Pose2d newPose = new Pose2d(3.0, 4.0, Rotation2d.fromDegrees(90));
     swerveDrive.setPose(newPose);
 
-    // Verify that the resetPosition method was called with the new pose
+    // Verify that the setPose method was called with the new pose
     verify(swerveDrive).setPose(eq(newPose));
   }
 }
