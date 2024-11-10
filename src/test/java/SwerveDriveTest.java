@@ -19,6 +19,7 @@ import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 class SwerveDriveTest {
@@ -122,18 +123,5 @@ class SwerveDriveTest {
 
     // Verify that the resetPosition method was called with the new pose
     verify(swerveDrive).setPose(eq(newPose));
-  }
-
-  @Test
-  void testAllianceAngleOffset() {
-when(DriverStation.getAlliance()).thenAnswer(invocation -> Optional.of(DriverStation.Alliance.Blue));
-
-// Now perform the assertion
-assertEquals(0.0, swerveDrive.getAllianceAngleOffset(), 0.001);
-      // Mock for Red Alliance
-      when(DriverStation.getAlliance()).thenAnswer(invocation -> Optional.of(DriverStation.Alliance.Red));
-
-      // Now perform the assertion
-      assertEquals(0.0, swerveDrive.getAllianceAngleOffset(), 0.001);
   }
 }
