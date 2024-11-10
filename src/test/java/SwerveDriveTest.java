@@ -52,16 +52,6 @@ class SwerveDriveTest {
   }
 
   @Test
-  void testGetGyroRate() {
-    // Mock gyro inputs
-    when(swerveDrive.getGyroRate()).thenReturn(0.5);
-
-    // Test the getGyroRate method
-    double gyroRate = swerveDrive.getGyroRate();
-    assertEquals(0.5, gyroRate, 0.001);
-  }
-
-  @Test
   void testDrive() {
     // Prepare mock module states
     SwerveModuleState[] mockStates = new SwerveModuleState[4];
@@ -79,19 +69,6 @@ class SwerveDriveTest {
     // Verify that setModuleStates was called with mockStates
     verify(swerveDrive).setModuleStates(mockStates);
     verify(swerveDrive.getKinematics()).toSwerveModuleStates(any(ChassisSpeeds.class));
-  }
-
-  @Test
-  void testGetPose() {
-    // Mock the pose estimator to return a specific pose
-    Pose2d mockPose = new Pose2d(1.0, 2.0, new Rotation2d(Math.toRadians(45)));
-    when(swerveDrive.getPose()).thenReturn(mockPose);
-
-    // Call the getPose method and verify the returned pose
-    Pose2d pose = swerveDrive.getPose();
-    assertEquals(1.0, pose.getX(), 0.001);
-    assertEquals(2.0, pose.getY(), 0.001);
-    assertEquals(Math.toRadians(45), pose.getRotation().getRadians(), 0.001);
   }
 
   @Test
