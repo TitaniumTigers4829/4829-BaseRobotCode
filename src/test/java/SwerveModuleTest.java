@@ -46,7 +46,7 @@ class SwerveModuleTest {
           new SwerveModulePosition(1.0, Rotation2d.fromDegrees(90)),
           new SwerveModulePosition(2.0, Rotation2d.fromDegrees(180))
         };
-    when(swerveModule.getOdometryPositions()).thenAnswer(t -> mockPositions);
+    when(swerveModule.getOdometryPositions()).thenAnswer(answer -> mockPositions);
 
     // Verify that the getOdometryPositions method returns the correct positions
     SwerveModulePosition[] positions = swerveModule.getOdometryPositions();
