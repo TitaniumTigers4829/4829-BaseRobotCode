@@ -57,7 +57,7 @@ public class SwerveModule extends SubsystemBase {
   }
 
   /** Runs the module with the specified setpoint state. Returns the optimized state. */
-  public void runSetPoint(SwerveModuleState state) {
+  public void runSetpoint(SwerveModuleState state) {
     io.setDesiredState(state);
   }
 

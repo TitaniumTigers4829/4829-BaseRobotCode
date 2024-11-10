@@ -29,12 +29,12 @@ class SwerveModuleTest {
   }
 
   @Test
-  void testRunSetPoint() {
+  void testRunSetpoint() {
     // Prepare a mock state for the module
     SwerveModuleState mockState = new SwerveModuleState(2.0, Rotation2d.fromDegrees(45));
 
     // Call runSetPoint and verify that the setDesiredState method is called on the module interface
-    swerveModule.runSetPoint(mockState);
+    swerveModule.runSetpoint(mockState);
     verify(mockModuleInterface).setDesiredState(mockState);
   }
 }

@@ -228,7 +228,7 @@ public class SwerveDrive extends SubsystemBase {
    */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     for (int i = 0; i < 4; i++) {
-      swerveModules[i].runSetPoint(desiredStates[i]);
+      swerveModules[i].runSetpoint(desiredStates[i]);
     }
   }
 
