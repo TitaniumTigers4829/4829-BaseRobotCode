@@ -42,6 +42,8 @@ public class SwerveDrive extends SubsystemBase {
 
   private final Alert gyroDisconnectedAlert =
       new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
+  private SwerveDriveKinematics kinematics;
+  private boolean isTest;
 
   public SwerveDrive(
       GyroInterface gyroIO,
@@ -53,6 +55,7 @@ public class SwerveDrive extends SubsystemBase {
     this.gyroInputs = new GyroInputsAutoLogged();
     this.rawGyroRotation = new Rotation2d();
 
+    setKinematics(DriveConstants.DRIVE_KINEMATICS);
     swerveModules =
         new SwerveModule[] {
           new SwerveModule(frontLeftModuleIO, "FrontLeft"),
@@ -68,9 +71,9 @@ public class SwerveDrive extends SubsystemBase {
           new SwerveModulePosition(),
           new SwerveModulePosition()
         };
-    this.poseEstimator =
+    poseEstimator =
         new SwerveDrivePoseEstimator(
-            DriveConstants.DRIVE_KINEMATICS,
+            getKinematics(),
             rawGyroRotation,
             lastModulePositions,
             new Pose2d(),
@@ -86,6 +89,14 @@ public class SwerveDrive extends SubsystemBase {
     this.odometryThread.start();
 
     gyroDisconnectedAlert.set(false);
+  }
+
+  public SwerveDriveKinematics getKinematics() {
+    return kinematics;
+  }
+
+  public void setKinematics(SwerveDriveKinematics newKinematics) {
+    kinematics = newKinematics;
   }
 
   /**
@@ -160,7 +171,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   /** Processes odometry inputs */
-  private void fetchOdometryInputs() {
+  void fetchOdometryInputs() {
     odometryThread.lockOdometry();
     odometryThread.updateInputs(odometryThreadInputs);
     Logger.processInputs("Drive/OdometryThread", odometryThreadInputs);
@@ -188,11 +199,12 @@ public class SwerveDrive extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rotationSpeed, boolean fieldRelative) {
     SwerveModuleState[] swerveModuleStates =
-        DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(
-            fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeed, ySpeed, rotationSpeed, getPose().getRotation())
-                : new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed));
+        getKinematics()
+            .toSwerveModuleStates(
+                fieldRelative
+                    ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                        xSpeed, ySpeed, rotationSpeed, getPose().getRotation())
+                    : new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.MAX_SPEED_METERS_PER_SECOND);
 
@@ -216,7 +228,7 @@ public class SwerveDrive extends SubsystemBase {
    */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     for (int i = 0; i < 4; i++) {
-      swerveModules[i].runSetPoint(desiredStates[i]);
+      swerveModules[i].runSetpoint(desiredStates[i]);
     }
   }
 
@@ -232,7 +244,7 @@ public class SwerveDrive extends SubsystemBase {
     if (gyroInputs.isConnected) {
       rawGyroRotation = gyroInputs.odometryYawPositions[timestampIndex];
     } else {
-      Twist2d twist = DriveConstants.DRIVE_KINEMATICS.toTwist2d(moduleDeltas);
+      Twist2d twist = getKinematics().toTwist2d(moduleDeltas);
       rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
     }
 

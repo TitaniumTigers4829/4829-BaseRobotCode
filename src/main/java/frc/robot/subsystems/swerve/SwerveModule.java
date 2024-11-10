@@ -19,7 +19,7 @@ public class SwerveModule extends SubsystemBase {
   private final String name;
   private final ModuleInputsAutoLogged inputs = new ModuleInputsAutoLogged();
 
-  private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
+  SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
   private final Alert hardwareFaultAlert;
 
@@ -57,7 +57,7 @@ public class SwerveModule extends SubsystemBase {
   }
 
   /** Runs the module with the specified setpoint state. Returns the optimized state. */
-  public void runSetPoint(SwerveModuleState state) {
+  public void runSetpoint(SwerveModuleState state) {
     io.setDesiredState(state);
   }
 
