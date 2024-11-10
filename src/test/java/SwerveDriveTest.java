@@ -3,23 +3,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import java.util.Optional;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.swerve.*;
 import frc.robot.subsystems.swerve.gyroIO.GyroInterface;
 import frc.robot.subsystems.swerve.moduleIO.ModuleInterface;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 class SwerveDriveTest {
@@ -33,8 +28,7 @@ class SwerveDriveTest {
       backRightModuleIO;
   @Mock private SwerveModule frontLeftModule, frontRightModule, backLeftModule, backRightModule;
 
-  @Mock
-  private OdometryThread mockOdometryThread;
+  @Mock private OdometryThread mockOdometryThread;
 
   @Mock private SwerveDriveKinematics swerveDriveKinematics;
 
@@ -45,31 +39,16 @@ class SwerveDriveTest {
     // Initialize the mocks
     MockitoAnnotations.openMocks(this);
 
-    // Ensure mocks are not null before using them
-    assertNotNull(gyroIO, "gyroIO is null");
-    assertNotNull(frontLeftModuleIO, "frontLeftModuleIO is null");
-    assertNotNull(frontRightModuleIO, "frontRightModuleIO is null");
-    assertNotNull(backLeftModuleIO, "backLeftModuleIO is null");
-    assertNotNull(backRightModuleIO, "backRightModuleIO is null");
+    swerveDrive =
+        spy(
+            new SwerveDrive(
+                gyroIO,
+                frontLeftModuleIO,
+                frontRightModuleIO,
+                backLeftModuleIO,
+                backRightModuleIO));
 
-    // Try to create SwerveDrive and catch any issues
-    try {
-      swerveDrive =
-          new SwerveDrive(
-              gyroIO, frontLeftModuleIO, frontRightModuleIO, backLeftModuleIO, backRightModuleIO);
-    } catch (Exception e) {
-      System.out.println("Exception during SwerveDrive instantiation: " + e.getMessage());
-      e.printStackTrace();
-    }
-
-    // Verify swerveDrive is not null after instantiation
-    assertNotNull(swerveDrive, "SwerveDrive instantiation failed");
-
-    // Set mocked kinematics if SwerveDrive was created successfully
-    if (swerveDrive != null) {
-      swerveDrive.setKinematics(swerveDriveKinematics);
-      swerveDrive = spy(swerveDrive);
-    }
+    swerveDrive.setKinematics(swerveDriveKinematics);
   }
 
   @Test
