@@ -54,16 +54,17 @@ public interface OdometryThread {
               registeredInputs.toArray(new OdometryDoubleInput[0]),
               registeredStatusSignals.toArray(new BaseStatusSignal[0]));
       case SIM -> new OdometryThreadSim();
-      case REPLAY -> inputs -> {};
+      //case REPLAY -> inputs -> {};
+      default -> throw new IllegalArgumentException("Unexpected value: " + Robot.CURRENT_ROBOT_MODE);
     };
   }
 
   @AutoLog
-  class OdometryThreadInputs {
+  public class OdometryThreadInputs {
     public double[] measurementTimeStamps = new double[0];
   }
 
-  void updateInputs(OdometryThreadInputs inputs);
+  default void updateInputs(OdometryThreadInputs inputs) {}
 
   default void start() {}
 

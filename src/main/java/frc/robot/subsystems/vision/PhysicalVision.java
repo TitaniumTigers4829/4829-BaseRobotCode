@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class VisionIOReal implements VisionIO {
+public class PhysicalVision implements VisionInterface {
 
   private Pose2d lastSeenPose = new Pose2d();
   private double headingDegrees = 0;
@@ -28,7 +28,7 @@ public class VisionIOReal implements VisionIO {
    */
   private PoseEstimate[] limelightEstimates;
 
-  public VisionIOReal() {
+  public PhysicalVision() {
     limelightEstimates = new PoseEstimate[3];
     for (int limelightNumber = 0; limelightNumber < limelightEstimates.length; limelightNumber++) {
       limelightThreads.put(limelightNumber, new AtomicBoolean(true));
@@ -37,7 +37,7 @@ public class VisionIOReal implements VisionIO {
   }
 
   @Override
-  public void updateInputs(VisionIOInputs inputs) {
+  public void updateInputs(VisionInputs inputs) {
     inputs.camerasAmount = limelightEstimates.length;
     inputs.cameraConnected = true;
 

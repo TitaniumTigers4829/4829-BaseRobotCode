@@ -1,9 +1,9 @@
 package frc.robot.extras.util;
 
-import frc.robot.Constants.HardwareConstants;
+import frc.robot.Constants.JoystickConstants;
 import java.util.function.DoubleSupplier;
 
-public class Util {
+public class JoystickUtil {
     
   /**
    * Deadbands a value to 0
@@ -35,7 +35,7 @@ public class Util {
     double value = supplierValue.getAsDouble();
 
     // Deadband
-    value = deadband(value, HardwareConstants.DEADBAND_VALUE);
+    value = deadband(value, JoystickConstants.DEADBAND_VALUE);
 
     // Raise value to specified exponent
     value = Math.copySign(Math.pow(value, exponent), value);
@@ -54,8 +54,8 @@ public class Util {
    */
   public static double[] modifyAxisPolar(
       DoubleSupplier xJoystick, DoubleSupplier yJoystick, int exponent) {
-    double xInput = deadband(xJoystick.getAsDouble(), HardwareConstants.DEADBAND_VALUE);
-    double yInput = deadband(yJoystick.getAsDouble(), HardwareConstants.DEADBAND_VALUE);
+    double xInput = deadband(xJoystick.getAsDouble(), JoystickConstants.DEADBAND_VALUE);
+    double yInput = deadband(yJoystick.getAsDouble(), JoystickConstants.DEADBAND_VALUE);
     if (Math.abs(xInput) > 0 && Math.abs(yInput) > 0) {
       double theta = Math.atan(xInput / yInput);
       double hypotenuse = Math.sqrt(xInput * xInput + yInput * yInput);

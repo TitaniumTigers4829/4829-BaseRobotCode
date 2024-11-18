@@ -3,9 +3,9 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface VisionIO {
+public interface VisionInterface {
   @AutoLog
-  class VisionIOInputs {
+  class VisionInputs {
     public boolean cameraConnected = false;
     public double latency = 0.0;
     public double fiducialMarksID = 0.0;
@@ -14,7 +14,7 @@ public interface VisionIO {
     public int targetsCount = 0;
   }
 
-  void updateInputs(VisionIOInputs inputs);
+  void updateInputs(VisionInputs inputs);
 
   String getLimelightName(int limelightNumber);
 

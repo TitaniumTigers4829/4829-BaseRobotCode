@@ -6,49 +6,49 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
-  private final VisionIO visionIO;
-  private final VisionIOInputsAutoLogged inputs = new VisionIOInputsAutoLogged();
+  private final VisionInterface visionInterface;
+  private final VisionInputsAutoLogged inputs = new VisionInputsAutoLogged();
 
-  public Vision(VisionIO visionIO) {
+  public Vision(VisionInterface visionInterface) {
     // Initializing Fields
-    this.visionIO = visionIO;
+    this.visionInterface = visionInterface;
   }
 
   @Override
   public void periodic() {
     // Updates limelight inputs
-    visionIO.updateInputs(inputs);
-    Logger.processInputs(visionIO.getLimelightName(0), inputs);
+    visionInterface.updateInputs(inputs);
+    Logger.processInputs(visionInterface.getLimelightName(0), inputs);
   }
 
   // Add methods to support DriveCommand
   public int getNumberOfAprilTags(int limelightNumber) {
-    return visionIO.getNumberOfAprilTags(limelightNumber);
+    return visionInterface.getNumberOfAprilTags(limelightNumber);
   }
 
   public double getLimelightAprilTagDistance(int limelightNumber) {
-    return visionIO.getLimelightAprilTagDistance(limelightNumber);
+    return visionInterface.getLimelightAprilTagDistance(limelightNumber);
   }
 
   public double getTimeStampSeconds(int limelightNumber) {
-    return visionIO.getTimeStampSeconds(limelightNumber);
+    return visionInterface.getTimeStampSeconds(limelightNumber);
   }
 
   public double getLatencySeconds(int limelightNumber) {
-    return visionIO.getLatencySeconds(limelightNumber);
+    return visionInterface.getLatencySeconds(limelightNumber);
   }
 
   public void setHeadingInfo(double headingDegrees, double headingRateDegrees) {
-    visionIO.setHeadingInfo(headingDegrees, headingRateDegrees);
+    visionInterface.setHeadingInfo(headingDegrees, headingRateDegrees);
   }
 
   @AutoLogOutput(key = "Vision/Has Targets")
   public boolean canSeeAprilTags(int limelightNumber) {
-    return visionIO.canSeeAprilTags(
+    return visionInterface.canSeeAprilTags(
         limelightNumber); // Assuming we're checking the shooter limelight
   }
 
   public Pose2d getPoseFromAprilTags(int limelightNumber) {
-    return visionIO.getPoseFromAprilTags(limelightNumber);
+    return visionInterface.getPoseFromAprilTags(limelightNumber);
   }
 }
