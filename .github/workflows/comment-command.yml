@@ -2,7 +2,7 @@ name: Comment Commands
 on:
   issue_comment:
     types: [ created ]
-
+workflow_dispatch:
 jobs:
   format:
     if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/format')
