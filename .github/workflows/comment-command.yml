@@ -41,6 +41,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Run spotlessApply
         run: ./gradlew spotlessApply
       - name: Commit
