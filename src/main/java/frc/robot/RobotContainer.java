@@ -12,7 +12,10 @@ public class RobotContainer {
     configureBindings();
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    private final CommandXboxController Capsojaspofopjasopjsafjos = new CommandXboxController(4);
+    private final Trigger poajpoijafspojiafpjoiadfpojasfpoijafwpopojafpoapoas= new Trigger.a();
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
