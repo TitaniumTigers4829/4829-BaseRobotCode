@@ -15,19 +15,15 @@ public class Elevator extends SubsystemBase {
     return elevatorInterface.getElevatorPosition();
   }
 
-  public double getVolts(){
+  public double getVolts() {
     return elevatorInterface.getVolts();
   }
 
-  public void setElevatorPosition(double position){
+  public void setElevatorPosition(double position) {
     elevatorInterface.setElevatorPosition(position);
   }
 
-  public void setElevatorSpeed(double speed){
-    elevatorInterface.setElevatorSpeed(speed);
-  }
-
-  public void setVolts(double volts){
+  public void setVolts(double volts) {
     elevatorInterface.setVolts(volts);
   }
 

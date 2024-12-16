@@ -1,10 +1,13 @@
 package frc.robot.subsystems.elevator;
 
+import java.io.ObjectInputFilter.Status;
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.elevator.ElevatorInterface.ElevatorInputs;
 
 /** Add your docs here. */
@@ -13,13 +16,23 @@ public class PhysicalElevator {
   private TalonFX followerMotor = new TalonFX(0);
 
   StatusSignal<Angle> leaderPosition;
-  Statussignal<Angle> followerPosition;
+  StatusSignal<Angle> followerPosition;
+
+  StatusSignal<Voltage> leaderAppliedVoltage;
+  StatusSignal<Voltage> followerAppliedVoltage;
+
   public PhysicalElevator() {
+    leaderPosition = leaderMotor.getRotorPosition();
+    followerPosition = followerMotor.getRotorPosition();
+
+    leaderAppliedVoltage = leaderMotor.getMotorVoltage();
+    followerAppliedVoltage = followerMotor.getMotorVoltage();
+
     TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
 
-    elevatorConfig.Slot0.kP = 0;
-    elevatorConfig.Slot0.kI = 0;
-    elevatorConfig.Slot0.kD = 0;
+    elevatorConfig.Slot0.kP = ElevatorConstants.ELEVATOR_P;
+    elevatorConfig.Slot0.kI = ElevatorConstants.ELEVATOR_I;
+    elevatorConfig.Slot0.kD = ElevatorConstants.ELEVATOR_D;
 
     leaderMotor.getConfigurator().apply(elevatorConfig);
     followerMotor.getConfigurator().apply(elevatorConfig);
@@ -27,28 +40,16 @@ public class PhysicalElevator {
 
   public void updateInputs(ElevatorInputs inputs) {
     inputs.leaderMotorPosition = leaderPosition.getValueAsDouble();
-    inputs.leaderMotorVelocity = leaderVelocity.getValueAsDouble();
-    inputs.leaderMotorAppliedVolts = leaderAppliedVolts.getValueAsDouble();
-    inputs.leaderMotorCurrentAmps = leaderCurrentAmps.getValueAsDouble();
-
     inputs.followerMotorPosition = followerPosition.getValueAsDouble();
-    inputs.followerMotorVelocity = followerVelocity.getValueAsDouble();
-    inputs.followerMotorAppliedVolts = followerAppliedVolts.getValueAsDouble();
-    inputs.followerMotorCurrentAmps = followerCurrentAmps.getValueAsDouble();
   }
 
   public double getElevatorPosition() {
-    return leaderMotor.getRotorPosition().getValueAsDouble();
+    return leaderPosition.getValueAsDouble();
   }
 
   public void setElevatorPosition(double position) {
     leaderMotor.setPosition(position);
     followerMotor.setPosition(position);
-  }
-
-  public void setElevatorSpeed(double speed) {
-    leaderMotor.set(speed);
-    followerMotor.set(speed);
   }
 
   public void setVolts(double volts) {
