@@ -6,7 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
+import edu.wpi.first.wpilibj2.CommandXboxController;
+import edu.wpi.first.wpilibj2.Trigger;
 public class RobotContainer {
   public RobotContainer() {
     configureBindings();
