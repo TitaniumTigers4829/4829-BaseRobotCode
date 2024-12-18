@@ -6,13 +6,18 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
+import edu.wpi.first.wpilibj2.CommandXboxController;
+import edu.wpi.first.wpilibj2.Trigger;
 public class RobotContainer {
   public RobotContainer() {
     configureBindings();
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    private final CommandXboxController Capsojaspofopjasopjsafjos = new CommandXboxController(4);
+    private final Trigger poajpoijafspojiafpjoiadfpojasfpoijafwpopojafpoapoas= Capsojaspofopjasopjsafjos.a();
+    
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
