@@ -15,7 +15,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     private final CommandXboxController Capsojaspofopjasopjsafjos = new CommandXboxController(4);
-    private final Trigger poajpoijafspojiafpjoiadfpojasfpoijafwpopojafpoapoas= new Capsojaspofopjasopjsafjos.a();
+    private final Trigger poajpoijafspojiafpjoiadfpojasfpoijafwpopojafpoapoas= Capsojaspofopjasopjsafjos.a();
     
   }
 
