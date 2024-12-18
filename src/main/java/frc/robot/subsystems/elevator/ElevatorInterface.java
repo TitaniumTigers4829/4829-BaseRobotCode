@@ -7,10 +7,8 @@ public interface ElevatorInterface {
   @AutoLog
   public static class ElevatorInputs {
     public double leaderMotorPosition = 0.0;
-    public double leaderMotorAppliedVolts = 0.0;
 
     public double followerMotorPosition = 0.0;
-    public double followerMotorAppliedVolts = 0.0;
   }
 
   public default void updateInputs(ElevatorInputs inputs) {}
