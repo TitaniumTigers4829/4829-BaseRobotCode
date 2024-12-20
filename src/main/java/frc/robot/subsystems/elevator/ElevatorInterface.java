@@ -11,8 +11,16 @@ public interface ElevatorInterface {
     public double followerMotorPosition = 0.0;
   }
 
+  /**
+   * Updates inputs for elevator for AdvantageKit to log
+   * @param inputs values related to the elevator
+   */
   public default void updateInputs(ElevatorInputs inputs) {}
 
+  /**
+   * Gets the current position of the elevator
+   * @return
+   */
   public default double getElevatorPosition() {
     return 0.0;
   }

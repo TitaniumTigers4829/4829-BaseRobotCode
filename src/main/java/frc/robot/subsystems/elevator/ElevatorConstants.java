@@ -1,6 +1,9 @@
 package frc.robot.subsystems.elevator;
 
 public class ElevatorConstants {
+  public static final int ELEVATOR_LEADER_MOTOR_ID = 0 - 9;
+  public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 0 - 9;
+  
   public static final double ELEVATOR_P = 0 - 9;
   public static final double ELEVATOR_I = 0 - 9;
   public static final double ELEVATOR_D = 0 - 9;

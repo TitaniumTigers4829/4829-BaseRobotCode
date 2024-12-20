@@ -12,8 +12,8 @@ import frc.robot.subsystems.elevator.ElevatorInterface.ElevatorInputs;
 
 /** Add your docs here. */
 public class PhysicalElevator {
-  private TalonFX leaderMotor = new TalonFX(0);
-  private TalonFX followerMotor = new TalonFX(0);
+  private TalonFX leaderMotor = new TalonFX(ElevatorConstants.ELEVATOR_LEADER_MOTOR_ID);
+  private TalonFX followerMotor = new TalonFX(ElevatorConstants.ELEVATOR_FOLLOWER_MOTOR_ID);
 
   StatusSignal<Angle> leaderPosition;
   StatusSignal<Angle> followerPosition;

@@ -6,33 +6,33 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 /** Add your docs here. */
 public class SimulatedElevator implements ElevatorInterface {
-    private ElevatorSim simulatedElevator = new ElevatorSim(DCMotor.getFalcon500(2), ElevatorConstants.ELEVATOR_GEAR_RATIO, ElevatorConstants.ELEVATOR_CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true, 0.0);
-    private PIDController simPID;
-    private double currentVolts;
+  private ElevatorSim elevatorSim = new ElevatorSim(DCMotor.getFalcon500(2), ElevatorConstants.ELEVATOR_GEAR_RATIO, ElevatorConstants.ELEVATOR_CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true, 0.0);
+  private PIDController simPID;
+  private double currentVolts;
 
-    public SimulatedElevator() {
-        simPID = new PIDController(ElevatorConstants.ELEVATOR_P, ElevatorConstants.ELEVATOR_I, ElevatorConstants.ELEVATOR_D);
-    }
+  public SimulatedElevator() {
+    simPID = new PIDController(ElevatorConstants.ELEVATOR_P, ElevatorConstants.ELEVATOR_I, ElevatorConstants.ELEVATOR_D);
+  }
 
-    public void updateInputs(ElevatorInputs inputs) {
-        inputs.leaderMotorPosition = getElevatorPosition();
-        inputs.followerMotorPosition = getElevatorPosition();
-    }
+  public void updateInputs(ElevatorInputs inputs) {
+    inputs.leaderMotorPosition = getElevatorPosition();
+    inputs.followerMotorPosition = getElevatorPosition();
+  }
 
-    public void setElevatorPosition(double position) {
-        simulatedElevator.setState(simPID.calculate(position), ElevatorConstants.VELOCITY_METERS_PER_SECOND);
-    }
+  public void setElevatorPosition(double position) {
+    elevatorSim.setState(simPID.calculate(position), ElevatorConstants.VELOCITY_METERS_PER_SECOND);
+  }
 
-    public double getElevatorPosition() {
-        return simulatedElevator.getPositionMeters();
-    }
+  public double getElevatorPosition() {
+    return elevatorSim.getPositionMeters();
+  }
 
-    public void setVolts(double volts) {
-        currentVolts = simPID.calculate(volts);
-        simulatedElevator.setInputVoltage(currentVolts);
-    }
+  public void setVolts(double volts) {
+    currentVolts = simPID.calculate(volts);
+    elevatorSim.setInputVoltage(currentVolts);
+  }
 
-    public double getVolts() {
-        return currentVolts;
-    }
+  public double getVolts() {
+    return currentVolts;
+  }
 }
