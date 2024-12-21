@@ -6,16 +6,18 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.CommandXboxController;
-import edu.wpi.first.wpilibj2.Trigger;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.drive.DriveCommand;
 public class RobotContainer {
+  CommandXboxController driverController = new CommandXboxController(4);
+  Trigger driverAButton = driverController.a();
   public RobotContainer() {
     configureBindings();
   }
 
   private void configureBindings() {
-    private final CommandXboxController Capsojaspofopjasopjsafjos = new CommandXboxController(4);
-    private final Trigger poajpoijafspojiafpjoiadfpojasfpoijafwpopojafpoapoas= Capsojaspofopjasopjsafjos.a();
+    driverAButton.onTrue(new DriveCommand(null, null, null, null, null, driverAButton, driverAButton));
     
   }
 
