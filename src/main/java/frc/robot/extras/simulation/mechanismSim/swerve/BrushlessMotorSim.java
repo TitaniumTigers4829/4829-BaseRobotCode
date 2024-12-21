@@ -61,7 +61,7 @@ public class BrushlessMotorSim {
    *
    * @param motor the {@link DCMotor} model representing the motor(s) in the simulation
    * @param gearRatio the gear ratio of the mechanism; values greater than 1 indicate a reduction
-   * @param loadIntertiaJKgMetersSquared the rotational inertia of the mechanism, in kg·m²
+   * @param loadIntertiaJKgMetersSquared the rotational inertia of the mechanism, in kg*m^2
    * @param frictionVoltage the voltage required to overcome friction and make the mechanism move
    */
   public BrushlessMotorSim(
