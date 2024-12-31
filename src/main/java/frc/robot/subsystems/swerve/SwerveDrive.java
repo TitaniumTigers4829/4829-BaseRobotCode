@@ -42,7 +42,6 @@ public class SwerveDrive extends SubsystemBase {
 
   private final Alert gyroDisconnectedAlert =
       new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
-  private SwerveDriveKinematics kinematics;
 
   public SwerveDrive(
       GyroInterface gyroIO,
@@ -54,7 +53,6 @@ public class SwerveDrive extends SubsystemBase {
     this.gyroInputs = new GyroInputsAutoLogged();
     this.rawGyroRotation = new Rotation2d();
 
-    setKinematics(DriveConstants.DRIVE_KINEMATICS);
     swerveModules =
         new SwerveModule[] {
           new SwerveModule(frontLeftModuleIO, "FrontLeft"),
@@ -72,7 +70,7 @@ public class SwerveDrive extends SubsystemBase {
         };
     poseEstimator =
         new SwerveDrivePoseEstimator(
-            getKinematics(),
+            DriveConstants.DRIVE_KINEMATICS,
             rawGyroRotation,
             lastModulePositions,
             new Pose2d(),
@@ -88,14 +86,6 @@ public class SwerveDrive extends SubsystemBase {
     this.odometryThread.start();
 
     gyroDisconnectedAlert.set(false);
-  }
-
-  public SwerveDriveKinematics getKinematics() {
-    return kinematics;
-  }
-
-  public void setKinematics(SwerveDriveKinematics newKinematics) {
-    kinematics = newKinematics;
   }
 
   /**
@@ -198,7 +188,7 @@ public class SwerveDrive extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rotationSpeed, boolean fieldRelative) {
     SwerveModuleState[] swerveModuleStates =
-        getKinematics()
+        DriveConstants.DRIVE_KINEMATICS
             .toSwerveModuleStates(
                 fieldRelative
                     ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -243,7 +233,7 @@ public class SwerveDrive extends SubsystemBase {
     if (gyroInputs.isConnected) {
       rawGyroRotation = gyroInputs.odometryYawPositions[timestampIndex];
     } else {
-      Twist2d twist = getKinematics().toTwist2d(moduleDeltas);
+      Twist2d twist = DriveConstants.DRIVE_KINEMATICS.toTwist2d(moduleDeltas);
       rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
     }
 
