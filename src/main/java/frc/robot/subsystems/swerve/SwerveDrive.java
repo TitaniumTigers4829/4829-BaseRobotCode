@@ -43,7 +43,6 @@ public class SwerveDrive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Gyro Hardware Fault", Alert.AlertType.kError);
   private SwerveDriveKinematics kinematics;
-  private boolean isTest;
 
   public SwerveDrive(
       GyroInterface gyroIO,
