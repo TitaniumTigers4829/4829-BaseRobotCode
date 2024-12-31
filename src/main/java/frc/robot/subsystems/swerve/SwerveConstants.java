@@ -1,14 +1,11 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
@@ -22,9 +19,9 @@ public class SwerveConstants {
     // Wheel base and track width are measured by the center of the swerve modules, not the frame of
     // the robot
     // Distance between centers of right and left wheels on robot
-    public static final double TRACK_WIDTH = Units.inchesToMeters(22);
+    public static final double TRACK_WIDTH = Units.inchesToMeters(21.25);
     // Distance between front and back wheels on robot
-    public static final double WHEEL_BASE = Units.inchesToMeters(22);
+    public static final double WHEEL_BASE = Units.inchesToMeters(21.25);
 
     public static final Translation2d[] MODULE_TRANSLATIONS =
         new Translation2d[] {
@@ -37,25 +34,25 @@ public class SwerveConstants {
     public static final SwerveDriveKinematics DRIVE_KINEMATICS =
         new SwerveDriveKinematics(MODULE_TRANSLATIONS);
 
-    public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 0 - 9;
-    public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 0 - 9;
-    public static final int REAR_LEFT_DRIVE_MOTOR_ID = 0 - 9;
-    public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 0 - 9;
+    public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 22;
+    public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 24;
+    public static final int REAR_LEFT_DRIVE_MOTOR_ID = 23;
+    public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 21;
 
-    public static final int FRONT_LEFT_TURN_MOTOR_ID = 0 - 9;
-    public static final int FRONT_RIGHT_TURN_MOTOR_ID = 0 - 9;
-    public static final int REAR_LEFT_TURN_MOTOR_ID = 0 - 9;
-    public static final int REAR_RIGHT_TURN_MOTOR_ID = 0 - 9;
+    public static final int FRONT_LEFT_TURN_MOTOR_ID = 5;
+    public static final int FRONT_RIGHT_TURN_MOTOR_ID = 6;
+    public static final int REAR_LEFT_TURN_MOTOR_ID = 8;
+    public static final int REAR_RIGHT_TURN_MOTOR_ID = 7;
 
-    public static final int FRONT_LEFT_CANCODER_ID = 0 - 9;
-    public static final int FRONT_RIGHT_CANCODER_ID = 0 - 9;
-    public static final int REAR_LEFT_CANCODER_ID = 0 - 9;
-    public static final int REAR_RIGHT_CANCODER_ID = 0 - 9;
+    public static final int FRONT_LEFT_CANCODER_ID = 14;
+    public static final int FRONT_RIGHT_CANCODER_ID = 12;
+    public static final int REAR_LEFT_CANCODER_ID = 11;
+    public static final int REAR_RIGHT_CANCODER_ID = 13;
 
-    public static final double FRONT_LEFT_ZERO_ANGLE = 0;
-    public static final double FRONT_RIGHT_ZERO_ANGLE = 0;
-    public static final double REAR_LEFT_ZERO_ANGLE = 0;
-    public static final double REAR_RIGHT_ZERO_ANGLE = 0;
+    public static final double FRONT_LEFT_ZERO_ANGLE = 0.137939453125;
+    public static final double FRONT_RIGHT_ZERO_ANGLE = -0.420654296875;
+    public static final double REAR_LEFT_ZERO_ANGLE = -0.475341796875;
+    public static final double REAR_RIGHT_ZERO_ANGLE = -0.05078125;
 
     public static final SensorDirectionValue FRONT_LEFT_CANCODER_REVERSED =
         SensorDirectionValue.CounterClockwise_Positive;
@@ -67,34 +64,36 @@ public class SwerveConstants {
         SensorDirectionValue.CounterClockwise_Positive;
 
     public static final InvertedValue FRONT_LEFT_TURN_MOTOR_REVERSED =
-        InvertedValue.Clockwise_Positive;
+        InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue FRONT_RIGHT_TURN_MOTOR_REVERSED =
-        InvertedValue.Clockwise_Positive;
+        InvertedValue.CounterClockwise_Positive;
     public static final InvertedValue REAR_LEFT_TURN_MOTOR_REVERSED =
         InvertedValue.Clockwise_Positive;
     public static final InvertedValue REAR_RIGHT_TURN_MOTOR_REVERSED =
         InvertedValue.Clockwise_Positive;
 
     public static final InvertedValue FRONT_LEFT_DRIVE_ENCODER_REVERSED =
-        InvertedValue.Clockwise_Positive;
-    public static final InvertedValue FRONT_RIGHT_DRIVE_ENCODER_REVERSED =
         InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue FRONT_RIGHT_DRIVE_ENCODER_REVERSED =
+        InvertedValue.Clockwise_Positive;
     public static final InvertedValue REAR_LEFT_DRIVE_ENCODER_REVERSED =
         InvertedValue.Clockwise_Positive;
     public static final InvertedValue REAR_RIGHT_DRIVE_ENCODER_REVERSED =
         InvertedValue.CounterClockwise_Positive;
 
-    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 0 - 9;
-    public static final double LOW_ANGULAR_SPEED_RADIANS_PER_SECOND = 0 - 9;
+    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 20;
+    public static final double LOW_ANGULAR_SPEED_RADIANS_PER_SECOND = 5;
 
-    public static final double MAX_SPEED_METERS_PER_SECOND = 0 - 9;
+    public static final double MAX_SPEED_METERS_PER_SECOND = 6.95;
+    public static final double MAX_SHOOT_SPEED_METERS_PER_SECOND = 3;
+
+    public static final double HEADING_ACCEPTABLE_ERROR_RADIANS = Units.degreesToRadians(2.5);
+    public static final double HEADING_ACCEPTABLE_ERROR_MOVING_RADIANS = Units.degreesToRadians(4);
   }
 
   public class ModuleConstants {
-    public static final double DRIVE_GEAR_RATIO = 0 - 9;
-    public static final double TURN_GEAR_RATIO = 0 - 9;
-    // Use the wheel diamer characterization periodically to find this
-    public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
+    public static final double DRIVE_GEAR_RATIO = 4.59;
+    public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(3.774788522800778);
 
     public static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
     public static final double DRIVE_TO_METERS = WHEEL_CIRCUMFERENCE_METERS / DRIVE_GEAR_RATIO;
@@ -104,116 +103,71 @@ public class SwerveConstants {
     public static final double DRIVE_SUPPLY_LIMIT = 45.0;
     public static final double DRIVE_STATOR_LIMIT = 50.0;
 
-    public static final double TURN_P = 0 - 9;
-    public static final double TURN_I = 0 - 9;
-    public static final double TURN_D = 0 - 9;
+    public static final double TURN_P = 116;
+    public static final double TURN_I = 0.0;
+    public static final double TURN_D = 0.64;
 
-    public static final double TURN_S = 0 - 9;
-    public static final double TURN_V = 0 - 9;
-    public static final double TURN_A = 0 - 9;
+    public static final double TURN_S = 0.0;
+    public static final double TURN_V = 0.0;
+    public static final double TURN_A = 0.0;
 
-    public static final double MAX_ANGULAR_SPEED_ROTATIONS_PER_SECOND = 0 - 9;
-    public static final double MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED = 0 - 9;
+    public static final double MAX_ANGULAR_SPEED_ROTATIONS_PER_SECOND = 30;
+    public static final double MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED = 24;
 
-    public static final double DRIVE_P = 0 - 9;
-    public static final double DRIVE_I = 0 - 9;
-    public static final double DRIVE_D = 0 - 9;
-    // Use recalc to find the feedfoward values
+    public static final double DRIVE_P = 0.417;
+    public static final double DRIVE_I = 0.0;
+    public static final double DRIVE_D = 0.0;
+
+    public static final double DRIVE_S = 0.16;
+    // These values were gotten using recalc, then converted to the correct units & were confirmed
+    // through testing and characterization
     // https://www.reca.lc/drive?appliedVoltageRamp=%7B%22s%22%3A1200%2C%22u%22%3A%22V%2Fs%22%7D&batteryAmpHours=%7B%22s%22%3A18%2C%22u%22%3A%22A%2Ah%22%7D&batteryResistance=%7B%22s%22%3A0.018%2C%22u%22%3A%22Ohm%22%7D&batteryVoltageAtRest=%7B%22s%22%3A12.6%2C%22u%22%3A%22V%22%7D&efficiency=97&filtering=1&gearRatioMax=%7B%22magnitude%22%3A15%2C%22ratioType%22%3A%22Reduction%22%7D&gearRatioMin=%7B%22magnitude%22%3A3%2C%22ratioType%22%3A%22Reduction%22%7D&maxSimulationTime=%7B%22s%22%3A4%2C%22u%22%3A%22s%22%7D&maxSpeedAccelerationThreshold=%7B%22s%22%3A0.15%2C%22u%22%3A%22ft%2Fs2%22%7D&motor=%7B%22quantity%22%3A4%2C%22name%22%3A%22Kraken%20X60%2A%22%7D&motorCurrentLimit=%7B%22s%22%3A60%2C%22u%22%3A%22A%22%7D&numCyclesPerMatch=24&peakBatteryDischarge=20&ratio=%7B%22magnitude%22%3A4.59%2C%22ratioType%22%3A%22Reduction%22%7D&sprintDistance=%7B%22s%22%3A25%2C%22u%22%3A%22ft%22%7D&swerve=1&targetTimeToGoal=%7B%22s%22%3A2%2C%22u%22%3A%22s%22%7D&throttleResponseMax=0.99&throttleResponseMin=0.5&weightAuxilliary=%7B%22s%22%3A24%2C%22u%22%3A%22lbs%22%7D&weightDistributionFrontBack=0.5&weightDistributionLeftRight=0.5&weightInspected=%7B%22s%22%3A125%2C%22u%22%3A%22lbs%22%7D&wheelBaseLength=%7B%22s%22%3A27%2C%22u%22%3A%22in%22%7D&wheelBaseWidth=%7B%22s%22%3A20%2C%22u%22%3A%22in%22%7D&wheelCOFDynamic=0.9&wheelCOFLateral=1.1&wheelCOFStatic=1.1&wheelDiameter=%7B%22s%22%3A4%2C%22u%22%3A%22in%22%7D
-    public static final double DRIVE_S = 0 - 9;
-    public static final double DRIVE_V = 0 - 9;
-    public static final double DRIVE_A = 0 - 9;
+    public static final double DRIVE_V =
+        1.73 * WHEEL_CIRCUMFERENCE_METERS / DRIVE_GEAR_RATIO; // = 0.1203 V*s/m
+    public static final double DRIVE_A =
+        0.32 * WHEEL_CIRCUMFERENCE_METERS / DRIVE_GEAR_RATIO; // = 0.02225 V*s^2/m
   }
 
   public static final class TrajectoryConstants {
 
     public static final double DRIVE_BASE_DIAMETER =
         Math.sqrt(Math.pow(DriveConstants.TRACK_WIDTH, 2) + Math.pow(DriveConstants.WHEEL_BASE, 2));
-    public static final double MAX_SPEED = 0 - 9;
-    public static final double MAX_ACCELERATION = 0 - 9;
 
-    public static final double AUTO_TRANSLATION_P = 0 - 9;
-    public static final double AUTO_TRANSLATION_D = 0 - 9;
-    public static final double AUTO_THETA_P = 0 - 9;
-    public static final double AUTO_THETA_D = 0 - 9;
-  }
+    public static final double MAX_SPEED = 5.0;
+    public static final double MAX_ACCELERATION = 3;
 
-  /**
-   * stores the constants and PID configs for chassis because we want an all-real simulation for the
-   * chassis, the numbers are required to be considerably precise
-   */
-  public class SimulationConstants {
-    /**
-     * numbers that needs to be changed to fit each robot TODO: change these numbers to match your
-     * robot
-     */
-    public static final double WHEEL_COEFFICIENT_OF_FRICTION = 0.95,
-        ROBOT_MASS_KG = 40; // with bumpers
+    public static final double AUTO_TRANSLATION_P = 1.5; // 1.7
+    public static final double AUTO_TRANSLATION_D = 0.2;
+    public static final double AUTO_THETA_P = 4.5; // 5
+    public static final double AUTO_THETA_D = 0.4;
 
-    /** TODO: change motor type to match your robot */
-    public static final DCMotor DRIVE_MOTOR = DCMotor.getKrakenX60(1),
-        STEER_MOTOR = DCMotor.getFalcon500(1);
+    public static final double AUTO_SHOOT_HEADING_OFFSET = 2;
 
-    public static final double WHEEL_RADIUS_METERS = ModuleConstants.WHEEL_DIAMETER_METERS / 2,
-        DRIVE_GEAR_RATIO = ModuleConstants.DRIVE_GEAR_RATIO,
-        STEER_GEAR_RATIO = 16.0,
-        TIME_ROBOT_STOP_ROTATING_SECONDS = 0.06,
-        STEER_FRICTION_VOLTAGE = 0.12,
-        DRIVE_FRICTION_VOLTAGE = ModuleConstants.DRIVE_S,
-        DRIVE_INERTIA = 0.01,
-        STEER_INERTIA = 0.01;
+    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2;
+    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = 2;
 
-    /* adjust current limit */
-    public static final double DRIVE_CURRENT_LIMIT = ModuleConstants.DRIVE_STATOR_LIMIT;
-    // public static final double STEER_CURRENT_LIMIT = ModuleConstants.ST;
+    // Constraint for the motion profiled robot angle controller
+    public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS =
+        new TrapezoidProfile.Constraints(
+            MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
 
-    /* equations that calculates some constants for the simulator (don't modify) */
-    private static final double GRAVITY_CONSTANT = 9.81;
-    public static final double DRIVE_BASE_RADIUS = DriveConstants.MODULE_TRANSLATIONS[0].getNorm(),
-        /* friction_force = normal_force * coefficient_of_friction */
-        MAX_FRICTION_ACCELERATION = GRAVITY_CONSTANT * WHEEL_COEFFICIENT_OF_FRICTION,
-        MAX_FRICTION_FORCE_PER_MODULE =
-            MAX_FRICTION_ACCELERATION * ROBOT_MASS_KG / DriveConstants.MODULE_TRANSLATIONS.length,
-        /* force = torque / distance */
-        MAX_PROPELLING_FORCE_NEWTONS =
-            DRIVE_MOTOR.getTorque(DRIVE_CURRENT_LIMIT) * DRIVE_GEAR_RATIO / WHEEL_RADIUS_METERS,
-        /* floor_speed = wheel_angular_velocity * wheel_radius */
-        CHASSIS_MAX_VELOCITY =
-            DRIVE_MOTOR.freeSpeedRadPerSec
-                / DRIVE_GEAR_RATIO
-                * WHEEL_RADIUS_METERS, // calculate using choreo
-        CHASSIS_MAX_ACCELERATION_MPS_SQ =
-            Math.min(
-                MAX_FRICTION_ACCELERATION, // cannot exceed max friction
-                MAX_PROPELLING_FORCE_NEWTONS / ROBOT_MASS_KG),
-        CHASSIS_MAX_ANGULAR_VELOCITY_RAD_PER_SEC = CHASSIS_MAX_VELOCITY / DRIVE_BASE_RADIUS,
-        CHASSIS_MAX_ANGULAR_ACCELERATION_RAD_PER_SEC_SQ =
-            CHASSIS_MAX_ACCELERATION_MPS_SQ / DRIVE_BASE_RADIUS,
-        CHASSIS_FRICTIONAL_ANGULAR_ACCELERATION =
-            CHASSIS_MAX_ANGULAR_VELOCITY_RAD_PER_SEC / TIME_ROBOT_STOP_ROTATING_SECONDS;
+    public static final double X_TOLERANCE = 0.02;
+    public static final double Y_TOLERANCE = 0.02;
+    public static final double THETA_TOLERANCE = 1.25;
 
-    /* for collision detection in simulation */
-    public static final double BUMPER_WIDTH_METERS = Units.inchesToMeters(34.5),
-        BUMPER_LENGTH_METERS = Units.inchesToMeters(36),
-        /* https://en.wikipedia.org/wiki/Friction#Coefficient_of_friction */
-        BUMPER_COEFFICIENT_OF_FRICTION = 0.75,
-        /* https://simple.wikipedia.org/wiki/Coefficient_of_restitution */
-        BUMPER_COEFFICIENT_OF_RESTITUTION = 0.08;
+    // Note Detection Driving Constants
+    public static final double AUTO_ALIGN_TRANSLATIONAL_P = 3;
+    public static final double AUTO_ALIGN_TRANSLATIONAL_I = 0;
+    public static final double AUTO_ALIGN_TRANSLATIONAL_D = 0;
 
-    /* Gyro Sim */
-    public static final double GYRO_ANGULAR_ACCELERATION_THRESHOLD_SKIDDING_RAD_PER_SEC_SQ = 100;
-    public static final double SKIDDING_AMOUNT_AT_THRESHOLD_RAD = Math.toRadians(1.2);
-    /*
-     * https://store.ctr-electronics.com/pigeon-2/
-     * for a well-installed one with vibration reduction, only 0.4 degree
-     * but most teams just install it directly on the rigid chassis frame (including my team :D)
-     * so at least 1.2 degrees of drifting in 1 minutes for an average angular velocity of 60 degrees/second
-     * which is the average velocity during normal swerve-circular-offense
-     * */
-    public static final double NORMAL_GYRO_DRIFT_IN_1_MIN_Std_Dev_RAD = Math.toRadians(1.2);
-    public static final double AVERAGE_VELOCITY_RAD_PER_SEC_DURING_TEST = Math.toRadians(60);
+    public static Constraints AUTO_ALIGN_TRANSLATION_CONSTRAINTS = new Constraints(5, 2);
 
-    public static final int SIMULATION_TICKS_IN_1_PERIOD = 5;
+    public static final double AUTO_ALIGN_ROTATIONAL_P = 3;
+    public static final double AUTO_ALIGN_ROTATIONAL_I = 0;
+    public static final double AUTO_ALIGN_ROTATIONAL_D = 0;
+
+    public static Constraints AUTO_ALIGN_ROTATIONAL_CONSTRAINTS =
+        new Constraints(DriveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, 2);
   }
 
   public static final ModuleConfig[] moduleConfigs =

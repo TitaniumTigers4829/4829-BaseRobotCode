@@ -55,7 +55,7 @@ public class OdometryThreadReal extends Thread implements OdometryThread {
   private void refreshSignalsAndBlockThread() {
     switch (canBus) {
       case RIO -> {
-        TimeUtil.delay(1.0 / HardwareConstants.SIGNAL_FREQUENCY);
+        // TimeUtil.delay(1.0 / HardwareConstants.SIGNAL_FREQUENCY);
         BaseStatusSignal.refreshAll();
       }
       case CANIVORE -> BaseStatusSignal.waitForAll(HardwareConstants.TIMEOUT_S, statusSignals);

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.swerve.moduleIO;
+package frc.robot.subsystems.swerve.module;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -11,7 +11,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -56,8 +55,6 @@ public class PhysicalModule implements ModuleInterface {
     CANcoderConfiguration turnEncoderConfig = new CANcoderConfiguration();
     turnEncoderConfig.MagnetSensor.MagnetOffset = -moduleConfig.angleZero();
     turnEncoderConfig.MagnetSensor.SensorDirection = moduleConfig.encoderReversed();
-    turnEncoderConfig.MagnetSensor.AbsoluteSensorRange =
-        AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     turnEncoder.getConfigurator().apply(turnEncoderConfig, HardwareConstants.TIMEOUT_S);
 
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
@@ -153,12 +150,8 @@ public class PhysicalModule implements ModuleInterface {
       turnEncoderAbsolutePosition.clear();
     }
 
-    inputs.turnPosition = turnMotor.getPosition().getValueAsDouble();
-
     inputs.driveAppliedVolts = driveMotorAppliedVoltage.getValueAsDouble();
     inputs.driveCurrentAmps = driveMotorCurrent.getValueAsDouble();
-
-    inputs.turnPosition = turnMotor.getPosition().getValueAsDouble();
 
     inputs.turnVelocity = turnEncoderVelocity.getValueAsDouble();
     inputs.turnAppliedVolts = turnMotorAppliedVolts.getValueAsDouble();

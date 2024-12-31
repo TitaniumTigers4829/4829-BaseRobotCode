@@ -3,12 +3,17 @@ package frc.robot.extras.simulation.field;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.extras.simulation.gamePiece.CrescendoNoteSimulation;
 import frc.robot.extras.simulation.gamePiece.GamePieceSimulation;
 import frc.robot.extras.simulation.mechanismSim.IntakeSimulation;
 import frc.robot.extras.simulation.mechanismSim.swerve.AbstractDriveTrainSimulation;
+import frc.robot.extras.simulation.mechanismSim.swerve.BrushlessMotorSim;
 import frc.robot.extras.util.GeomUtil;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -125,6 +130,7 @@ public abstract class SimulatedField {
   protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
   protected final Set<GamePieceSimulation> gamePieces;
   protected final List<Runnable> simulationSubTickActions;
+  protected final List<WeakReference<BrushlessMotorSim>> motors;
   private final List<IntakeSimulation> intakeSimulations;
 
   /**
@@ -149,6 +155,7 @@ public abstract class SimulatedField {
     simulationSubTickActions = new ArrayList<>();
     this.gamePieces = new HashSet<>();
     this.intakeSimulations = new ArrayList<>();
+    motors = new ArrayList<>();
   }
 
   /**
@@ -276,6 +283,10 @@ public abstract class SimulatedField {
         "MapleArenaSimulation/Dyn4jEngineCPUTimeMS", (System.nanoTime() - t0) / 1000000.0);
   }
 
+  public void addMotor(BrushlessMotorSim motor) {
+    motors.add(new WeakReference<>(motor));
+  }
+
   /**
    *
    *
@@ -293,6 +304,17 @@ public abstract class SimulatedField {
    * </ul>
    */
   private void simulationSubTick() {
+    ArrayList<Double> motorCurrents = new ArrayList<>();
+    for (var motor : motors) {
+      BrushlessMotorSim motorRef = motor.get();
+      if (motorRef != null) {
+        motorRef.update();
+      }
+    }
+    double vin =
+        BatterySim.calculateLoadedBatteryVoltage(
+            12.2, 0.015, motorCurrents.stream().mapToDouble(Double::doubleValue).toArray());
+    RoboRioSim.setVInVoltage(vin);
     for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
       driveTrainSimulation.simulationSubTick();
 

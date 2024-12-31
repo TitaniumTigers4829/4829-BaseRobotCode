@@ -50,7 +50,38 @@ public class GeomUtil {
         dyn4jLinearVelocity.x, dyn4jLinearVelocity.y, angularVelocityRadPerSec);
   }
 
+  /**
+   * Gets the x and y velocities of a ChassisSpeeds
+   *
+   * @param chassisSpeeds the ChassisSpeeds to retrieve velocities from
+   * @return a Translation2d containing the velocities in the x and y direction in meters per second
+   */
   public static Translation2d getChassisSpeedsTranslationalComponent(ChassisSpeeds chassisSpeeds) {
     return new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond);
+  }
+
+  /**
+   * Checks if two translations are within a certain threshold in meters
+   *
+   * @param t1 Translation 1 as a Translation2d
+   * @param t2 Translation 2 as a Translation2d
+   * @param thresholdMeters the threshold between the two translations in meters
+   * @return true if the two translations are within thresholdMeters
+   */
+  public static boolean isTranslationWithinThreshold(
+      Translation2d t1, Translation2d t2, double thresholdMeters) {
+    return t1.getDistance(t2) <= thresholdMeters;
+  }
+
+  /**
+   * Checks if two rotations are within a certain threshold in degrees
+   *
+   * @param r1 Rotations 1 as a Rotation2d
+   * @param r2 Rotation 2 as a Rotation2d
+   * @param thresholdMeters the threshold between the two rotations in degrees
+   * @return true if the two rotations are within thresholdDegrees
+   */
+  public static boolean isRotationWithinThreshold(double r1, double r2, double thresholdDegrees) {
+    return Math.abs(r1 - r2) <= thresholdDegrees;
   }
 }

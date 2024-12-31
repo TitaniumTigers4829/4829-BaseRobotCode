@@ -3,11 +3,10 @@ package frc.robot.subsystems.swerve.odometryThread;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.units.measure.Angle;
+import frc.robot.Constants;
 import frc.robot.Constants.HardwareConstants;
-import frc.robot.Robot;
+// import frc.robot.Constants.SimulationConstants;
 import frc.robot.extras.util.DeviceCANBus;
-import frc.robot.extras.util.TimeUtil;
-import frc.robot.subsystems.swerve.SwerveConstants.SimulationConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -47,7 +46,7 @@ public interface OdometryThread {
   }
 
   static OdometryThread createInstance(DeviceCANBus canBus) {
-    return switch (Robot.CURRENT_ROBOT_MODE) {
+    return switch (Constants.CURRENT_MODE) {
       case REAL ->
           new OdometryThreadReal(
               canBus,
@@ -74,12 +73,13 @@ public interface OdometryThread {
   final class OdometryThreadSim implements OdometryThread {
     @Override
     public void updateInputs(OdometryThreadInputs inputs) {
-      inputs.measurementTimeStamps = new double[SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD];
-      final double robotStartingTimeStamps = TimeUtil.getLogTimeSeconds(),
-          iterationPeriodSeconds =
-              Robot.defaultPeriodSecs / SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD;
-      for (int i = 0; i < SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD; i++)
-        inputs.measurementTimeStamps[i] = robotStartingTimeStamps + i * iterationPeriodSeconds;
+      // inputs.measurementTimeStamps = new
+      // double[SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD];
+      // final double robotStartingTimeStamps = TimeUtil.getLogTimeSeconds(),
+      //     iterationPeriodSeconds =
+      //         Robot.defaultPeriodSecs / SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD;
+      // for (int i = 0; i < SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD; i++)
+      //   inputs.measurementTimeStamps[i] = robotStartingTimeStamps + i * iterationPeriodSeconds;
     }
   }
 }
