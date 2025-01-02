@@ -1,6 +1,4 @@
-/**
- * This subsystem is an elevator that uses PID for its position.
- */
+/** This subsystem is an elevator that uses PID for its position. */
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -8,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Elevator extends SubsystemBase {
   /** Creates a new Elevator. */
   private ElevatorInterface elevatorInterface;
+
   private ElevatorInputsAutoLogged inputs = new ElevatorInputsAutoLogged();
 
   public Elevator(ElevatorInterface elevatorInterface) {

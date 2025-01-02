@@ -1,11 +1,8 @@
 package frc.robot.subsystems.elevator;
 
-import java.io.ObjectInputFilter.Status;
-
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.elevator.ElevatorInterface.ElevatorInputs;
@@ -54,7 +51,8 @@ public class PhysicalElevator {
 
   public void setVolts(double volts) {
     leaderMotor.setVoltage(volts);
-    followerMotor.setVoltage(volts);;
+    followerMotor.setVoltage(volts);
+    ;
   }
 
   public double getVolts() {

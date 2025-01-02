@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems.arm;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -26,6 +24,5 @@ public class PhysicalArm implements ArmInterface {
   }
 
   @Override
-  public void setAngle(double angle) {
-  }
+  public void setAngle(double angle) {}
 }

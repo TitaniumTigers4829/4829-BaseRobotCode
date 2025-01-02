@@ -3,7 +3,7 @@ package frc.robot.subsystems.elevator;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorInterface {
-  
+
   @AutoLog
   public static class ElevatorInputs {
     public double leaderMotorPosition = 0.0;
@@ -13,12 +13,14 @@ public interface ElevatorInterface {
 
   /**
    * Updates inputs for elevator for AdvantageKit to log
+   *
    * @param inputs values related to the elevator
    */
   public default void updateInputs(ElevatorInputs inputs) {}
 
   /**
    * Gets the current position of the elevator
+   *
    * @return
    */
   public default double getElevatorPosition() {

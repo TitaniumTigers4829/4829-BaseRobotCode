@@ -16,18 +16,21 @@ public interface IntakeInterface {
 
   /**
    * Updates intake values
+   *
    * @param inputs
    */
   default void updateInputs(IntakeInputs inputs) {}
 
   /**
    * Sets the intake speed
+   *
    * @param speed The intake speed value from -1 to 1 (negative being reversed)
    */
   default void setIntakeSpeed(double speed) {}
 
   /**
    * Gets the current speed of the intake
+   *
    * @return Current velocity of the intake
    */
   default double getIntakeSpeed() {

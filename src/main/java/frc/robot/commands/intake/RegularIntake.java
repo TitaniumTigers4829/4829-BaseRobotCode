@@ -7,7 +7,7 @@ import frc.robot.subsystems.intake.Intake;
 
 public class RegularIntake extends Command {
   private final Intake intakeSubsystem;
- 
+
   public RegularIntake(Intake intake) {
     this.intakeSubsystem = intake;
     addRequirements(this.intakeSubsystem);

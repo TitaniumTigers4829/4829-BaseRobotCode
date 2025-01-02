@@ -54,8 +54,9 @@ public interface OdometryThread {
               registeredInputs.toArray(new OdometryDoubleInput[0]),
               registeredStatusSignals.toArray(new BaseStatusSignal[0]));
       case SIM -> new OdometryThreadSim();
-      //case REPLAY -> inputs -> {};
-      default -> throw new IllegalArgumentException("Unexpected value: " + Robot.CURRENT_ROBOT_MODE);
+        // case REPLAY -> inputs -> {};
+      default ->
+          throw new IllegalArgumentException("Unexpected value: " + Robot.CURRENT_ROBOT_MODE);
     };
   }
 

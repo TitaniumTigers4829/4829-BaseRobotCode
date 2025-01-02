@@ -3,11 +3,11 @@ package frc.robot.subsystems.elevator;
 public class ElevatorConstants {
   public static final int ELEVATOR_LEADER_MOTOR_ID = 0 - 9;
   public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 0 - 9;
-  
+
   public static final double ELEVATOR_P = 0 - 9;
   public static final double ELEVATOR_I = 0 - 9;
   public static final double ELEVATOR_D = 0 - 9;
-   
+
   public static final double DRUM_RADIUS = 0 - 9;
   public static final double ELEVATOR_GEAR_RATIO = 2;
   public static final double ELEVATOR_CARRIAGE_MASS = 0 - 9;

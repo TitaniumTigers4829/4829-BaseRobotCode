@@ -4,7 +4,7 @@ import frc.robot.Constants.JoystickConstants;
 import java.util.function.DoubleSupplier;
 
 public class JoystickUtil {
-    
+
   /**
    * Deadbands a value to 0
    *

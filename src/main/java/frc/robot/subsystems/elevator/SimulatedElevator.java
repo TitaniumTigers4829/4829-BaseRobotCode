@@ -6,12 +6,25 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 /** Add your docs here. */
 public class SimulatedElevator implements ElevatorInterface {
-  private ElevatorSim elevatorSim = new ElevatorSim(DCMotor.getFalcon500(2), ElevatorConstants.ELEVATOR_GEAR_RATIO, ElevatorConstants.ELEVATOR_CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true, 0.0);
+  private ElevatorSim elevatorSim =
+      new ElevatorSim(
+          DCMotor.getFalcon500(2),
+          ElevatorConstants.ELEVATOR_GEAR_RATIO,
+          ElevatorConstants.ELEVATOR_CARRIAGE_MASS,
+          ElevatorConstants.DRUM_RADIUS,
+          ElevatorConstants.MIN_HEIGHT,
+          ElevatorConstants.MAX_HEIGHT,
+          true,
+          0.0);
   private PIDController simPID;
   private double currentVolts;
 
   public SimulatedElevator() {
-    simPID = new PIDController(ElevatorConstants.ELEVATOR_P, ElevatorConstants.ELEVATOR_I, ElevatorConstants.ELEVATOR_D);
+    simPID =
+        new PIDController(
+            ElevatorConstants.ELEVATOR_P,
+            ElevatorConstants.ELEVATOR_I,
+            ElevatorConstants.ELEVATOR_D);
   }
 
   public void updateInputs(ElevatorInputs inputs) {
