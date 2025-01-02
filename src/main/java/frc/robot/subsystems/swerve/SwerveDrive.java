@@ -139,6 +139,7 @@ public class SwerveDrive extends SubsystemBase {
         VecBuilder.fill(xStandardDeviation, yStandardDeviation, thetaStandardDeviation));
   }
 
+  @Override
   public void periodic() {
     final double t0 = TimeUtil.getRealTimeSeconds();
     fetchOdometryInputs();
