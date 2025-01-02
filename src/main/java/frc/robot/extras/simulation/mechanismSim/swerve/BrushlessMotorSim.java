@@ -1,40 +1,40 @@
-// A drop-in replacement for WPILib's DCMotorSim to simulate modern brushless motors
-// Copyright (C) 2024 Team-5516-"Iron Maple"
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
-// Original source:
-// https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/src/main/java/org/ironmaple/simulation/drivesims/BrushlessMotorSim.java
-
 package frc.robot.extras.simulation.mechanismSim.swerve;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.NewtonMeters;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.CurrentUnit;
+import edu.wpi.first.units.PerUnit;
+import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Per;
+import edu.wpi.first.units.measure.Torque;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import frc.robot.extras.simulation.field.SimulatedField;
 
 /**
  *
  *
  * <h1>{@link DCMotorSim} with a bit of extra spice.</h1>
- *
- * <p>By Team 5516 "IRON MAPLE".
  *
  * <p>This class extends the functionality of the original {@link DCMotorSim} and models the
  * following aspects in addition:
@@ -43,16 +43,47 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
  *   <li>Friction force on the rotor.
  *   <li>Smart current limiting.
  *   <li>Brake and coast modes (only for simulating brushless motors).
- *   <li>Simulated encoder readings.
  * </ul>
  */
 public class BrushlessMotorSim {
-  private final DCMotor motor;
-  private final double gearRatio, frictionTorque, loadInertiaJKgMetersSquared;
-  private double requestedVoltageOutput, currentLimitAmps;
-  private boolean breakModeEnabled;
+  public enum OutputType {
+    VOLTAGE,
+    CURRENT
+  }
 
-  private double angularPositionRad, angularVelocityRadPerSec, appliedVolts, currentDrawAmps;
+  public enum OutputMode {
+    VELOCITY,
+    POSITION,
+    OPEN_LOOP
+  }
+
+  /** The Constants for the motor */
+  private final DCMotor motor;
+
+  /** The dynamics simulation for the motor */
+  private final DCMotorSim sim;
+
+  /** The gear ratio, value above 1.0 are a reduction */
+  private final double gearing;
+
+  /** The voltage required to overcome friction */
+  private final Voltage frictionVoltage;
+
+  private final PIDController poseVoltController = new PIDController(0, 0, 0);
+  private final PIDController veloVoltController = new PIDController(0, 0, 0);
+  private final PIDController poseCurrentController = new PIDController(0, 0, 0);
+  private final PIDController veloCurrentController = new PIDController(0, 0, 0);
+
+  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 0, 0);
+
+  private Current currentLimit = Amps.of(300.0);
+
+  private OutputType outputType = OutputType.VOLTAGE;
+  private OutputMode outputMode = OutputMode.OPEN_LOOP;
+  private double output = 0.0;
+
+  private Angle forwardLimit = Radians.of(Double.POSITIVE_INFINITY);
+  private Angle reverseLimit = Radians.of(Double.NEGATIVE_INFINITY);
 
   /**
    *
@@ -61,195 +92,396 @@ public class BrushlessMotorSim {
    *
    * @param motor the {@link DCMotor} model representing the motor(s) in the simulation
    * @param gearRatio the gear ratio of the mechanism; values greater than 1 indicate a reduction
-   * @param loadIntertiaJKgMetersSquared the rotational inertia of the mechanism, in kg·m²
-   * @param frictionVoltage the voltage required to overcome friction and make the mechanism move
+   * @param loadIntertia the rotational inertia of the mechanism
+   * @param frictionVoltage the voltage required to keep the motor moving at a constant velocity
    */
   public BrushlessMotorSim(
+      SimulatedField arena,
       DCMotor motor,
       double gearRatio,
-      double loadIntertiaJKgMetersSquared,
-      double frictionVoltage) {
+      MomentOfInertia loadIntertia,
+      Voltage frictionVoltage) {
+    this.sim =
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                motor, loadIntertia.in(KilogramSquareMeters), gearRatio),
+            motor);
     this.motor = motor;
-    this.gearRatio = gearRatio;
-    this.frictionTorque = motor.getTorque(motor.getCurrent(0, frictionVoltage)) * gearRatio;
+    this.gearing = gearRatio;
+    this.frictionVoltage = frictionVoltage;
 
-    this.loadInertiaJKgMetersSquared = loadIntertiaJKgMetersSquared;
-    disableCurrentLimit();
-    this.breakModeEnabled = true;
-
-    this.angularPositionRad = angularVelocityRadPerSec = appliedVolts = currentDrawAmps = 0;
+    arena.addMotor(this);
   }
 
   /**
+   * Configures the angle of the motor.
    *
-   *
-   * <h2>Requests an Output Voltage for the Motor.</h2>
-   *
-   * <p><strong>Note:</strong> The requested voltage may not always be fully applied due to current
-   * limits. For details on current limiting, refer to {@link #enableCurrentLimit(double)}.
-   *
-   * @param volts the requested output voltage for the motor
+   * @param angle the angle of the motor
+   * @return this instance for method chaining
    */
-  public void requestVoltageOutput(double volts) {
-    this.requestedVoltageOutput = volts;
+  public BrushlessMotorSim withOverrideAngle(Angle angle) {
+    sim.setAngle(angle.in(Radians));
+    return this;
   }
 
   /**
+   * Configures the angular velocity of the motor.
    *
-   *
-   * <h2>Configures a Current Limit for the Motor.</h2>
-   *
-   * <p>If the motor's supply current exceeds the specified limit, the motor will reduce its output
-   * to prevent exceeding the limit.
-   *
-   * @param currentLimitAmps the maximum allowed current, in amperes
+   * @param angularVelocity the angular velocity of the motor
+   * @return this instance for method chaining
    */
-  public void enableCurrentLimit(double currentLimitAmps) {
-    this.currentLimitAmps = currentLimitAmps;
+  public BrushlessMotorSim withOverrideAngularVelocity(AngularVelocity angularVelocity) {
+    sim.setAngularVelocity(angularVelocity.in(RadiansPerSecond));
+    return this;
+  }
+
+  public BrushlessMotorSim withFeedForward(
+      Voltage kS,
+      Per<VoltageUnit, AngularVelocityUnit> kV,
+      Per<VoltageUnit, AngularAccelerationUnit> kA) {
+    var kVUnit = PerUnit.combine(Volts, RadiansPerSecond);
+    var kAUnit = PerUnit.combine(Volts, RadiansPerSecondPerSecond);
+    feedforward =
+        new SimpleMotorFeedforward(
+            kS.in(Volts), kV.in(kVUnit), kA.in(kAUnit), SimulatedField.getSimulationDt());
+    return this;
   }
 
   /**
+   * Configures the PD controller for Positional Requests using {@link OutputType#VOLTAGE}.
    *
+   * <p>This is unit safe and can be configure like so:
    *
-   * <h2>Disables the Current Limit of the Motor.</h2>
+   * <pre><code>
+   * // Volts per Rotation of error is how CTRE handles PID when used with voltage requests
+   * sim.withPositionalVoltageController(
+   *   Volts.per(Rotation).ofNative(100.0),
+   *   Volts.per(RotationsPerSecond).ofNative(5.0)
+   * );
+   * </code></pre>
    *
-   * <p>This method removes the current limit, allowing the motor to operate without any current
-   * restrictions.
+   * @param kP the proportional gain
+   * @param kD the derivative gain
+   * @return this instance for method chaining
    */
-  public void disableCurrentLimit() {
-    this.currentLimitAmps = Double.POSITIVE_INFINITY;
+  public BrushlessMotorSim withPositionalVoltageController(
+      Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
+    var kPUnit = PerUnit.combine(Volts, Radians);
+    var kDUnit = PerUnit.combine(Volts, RadiansPerSecond);
+    poseVoltController.setP(kP.in(kPUnit));
+    poseVoltController.setD(kD.in(kDUnit));
+    return this;
   }
 
   /**
+   * Configures the PD controller for Velocity Requests using {@link OutputType#VOLTAGE}.
    *
+   * <p>This is unit safe and can be configure like so:
    *
-   * <h2>Configures the Zero Power Behavior of the Motor.</h2>
+   * <pre><code>
+   * // Volts per RPS of error is how CTRE handles PID when used with voltage requests
+   * sim.withVelocityVoltageController(
+   *   Volts.per(RotationsPerSecond).ofNative(0.4)
+   * );
+   * </code></pre>
    *
-   * <p>This method sets the motor's zero power behavior, similar to the <code>
-   * setZeroPowerBehavior()</code> method for brushless motors.
-   *
-   * <p>Use this feature only when simulating brushless motors.
-   *
-   * @param enabled <code>true</code> to enable brake mode, <code>false</code> to enable coast mode
+   * @param kP the proportional gain
+   * @return this instance for method chaining
    */
-  public void setMotorBrakeEnabled(boolean enabled) {
-    this.breakModeEnabled = enabled;
+  public BrushlessMotorSim withVelocityVoltageController(Per<VoltageUnit, AngleUnit> kP) {
+    var kPUnit = PerUnit.combine(Volts, Radians);
+    veloVoltController.setP(kP.in(kPUnit));
+    return this;
   }
 
   /**
+   * Configures the PD controller for Positional Requests using {@link OutputType#CURRENT}.
    *
+   * <p>This is unit safe and can be configure like so:
    *
-   * <h2>Sets the Current State of the Motor.</h2>
+   * <pre><code>
+   * // Amps per Rotation of error is how CTRE handles PID when used with current requests
+   * sim.withPositionalCurrentController(
+   *   Amps.per(Rotation).ofNative(100.0),
+   *   Amps.per(RotationsPerSecond).ofNative(5.0)
+   * );
+   * </code></pre>
    *
-   * <p>This method instantly shifts the motor to a given state, setting its angular position and
-   * velocity.
-   *
-   * <p>Equivalent to the {@link DCMotorSim#setState(double, double)} method.
-   *
-   * @param angularPositionRad the angular position of the motor, in radians
-   * @param angularVelocityRadPerSec the angular velocity of the motor, in radians per second
+   * @param kP the proportional gain
+   * @param kD the derivative gain
+   * @return this instance for method chaining
    */
-  public void setState(double angularPositionRad, double angularVelocityRadPerSec) {
-    this.angularPositionRad = angularPositionRad;
-    this.angularVelocityRadPerSec = angularVelocityRadPerSec;
+  public BrushlessMotorSim withPositionalCurrentController(
+      Per<CurrentUnit, AngleUnit> kP, Per<CurrentUnit, AngularVelocityUnit> kD) {
+    var kPUnit = PerUnit.combine(Amps, Radians);
+    var kDUnit = PerUnit.combine(Amps, RadiansPerSecond);
+    poseCurrentController.setP(kP.in(kPUnit));
+    poseCurrentController.setD(kD.in(kDUnit));
+    return this;
   }
 
   /**
+   * Configures the PD controller for Velocity Requests using {@link OutputType#CURRENT}.
    *
+   * <p>This is unit safe and can be configure like so:
    *
-   * <h2>Updates the Simulation.</h2>
+   * <pre><code>
+   * // Amps per RPS of error is how CTRE handles PID when used with current requests
+   * sim.withVelocityCurrentController(
+   *   Amps.per(RotationsPerSecond).ofNative(0.4)
+   * );
+   * </code></pre>
    *
-   * <p>This method steps the motor simulation forward by a given time interval (<code>dt</code>),
-   * recalculating and storing the states of the motor.
-   *
-   * <p>Equivalent to {@link DCMotorSim#update(double)}.
-   *
-   * @param dtSeconds the time step for the simulation, in seconds
+   * @param kP the proportional gain
+   * @return this instance for method chaining
    */
-  public void update(double dtSeconds) {
-    appliedVolts =
-        constrainOutputVoltage(
-            motor, angularVelocityRadPerSec * gearRatio, currentLimitAmps, requestedVoltageOutput);
-
-    double totalTorque = getMotorElectricTorque();
-
-    /* apply friction force */
-    final boolean electricTorqueResultingInAcceleration =
-        totalTorque * angularVelocityRadPerSec > 0;
-    if (electricTorqueResultingInAcceleration)
-      totalTorque = MathUtil.applyDeadband(totalTorque, frictionTorque, Double.POSITIVE_INFINITY);
-    else totalTorque += getCurrentFrictionTorque();
-
-    this.angularVelocityRadPerSec += totalTorque / loadInertiaJKgMetersSquared * dtSeconds;
-    this.angularPositionRad += this.angularVelocityRadPerSec * dtSeconds;
+  public BrushlessMotorSim withVelocityCurrentController(Per<CurrentUnit, AngleUnit> kP) {
+    var kPUnit = PerUnit.combine(Amps, Radians);
+    veloCurrentController.setP(kP.in(kPUnit));
+    return this;
   }
 
   /**
+   * Configures the positionaly controllers to use continuous wrap.
    *
-   *
-   * <h2>Calculates the Electric Torque on the Rotor.</h2>
-   *
-   * @return the torque applied to the mechanism by the motor's electrical output
+   * @param min the minimum angle
+   * @param max the maximum angle
+   * @return this instance for method chaining
+   * @see PIDController#enableContinuousInput(double, double)
    */
-  private double getMotorElectricTorque() {
-    if (!breakModeEnabled && appliedVolts == 0) return currentDrawAmps = 0;
-    currentDrawAmps = motor.getCurrent(angularVelocityRadPerSec * gearRatio, appliedVolts);
-    return motor.getTorque(currentDrawAmps) * gearRatio;
+  public BrushlessMotorSim withControllerContinousInput(Angle min, Angle max) {
+    poseVoltController.enableContinuousInput(min.in(Radians), max.in(Radians));
+    poseCurrentController.enableContinuousInput(min.in(Radians), max.in(Radians));
+    return this;
   }
 
   /**
+   * Configures the current limit for the motor.
    *
+   * <p>This is the total current limit for the sim
    *
-   * <h2>Calculates the Dynamic Friction Torque on the Mechanism.</h2>
-   *
-   * <p>This method simulates the amount of dynamic friction acting on the rotor when the mechanism
-   * is rotating.
-   *
-   * <p>In the real world, dynamic friction torque is typically constant. However, in the
-   * simulation, it is made proportional to the rotor speed when the speed is small to avoid
-   * oscillation.
-   *
-   * @return the amount of dynamic friction torque on the mechanism, in Newton-meters
+   * @param currentLimit the current limit for the motor
+   * @return
    */
-  private double getCurrentFrictionTorque() {
-    final double kFriction = 3.0,
-        percentAngularVelocity =
-            Math.abs(angularVelocityRadPerSec) * gearRatio / motor.freeSpeedRadPerSec,
-        currentFrictionTorqueMagnitude =
-            Math.min(percentAngularVelocity * kFriction * frictionTorque, frictionTorque);
-    return Math.copySign(currentFrictionTorqueMagnitude, -angularVelocityRadPerSec);
+  public BrushlessMotorSim withStatorCurrentLimit(Current currentLimit) {
+    // this is a limit across the sum of all motors output,
+    // so it should be set to the total current limit of the mechanism
+    this.currentLimit = currentLimit;
+    return this;
   }
 
   /**
+   * Configures the hard limits for the motor.
    *
-   *
-   * <h2>Constrains the Output Voltage of the Motor.</h2>
-   *
-   * <p>This method constrains the output voltage of the motor to ensure it operates within the
-   * current limit and does not exceed the available voltage from the robot's system.
-   *
-   * <p>The output voltage is constrained such that the motor does not function outside of the
-   * specified current limit. Additionally, it ensures that the voltage does not exceed the robot's
-   * input voltage, which can be obtained from {@link RoboRioSim#getVInVoltage()}.
-   *
-   * @param motor the {@link DCMotor} that models the motor
-   * @param motorCurrentVelocityRadPerSec the current velocity of the motor's rotor (geared), in
-   *     radians per second
-   * @param currentLimitAmps the configured current limit, in amperes. You can configure the current
-   *     limit using {@link #enableCurrentLimit(double)}.
-   * @param requestedOutputVoltage the requested output voltage
-   * @return the constrained output voltage based on the current limit and system voltage
+   * @param forwardLimit the forward limit
+   * @param reverseLimit the reverse limit
+   * @return this instance for method chaining
    */
-  public static double constrainOutputVoltage(
-      DCMotor motor,
-      double motorCurrentVelocityRadPerSec,
-      double currentLimitAmps,
-      double requestedOutputVoltage) {
+  public BrushlessMotorSim withHardLimits(Angle forwardLimit, Angle reverseLimit) {
+    this.forwardLimit = forwardLimit;
+    this.reverseLimit = reverseLimit;
+    return this;
+  }
+
+  public MomentOfInertia getMOI() {
+    return KilogramSquareMeters.of(sim.getJKgMetersSquared());
+  }
+
+  public Angle getPosition() {
+    return Radians.of(sim.getAngularPositionRad());
+  }
+
+  public AngularVelocity getVelocity() {
+    return RadiansPerSecond.of(sim.getAngularVelocityRadPerSec());
+  }
+
+  public AngularAcceleration getAcceleration() {
+    return RadiansPerSecondPerSecond.of(sim.getAngularAccelerationRadPerSecSq());
+  }
+
+  public Current getStatorCurrentDraw() {
+    return Amps.of(sim.getCurrentDrawAmps());
+  }
+
+  public Current getSupplyCurrent() {
+    // https://www.chiefdelphi.com/t/current-limiting-talonfx-values/374780/10
+    return getStatorCurrentDraw()
+        .times(sim.getInputVoltage() / RobotController.getBatteryVoltage());
+  }
+
+  public Voltage getRotorVoltage() {
+    return Volts.of(sim.getInputVoltage());
+  }
+
+  public Voltage getSupplyVoltage() {
+    return Volts.of(RobotController.getBatteryVoltage());
+  }
+
+  public void setControl(OutputType outputType, AngularVelocity velo) {
+    this.outputType = outputType;
+    this.outputMode = OutputMode.VELOCITY;
+    this.output = velo.in(RadiansPerSecond);
+  }
+
+  public void setControl(OutputType outputType, Angle pos) {
+    this.outputType = outputType;
+    this.outputMode = OutputMode.POSITION;
+    this.output = pos.in(Radians);
+  }
+
+  public void setControl(Current amps) {
+    this.outputType = OutputType.CURRENT;
+    this.outputMode = OutputMode.OPEN_LOOP;
+    this.output = amps.in(Amps);
+  }
+
+  public void setControl(Voltage volts) {
+    this.outputType = OutputType.VOLTAGE;
+    this.outputMode = OutputMode.OPEN_LOOP;
+    this.output = volts.in(Volts);
+  }
+
+  public void setControl() {
+    this.outputType = OutputType.VOLTAGE;
+    this.outputMode = OutputMode.OPEN_LOOP;
+    this.output = 0.0;
+  }
+
+  public void update() {
+    double dtSeconds = SimulatedField.getSimulationDt();
+    switch (this.outputType) {
+      case VOLTAGE -> {
+        switch (this.outputMode) {
+          case OPEN_LOOP -> {
+            driveAtVoltage(Volts.of(output));
+          }
+          case POSITION -> {
+            Voltage voltage =
+                Volts.of(poseVoltController.calculate(getPosition().in(Radians), output));
+            Voltage feedforwardVoltage =
+                Volts.of(
+                    feedforward.calculate(
+                        getVelocity().in(RadiansPerSecond),
+                        velocityForVolts(voltage).in(RadiansPerSecond)));
+            driveAtVoltage(feedforwardVoltage.plus(voltage));
+          }
+          case VELOCITY -> {
+            Voltage voltage =
+                Volts.of(veloVoltController.calculate(getVelocity().in(RadiansPerSecond), output));
+            Voltage feedforwardVoltage =
+                Volts.of(
+                    feedforward.calculate(
+                        getVelocity().in(RadiansPerSecond),
+                        RadiansPerSecond.of(output).in(RadiansPerSecond)));
+            driveAtVoltage(voltage.plus(feedforwardVoltage));
+          }
+        }
+      }
+      case CURRENT -> {
+        switch (this.outputMode) {
+          case OPEN_LOOP -> {
+            sim.setInputVoltage(voltsForAmps(Amps.of(output), getVelocity()).in(Volts));
+          }
+          case POSITION -> {
+            Current current =
+                Amps.of(poseCurrentController.calculate(getPosition().in(Radians), output));
+            Voltage voltage = voltsForAmps(current, getVelocity());
+            Voltage feedforwardVoltage =
+                Volts.of(
+                    feedforward.calculate(
+                        getVelocity().in(RadiansPerSecond),
+                        velocityForVolts(voltage).in(RadiansPerSecond)));
+            driveAtVoltage(feedforwardVoltage.plus(voltage));
+          }
+          case VELOCITY -> {
+            Current current =
+                Amps.of(veloCurrentController.calculate(getPosition().in(Radians), output));
+            Voltage feedforwardVoltage =
+                Volts.of(
+                    feedforward.calculate(
+                        getVelocity().in(RadiansPerSecond),
+                        RadiansPerSecond.of(output).in(RadiansPerSecond)));
+            Voltage voltage = voltsForAmps(current, getVelocity()).plus(feedforwardVoltage);
+            driveAtVoltage(voltage);
+          }
+        }
+      }
+    }
+
+    sim.update(dtSeconds);
+
+    if (getPosition().lte(reverseLimit)) {
+      sim.setState(reverseLimit.in(Radians), 0.0);
+    } else if (getPosition().gte(forwardLimit)) {
+      sim.setState(forwardLimit.in(Radians), 0.0);
+    }
+  }
+
+  private void driveAtVoltage(Voltage voltage) {
+    // The voltage constrained to current limits and battery voltage
+    Voltage constrained = constrainOutputVoltage(voltage);
+    Voltage frictionVoltage = applyFriction(constrained);
+
+    sim.setInputVoltage(frictionVoltage.in(Volts));
+  }
+
+  private Voltage applyFriction(Voltage voltage) {
+    // This function is responsible for slowing down acceleration
+    // and slowing down the velocity of the motor when at lowere output.
+    // This is not the same as the static friction, which is the force
+    // required to get the motor moving.
+
+    // to apply friction we convert the motors output to torque then back to voltage
+    double current =
+        motor.getCurrent(sim.getAngularVelocityRadPerSec() * gearing, voltage.in(Volts));
+    double currentVelo = getVelocity().in(RadiansPerSecond) * gearing;
+    double torque = motor.getTorque(current);
+    double friction = frictionTorque().in(NewtonMeters);
+
+    boolean movingForward = currentVelo > 0;
+
+    if (movingForward && currentVelo > motor.getSpeed(torque, sim.getInputVoltage())) {
+      // the motor is moving faster than it should based on the output voltage
+      // apply the friction to slow it down
+      torque -= friction;
+    } else if (!movingForward && currentVelo < motor.getSpeed(torque, sim.getInputVoltage())) {
+      // the motor is moving slower than it should based on the output voltage
+      // apply the friction to speed it up
+      torque += friction;
+    }
+
+    return Volts.of(motor.getVoltage(torque, currentVelo));
+  }
+
+  private Voltage voltsForAmps(Current current, AngularVelocity angularVelocity) {
+    // find what voltage is needed to get the current
+    return Volts.of(
+        motor.getVoltage(current.in(Amps), angularVelocity.in(RadiansPerSecond) * gearing));
+  }
+
+  private AngularVelocity velocityForVolts(Voltage voltage) {
+    return RadiansPerSecond.of(
+        motor.getSpeed(motor.getTorque(getStatorCurrentDraw().in(Amps)), voltage.in(Volts)));
+  }
+
+  private Torque frictionTorque() {
+    return NewtonMeters.of(
+        motor.getTorque(motor.getCurrent(0.0, frictionVoltage.in(Volts))) * gearing);
+  }
+
+  private Voltage constrainOutputVoltage(Voltage requestedOutput) {
+    final double kCurrentThreshold = 1.2;
+
+    final double motorCurrentVelocityRadPerSec = getVelocity().in(RadiansPerSecond);
+    final double currentLimitAmps = currentLimit.in(Amps);
+    final double requestedOutputVoltage = requestedOutput.in(Volts);
     final double currentAtRequestedVolts =
         motor.getCurrent(motorCurrentVelocityRadPerSec, requestedOutputVoltage);
 
-    /* normally, motor controller starts cutting the supply voltage when the current exceed 120% the current limit */
-    final boolean currentTooHigh = Math.abs(currentAtRequestedVolts) > 1.2 * currentLimitAmps;
+    // Resource for current limiting:
+    // https://file.tavsys.net/control/controls-engineering-in-frc.pdf (sec 12.1.3)
+    final boolean currentTooHigh =
+        Math.abs(currentAtRequestedVolts) > (kCurrentThreshold * currentLimitAmps);
     double limitedVoltage = requestedOutputVoltage;
     if (currentTooHigh) {
       final double limitedCurrent = Math.copySign(currentLimitAmps, currentAtRequestedVolts);
@@ -257,87 +489,16 @@ public class BrushlessMotorSim {
           motor.getVoltage(motor.getTorque(limitedCurrent), motorCurrentVelocityRadPerSec);
     }
 
-    if (Math.abs(limitedVoltage) > Math.abs(requestedOutputVoltage))
+    // ensure the current limit doesn't cause an increase to output voltage
+    if (Math.abs(limitedVoltage) > Math.abs(requestedOutputVoltage)) {
       limitedVoltage = requestedOutputVoltage;
+    }
 
-    return MathUtil.clamp(limitedVoltage, -RoboRioSim.getVInVoltage(), RoboRioSim.getVInVoltage());
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the Voltage Actually Applied to the Motor.</h2>
-   *
-   * <p>This method returns the voltage that is actually applied to the motor after being
-   * constrained by {@link #constrainOutputVoltage(DCMotor, double, double, double)}.
-   *
-   * <p>The voltage is constrained to ensure that the current limit is not exceeded and that it does
-   * not surpass the robot's battery voltage.
-   *
-   * @return the constrained voltage actually applied to the motor
-   */
-  public double getAppliedVolts() {
-    return appliedVolts;
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the Angular Position of the Mechanism.</h2>
-   *
-   * <p>This method is equivalent to {@link DCMotorSim#getAngularPositionRad()}.
-   *
-   * @return the final angular position of the mechanism, in radians
-   */
-  public double getAngularPositionRad() {
-    return angularPositionRad;
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the Angular Position of the Motor.</h2>
-   *
-   * @return the un-geared angular position of the motor (encoder reading), in radians
-   */
-  public double getEncoderPositionRad() {
-    return angularPositionRad * gearRatio;
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the Angular Velocity of the Mechanism.</h2>
-   *
-   * <p>This method is equivalent to {@link DCMotorSim#getAngularVelocityRadPerSec()}.
-   *
-   * @return the final angular velocity of the mechanism, in radians per second
-   */
-  public double getAngularVelocityRadPerSec() {
-    return angularVelocityRadPerSec;
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the Angular Velocity of the Encoder.</h2>
-   *
-   * @return the un-geared angular velocity of the motor (encoder velocity), in radians per second
-   */
-  public double getEncoderVelocityRadPerSec() {
-    return angularVelocityRadPerSec * gearRatio;
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the Amount of Current Flowing into the Motor.</h2>
-   *
-   * <p>This method is equivalent to {@link DCMotorSim#getCurrentDrawAmps()}.
-   *
-   * @return the amount of current flowing into the motor, in amperes
-   */
-  public double getCurrentDrawAmps() {
-    return currentDrawAmps;
+    // constrain the output voltage to the battery voltage
+    return Volts.of(
+        MathUtil.clamp(
+            limitedVoltage,
+            -RobotController.getBatteryVoltage(),
+            RobotController.getBatteryVoltage()));
   }
 }

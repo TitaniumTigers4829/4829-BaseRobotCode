@@ -1,34 +1,57 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.extras.vision.MegatagPoseEstimate;
+import frc.robot.subsystems.vision.VisionConstants.Limelight;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionInterface {
   @AutoLog
   class VisionInputs {
-    public boolean cameraConnected = false;
-    public double latency = 0.0;
-    public double fiducialMarksID = 0.0;
+    public boolean[] isLimelightConnected = new boolean[Limelight.values().length];
 
-    public int camerasAmount = 0;
-    public int targetsCount = 0;
+    public MegatagPoseEstimate[] limelightMegatagPoses =
+        new MegatagPoseEstimate[Limelight.values().length];
+    public double[] limelightLatencies = new double[Limelight.values().length];
+    public int[] limelightTargets = new int[Limelight.values().length];
+    public boolean[] limelightSeesAprilTags = new boolean[Limelight.values().length];
+
+    public Pose2d[] limelightCalculatedPoses = new Pose2d[Limelight.values().length];
+    public Pose2d limelightLastSeenPose = new Pose2d();
+    public double[] limelightAprilTagDistances = new double[Limelight.values().length];
+
+    public double[] limelightTimestamps = new double[Limelight.values().length];
   }
 
-  void updateInputs(VisionInputs inputs);
+  default void updateInputs(VisionInputs inputs) {}
 
-  String getLimelightName(int limelightNumber);
+  default double getLatencySeconds(Limelight limelight) {
+    return 0.0;
+  }
 
-  double getLatencySeconds(int limelightNumber);
+  default double getTimeStampSeconds(Limelight limelight) {
+    return 0.0;
+  }
 
-  double getTimeStampSeconds(int limelightNumber);
+  default boolean canSeeAprilTags(Limelight limelight) {
+    return false;
+  }
 
-  boolean canSeeAprilTags(int limelightNumber);
+  default double getLimelightAprilTagDistance(Limelight limelight) {
+    return 0.0;
+  }
 
-  double getLimelightAprilTagDistance(int limelightNumber);
+  default int getNumberOfAprilTags(Limelight limelight) {
+    return 0;
+  }
 
-  int getNumberOfAprilTags(int limelightNumber);
+  default Pose2d getPoseFromAprilTags(Limelight limelight) {
+    return null;
+  }
 
-  Pose2d getPoseFromAprilTags(int limelightNumber);
+  default void setHeadingInfo(double headingDegrees, double headingRateDegrees) {}
 
-  void setHeadingInfo(double headingDegrees, double headingRateDegrees);
+  default Pose2d getLastSeenPose() {
+    return null;
+  }
 }

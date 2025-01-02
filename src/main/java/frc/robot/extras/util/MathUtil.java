@@ -2,6 +2,7 @@ package frc.robot.extras.util;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import frc.robot.BuildConstants;
+
 import java.util.Random;
 
 public class MathUtil {
