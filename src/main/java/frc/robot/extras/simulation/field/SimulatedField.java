@@ -13,7 +13,7 @@ import frc.robot.extras.simulation.mechanismSim.IntakeSimulation;
 import frc.robot.extras.simulation.mechanismSim.swerve.AbstractDriveTrainSimulation;
 import frc.robot.extras.simulation.mechanismSim.swerve.BrushlessMotorSim;
 import frc.robot.extras.util.GeomUtil;
-import java.lang.ref.WeakReference;
+// import java.lang.ref.WeakReference;
 import java.util.*;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -130,7 +130,7 @@ public abstract class SimulatedField {
   protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
   protected final Set<GamePieceSimulation> gamePieces;
   protected final List<Runnable> simulationSubTickActions;
-  protected final List<WeakReference<BrushlessMotorSim>> motors;
+  protected final List<BrushlessMotorSim> motors;
   private final List<IntakeSimulation> intakeSimulations;
 
   /**
@@ -284,7 +284,7 @@ public abstract class SimulatedField {
   }
 
   public void addMotor(BrushlessMotorSim motor) {
-    motors.add(new WeakReference<>(motor));
+    motors.add(motor);
   }
 
   /**
@@ -306,7 +306,7 @@ public abstract class SimulatedField {
   private void simulationSubTick() {
     ArrayList<Double> motorCurrents = new ArrayList<>();
     for (var motor : motors) {
-      BrushlessMotorSim motorRef = motor.get();
+      BrushlessMotorSim motorRef = motor;
       if (motorRef != null) {
         motorRef.update();
       }

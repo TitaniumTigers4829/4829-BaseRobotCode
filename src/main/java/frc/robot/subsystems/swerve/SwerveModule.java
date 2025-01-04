@@ -32,6 +32,7 @@ public class SwerveModule extends SubsystemBase {
     CommandScheduler.getInstance().unregisterSubsystem(this);
   }
 
+  /** Updates the module's odometry inputs. */
   public void updateOdometryInputs() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module-" + name, inputs);
@@ -41,15 +42,18 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {}
 
+  /** Sets the drive voltage of the module. */
   public void setVoltage(Voltage volts) {
     io.setDriveVoltage(volts);
     io.setTurnVoltage(Volts.zero());
   }
 
+  /** Gets the drive voltage of the module. */
   public double getDriveVoltage() {
     return inputs.driveAppliedVolts;
   }
 
+  /** Sets the drive velocity of the module. */
   public double getCharacterizationVelocity() {
     return inputs.driveVelocity;
   }
@@ -61,6 +65,7 @@ public class SwerveModule extends SubsystemBase {
       io.stopModule();
     }
     io.setDesiredState(state);
+    Logger.recordOutput("Drive/desired turn angle", state.angle.getRotations());
   }
 
   /** Returns the current turn angle of the module. */

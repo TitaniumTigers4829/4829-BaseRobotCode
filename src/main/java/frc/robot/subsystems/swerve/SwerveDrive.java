@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.extras.setpointGen.SwerveSetpoint;
 import frc.robot.extras.setpointGen.SwerveSetpointGenerator;
+import frc.robot.extras.simulation.mechanismSim.swerve.SwerveModuleSimulation.WHEEL_GRIP;
 import frc.robot.extras.util.DeviceCANBus;
 import frc.robot.extras.util.TimeUtil;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
@@ -49,7 +50,7 @@ public class SwerveDrive extends SubsystemBase {
           58,
           7,
           ModuleConstants.WHEEL_DIAMETER_METERS,
-          1.5,
+          WHEEL_GRIP.TIRE_WHEEL.cof,
           0.0);
   private SwerveSetpoint setpoint = SwerveSetpoint.zeroed();
 
@@ -104,13 +105,6 @@ public class SwerveDrive extends SubsystemBase {
 
     gyroDisconnectedAlert.set(false);
   }
-
-  /** Updates the pose estimator with the pose calculated from the swerve modules. */
-  // public void addPoseEstimatorSwerveMeasurement() {
-  //   for (int timestampIndex = 0;
-  //       timestampIndex < odometryThreadInputs.measurementTimeStamps.length;
-  //       timestampIndex++) addPoseEstimatorSwerveMeasurement(timestampIndex);
-  // }
 
   /*
    * Updates the pose estimator with the pose calculated from the april tags. How much it
@@ -183,6 +177,7 @@ public class SwerveDrive extends SubsystemBase {
     odometryThread.unlockOdometry();
   }
 
+  /** Runs the SwerveModules periodic methods */
   private void modulesPeriodic() {
     for (SwerveModule module : swerveModules) module.periodic();
   }
@@ -202,7 +197,7 @@ public class SwerveDrive extends SubsystemBase {
                 xSpeed, ySpeed, rotationSpeed, getOdometryAllianceRelativeRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
 
-    setpoint = setpointGenerator.generateSimpleSetpoint(setpoint, desiredSpeeds, 0.02);
+    setpoint = setpointGenerator.generateSetpoint(setpoint, desiredSpeeds, 0.02);
 
     setModuleStates(setpoint.moduleStates());
     Logger.recordOutput("SwerveStates/DesiredStates", setpoint.moduleStates());
@@ -289,23 +284,6 @@ public class SwerveDrive extends SubsystemBase {
    *
    * @param timestampIndex index of the timestamp to sample the pose at
    */
-  // private void addPoseEstimatorSwerveMeasurement(int timestampIndex) {
-  //   final SwerveModulePosition[] modulePositions = getModulePositions(),
-  //       moduleDeltas = getModulesDelta(modulePositions);
-
-  //   if (gyroInputs.isConnected) {
-  //     rawGyroRotation = gyroInputs.odometryYawPositions[timestampIndex];
-  //   } else {
-  //     Twist2d twist = DriveConstants.DRIVE_KINEMATICS.toTwist2d(moduleDeltas);
-  //     rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
-  //   }
-
-  //   poseEstimator.updateWithTime(
-  //       odometryThreadInputs.measurementTimeStamps[timestampIndex],
-  //       rawGyroRotation,
-  //       modulePositions);
-  // }
-
   public void addPoseEstimatorSwerveMeasurement() { // int timestampIndex
     final SwerveModulePosition[] modulePositions = getModulePositions(),
         moduleDeltas = getModulesDelta(modulePositions);
@@ -324,21 +302,9 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   /**
-   * Gets the modules positions, sampled at the indexed timestamp.
-   *
-   * @param timestampIndex the timestamp index to sample.
-   * @return a list of SwerveModulePosition, containing relative drive position and absolute turn
-   *     rotation at the sampled timestamp.
+   * @param freshModulesPosition Latest module positions
+   * @return The change of the module positions between the current and last update
    */
-  // private SwerveModulePosition[] getModulesPosition(int timestampIndex) {
-  //   SwerveModulePosition[] swerveModulePositions = new
-  // SwerveModulePosition[swerveModules.length];
-  //   for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++)
-  //     swerveModulePositions[moduleIndex] =
-  //         swerveModules[moduleIndex].getOdometryPositions()[timestampIndex];
-  //   return swerveModulePositions;
-  // }
-
   private SwerveModulePosition[] getModulesDelta(SwerveModulePosition[] freshModulesPosition) {
     SwerveModulePosition[] deltas = new SwerveModulePosition[swerveModules.length];
     for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
