@@ -43,18 +43,6 @@ public class JoystickUtil {
     return value;
   }
 
-  public static double modifyAxisCubed(DoubleSupplier supplierValue) {
-    double value = supplierValue.getAsDouble();
-
-    // Deadband
-    value = JoystickUtil.deadband(value, JoystickConstants.DEADBAND_VALUE);
-
-    // Cube the axis
-    value = Math.copySign(value * value * value, value);
-
-    return value;
-  }
-
   /**
    * Converts the two axis coordinates to polar to get both the angle and radius, so they can work
    * in a double[] list.
@@ -79,24 +67,6 @@ public class JoystickUtil {
     return new double[] {
       Math.copySign(Math.pow(xInput, exponent), xInput),
       Math.copySign(Math.pow(yInput, exponent), yInput)
-    };
-  }
-
-  public static double[] modifyAxisCubedPolar(DoubleSupplier xJoystick, DoubleSupplier yJoystick) {
-    double xInput =
-        JoystickUtil.deadband(xJoystick.getAsDouble(), JoystickConstants.DEADBAND_VALUE);
-    double yInput = deadband(yJoystick.getAsDouble(), JoystickConstants.DEADBAND_VALUE);
-    if (Math.abs(xInput) > 0 && Math.abs(yInput) > 0) {
-      double theta = Math.atan(xInput / yInput);
-      double hypotenuse = Math.sqrt(xInput * xInput + yInput * yInput);
-      double cubedHypotenuse = Math.pow(hypotenuse, 3);
-      xInput = Math.copySign(Math.sin(theta) * cubedHypotenuse, xInput);
-      yInput = Math.copySign(Math.cos(theta) * cubedHypotenuse, yInput);
-      return new double[] {xInput, yInput};
-    }
-    return new double[] {
-      Math.copySign(xInput * xInput * xInput, xInput),
-      Math.copySign(yInput * yInput * yInput, yInput)
     };
   }
 }
