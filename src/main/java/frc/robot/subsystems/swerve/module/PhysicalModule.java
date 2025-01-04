@@ -1,4 +1,4 @@
-package frc.robot.subsystems.swerve.moduleIO;
+package frc.robot.subsystems.swerve.module;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -11,7 +11,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -49,15 +48,13 @@ public class PhysicalModule implements ModuleInterface {
   private final BaseStatusSignal[] periodicallyRefreshedSignals;
 
   public PhysicalModule(ModuleConfig moduleConfig) {
-    driveMotor = new TalonFX(moduleConfig.driveMotorChannel(), DeviceCANBus.RIO.name);
-    turnMotor = new TalonFX(moduleConfig.turnMotorChannel(), DeviceCANBus.RIO.name);
-    turnEncoder = new CANcoder(moduleConfig.turnEncoderChannel(), DeviceCANBus.RIO.name);
+    driveMotor = new TalonFX(moduleConfig.driveMotorChannel(), DeviceCANBus.CANIVORE.name);
+    turnMotor = new TalonFX(moduleConfig.turnMotorChannel(), DeviceCANBus.CANIVORE.name);
+    turnEncoder = new CANcoder(moduleConfig.turnEncoderChannel(), DeviceCANBus.CANIVORE.name);
 
     CANcoderConfiguration turnEncoderConfig = new CANcoderConfiguration();
     turnEncoderConfig.MagnetSensor.MagnetOffset = -moduleConfig.angleZero();
     turnEncoderConfig.MagnetSensor.SensorDirection = moduleConfig.encoderReversed();
-    turnEncoderConfig.MagnetSensor.AbsoluteSensorRange =
-        AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     turnEncoder.getConfigurator().apply(turnEncoderConfig, HardwareConstants.TIMEOUT_S);
 
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
@@ -153,12 +150,8 @@ public class PhysicalModule implements ModuleInterface {
       turnEncoderAbsolutePosition.clear();
     }
 
-    inputs.turnPosition = turnMotor.getPosition().getValueAsDouble();
-
     inputs.driveAppliedVolts = driveMotorAppliedVoltage.getValueAsDouble();
     inputs.driveCurrentAmps = driveMotorCurrent.getValueAsDouble();
-
-    inputs.turnPosition = turnMotor.getPosition().getValueAsDouble();
 
     inputs.turnVelocity = turnEncoderVelocity.getValueAsDouble();
     inputs.turnAppliedVolts = turnMotorAppliedVolts.getValueAsDouble();
@@ -177,29 +170,15 @@ public class PhysicalModule implements ModuleInterface {
 
   @Override
   public void setDesiredState(SwerveModuleState desiredState) {
-    double turnRotations = getTurnRotations();
-    // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState setpoint =
-        new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
-
-    setpoint.optimize(Rotation2d.fromRotations(turnRotations));
-    setpoint.cosineScale(Rotation2d.fromRotations(turnRotations));
-
-    if (Math.abs(setpoint.speedMetersPerSecond) < 0.01) {
-      driveMotor.set(0);
-      turnMotor.set(0);
-      return;
-    }
-
     // Converts meters per second to rotations per second
     double desiredDriveRPS =
-        setpoint.speedMetersPerSecond
+        desiredState.speedMetersPerSecond
             * ModuleConstants.DRIVE_GEAR_RATIO
             / ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
 
     driveMotor.setControl(velocityRequest.withVelocity(RotationsPerSecond.of(desiredDriveRPS)));
     turnMotor.setControl(
-        mmPositionRequest.withPosition(Rotations.of(setpoint.angle.getRotations())));
+        mmPositionRequest.withPosition(Rotations.of(desiredState.angle.getRotations())));
   }
 
   public double getTurnRotations() {

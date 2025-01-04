@@ -1,4 +1,4 @@
-package frc.robot.subsystems.swerve.moduleIO;
+package frc.robot.subsystems.swerve.module;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -23,7 +23,8 @@ public interface ModuleInterface {
 
     public double[] odometryTimestamps = new double[] {};
 
-    public double turnPosition = 0.0;
+    public double[] odometryDriveWheelRevolutions = new double[] {};
+    public Rotation2d[] odometrySteerPositions = new Rotation2d[] {};
   }
 
   /**

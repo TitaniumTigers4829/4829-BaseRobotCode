@@ -6,8 +6,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.extras.interpolators.MultiLinearInterpolator;
 import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionConstants.Limelight;
+import frc.robot.subsystems.vision.VisionSubsystem;
 
 public abstract class DriveCommandBase extends Command {
 
@@ -16,7 +17,7 @@ public abstract class DriveCommandBase extends Command {
   private final MultiLinearInterpolator twoAprilTagLookupTable =
       new MultiLinearInterpolator(VisionConstants.TWO_APRIL_TAG_LOOKUP_TABLE);
 
-  private final Vision vision;
+  private final VisionSubsystem vision;
   private final SwerveDrive swerveDrive;
 
   private double lastTimeStampSeconds = 0;
@@ -27,7 +28,7 @@ public abstract class DriveCommandBase extends Command {
    * @param driveSubsystem The subsystem for the swerve drive
    * @param vision The subsystem for vision measurements
    */
-  public DriveCommandBase(SwerveDrive swerveDrive, Vision vision) {
+  public DriveCommandBase(SwerveDrive swerveDrive, VisionSubsystem vision) {
     this.swerveDrive = swerveDrive;
     this.vision = vision;
     // It is important that you do addRequirements(driveSubsystem, vision) in whatever
@@ -40,12 +41,12 @@ public abstract class DriveCommandBase extends Command {
     swerveDrive.addPoseEstimatorSwerveMeasurement();
     vision.setHeadingInfo(
         swerveDrive.getPose().getRotation().getDegrees(), swerveDrive.getGyroRate());
-    calculatePoseFromLimelight(VisionConstants.SHOOTER_LIMELIGHT_NUMBER);
-    calculatePoseFromLimelight(VisionConstants.FRONT_LEFT_LIMELIGHT_NUMBER);
-    calculatePoseFromLimelight(VisionConstants.FRONT_RIGHT_LIMELIGHT_NUMBER);
+    calculatePoseFromLimelight(Limelight.SHOOTER);
+    calculatePoseFromLimelight(Limelight.FRONT_LEFT);
+    calculatePoseFromLimelight(Limelight.FRONT_RIGHT);
   }
 
-  public void calculatePoseFromLimelight(int limelightNumber) {
+  public void calculatePoseFromLimelight(Limelight limelightNumber) {
     double currentTimeStampSeconds = lastTimeStampSeconds;
 
     // Updates the robot's odometry with april tags

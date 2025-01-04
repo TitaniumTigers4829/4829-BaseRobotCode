@@ -12,10 +12,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.Constants.FieldConstants;
 
 public class AllianceFlipper {
-  private static final double FIELD_LENGTH = 16.58112;
-
   public static boolean isBlue() {
     return DriverStation.getAlliance().orElseGet(() -> Alliance.Blue).equals(Alliance.Blue);
   }
@@ -29,7 +28,8 @@ public class AllianceFlipper {
    * @return Translation2d object with its x coordinate flipped over the y-axis
    */
   public static final Translation2d flipTranslation(Translation2d translation) {
-    return new Translation2d(FIELD_LENGTH - translation.getX(), translation.getY());
+    return new Translation2d(
+        FieldConstants.FIELD_LENGTH_METERS - translation.getX(), translation.getY());
   }
 
   /**
@@ -38,7 +38,9 @@ public class AllianceFlipper {
    */
   public static final Translation3d flipTranslation(Translation3d translation) {
     return new Translation3d(
-        FIELD_LENGTH - translation.getX(), translation.getY(), translation.getZ());
+        FieldConstants.FIELD_LENGTH_METERS - translation.getX(),
+        translation.getY(),
+        translation.getZ());
   }
 
   /**
