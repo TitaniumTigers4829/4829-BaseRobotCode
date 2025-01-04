@@ -8,7 +8,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
-/** Add your docs here. */
+/** Swerve Constants */
 public class SwerveConstants {
 
   public static final class DriveConstants {

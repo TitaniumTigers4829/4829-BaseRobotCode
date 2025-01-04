@@ -26,7 +26,7 @@ public class VisionSubsystem extends SubsystemBase {
 
   // Add methods to support DriveCommand
   public int getNumberOfAprilTags(Limelight limelight) {
-    return visionInterface.getNumberOfAprilTags(limelight);
+    return inputs.limelightTargets[limelight.getId()];
   }
 
   public double getLimelightAprilTagDistance(Limelight limelight) {
@@ -55,6 +55,6 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public Pose2d getLastSeenPose() {
-    return inputs.limelightLastSeenPose;
+    return visionInterface.getLastSeenPose();
   }
 }

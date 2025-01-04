@@ -48,9 +48,9 @@ public class PhysicalModule implements ModuleInterface {
   private final BaseStatusSignal[] periodicallyRefreshedSignals;
 
   public PhysicalModule(ModuleConfig moduleConfig) {
-    driveMotor = new TalonFX(moduleConfig.driveMotorChannel(), DeviceCANBus.RIO.name);
-    turnMotor = new TalonFX(moduleConfig.turnMotorChannel(), DeviceCANBus.RIO.name);
-    turnEncoder = new CANcoder(moduleConfig.turnEncoderChannel(), DeviceCANBus.RIO.name);
+    driveMotor = new TalonFX(moduleConfig.driveMotorChannel(), DeviceCANBus.CANIVORE.name);
+    turnMotor = new TalonFX(moduleConfig.turnMotorChannel(), DeviceCANBus.CANIVORE.name);
+    turnEncoder = new CANcoder(moduleConfig.turnEncoderChannel(), DeviceCANBus.CANIVORE.name);
 
     CANcoderConfiguration turnEncoderConfig = new CANcoderConfiguration();
     turnEncoderConfig.MagnetSensor.MagnetOffset = -moduleConfig.angleZero();
@@ -170,29 +170,15 @@ public class PhysicalModule implements ModuleInterface {
 
   @Override
   public void setDesiredState(SwerveModuleState desiredState) {
-    double turnRotations = getTurnRotations();
-    // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState setpoint =
-        new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
-
-    setpoint.optimize(Rotation2d.fromRotations(turnRotations));
-    setpoint.cosineScale(Rotation2d.fromRotations(turnRotations));
-
-    if (Math.abs(setpoint.speedMetersPerSecond) < 0.01) {
-      driveMotor.set(0);
-      turnMotor.set(0);
-      return;
-    }
-
     // Converts meters per second to rotations per second
     double desiredDriveRPS =
-        setpoint.speedMetersPerSecond
+        desiredState.speedMetersPerSecond
             * ModuleConstants.DRIVE_GEAR_RATIO
             / ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
 
     driveMotor.setControl(velocityRequest.withVelocity(RotationsPerSecond.of(desiredDriveRPS)));
     turnMotor.setControl(
-        mmPositionRequest.withPosition(Rotations.of(setpoint.angle.getRotations())));
+        mmPositionRequest.withPosition(Rotations.of(desiredState.angle.getRotations())));
   }
 
   public double getTurnRotations() {

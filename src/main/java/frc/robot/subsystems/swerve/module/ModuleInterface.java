@@ -6,7 +6,6 @@ import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ModuleInterface {
-
   @AutoLog
   class ModuleInputs {
 

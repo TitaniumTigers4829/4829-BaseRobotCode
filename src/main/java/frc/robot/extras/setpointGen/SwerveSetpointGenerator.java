@@ -9,8 +9,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotController;
-import frc.robot.extras.setpointGen.SPGCalcs.LocalVars;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * Swerve setpoint generatoR that has been passed around so many times its hard to keep track, just
@@ -24,7 +22,6 @@ public class SwerveSetpointGenerator {
   private static final ChassisSpeeds ZERO_SPEEDS = new ChassisSpeeds();
 
   private static final int NUM_MODULES = SPGCalcs.NUM_MODULES;
-  // private final double brownoutVoltage;
 
   private final SwerveDriveKinematics kinematics;
   private final Translation2d[] moduleLocations;
@@ -63,7 +60,6 @@ public class SwerveSetpointGenerator {
     this.moiKgMetersSquared = moiKgMetersSquared;
     this.wheelRadiusMeters = wheelDiameterMeters / 2;
     this.maxDriveVelocityMPS = driveMotor.freeSpeedRadPerSec * wheelRadiusMeters;
-    // this.brownoutVoltage = RobotController.getBrownoutVoltage();
 
     wheelFrictionForce = wheelCoF * ((massKg / 4) * 9.81);
     // maxTorqueFriction = this.wheelFrictionForce * wheelRadiusMeters;
@@ -89,13 +85,6 @@ public class SwerveSetpointGenerator {
    */
   public SwerveSetpoint generateSetpoint(
       final SwerveSetpoint prevSetpoint, ChassisSpeeds desiredRobotRelativeSpeeds, double dt) {
-    // Add logging for inputs
-    // if (Double.isNaN(inputVoltage)) {
-    //   inputVoltage = 12.0;
-    // } else {
-    //   inputVoltage = Math.max(inputVoltage, brownoutVoltage);
-    // }
-
     // https://github.com/wpilibsuite/allwpilib/issues/7332
     SwerveModuleState[] desiredModuleStates =
         kinematics.toSwerveModuleStates(desiredRobotRelativeSpeeds);
@@ -120,37 +109,28 @@ public class SwerveSetpointGenerator {
             - prevSetpoint.chassisSpeeds().omegaRadiansPerSecond;
     vars.minS = 1.0;
 
-    Logger.recordOutput("beginningVars", vars);
-
     checkNeedToSteer(vars);
-
-    Logger.recordOutput("postCheckNeedToSteer", vars);
-
     makeVectors(vars);
 
-    Logger.recordOutput("pastMakeVectors", vars);
-
-    if (vars.allModulesShouldFlip
-        && !epsilonEquals(prevSetpoint.chassisSpeeds(), ZERO_SPEEDS)
-        && !epsilonEquals(desiredRobotRelativeSpeeds, ZERO_SPEEDS)) {
-      // It will (likely) be faster to stop the robot, rotate the modules in place to the
-      // complement
-      // of the desired angle, and accelerate again.
-      return generateSetpoint(prevSetpoint, ZERO_SPEEDS, dt);
-    }
+    // if (vars.allModulesShouldFlip
+    //         && !epsilonEquals(prevSetpoint.chassisSpeeds(), ZERO_SPEEDS)
+    //         && !epsilonEquals(desiredRobotRelativeSpeeds, ZERO_SPEEDS)) {
+    //     // It will (likely) be faster to stop the robot, rotate the modules in place to the
+    // complement
+    //     // of the desired angle, and accelerate again.
+    //     return generateSetpoint(prevSetpoint, ZERO_SPEEDS, dt);
+    // }
 
     solveSteering(vars);
-    Logger.recordOutput("postSolveSteering", vars);
 
     solveDriving(vars);
-    Logger.recordOutput("postSolveDriving", vars);
 
     ChassisSpeeds retSpeeds =
         new ChassisSpeeds(
             vars.prevSpeeds.vxMetersPerSecond + vars.minS * vars.dx,
             vars.prevSpeeds.vyMetersPerSecond + vars.minS * vars.dy,
             vars.prevSpeeds.omegaRadiansPerSecond + vars.minS * vars.dtheta);
-    retSpeeds = ChassisSpeeds.discretize(retSpeeds, dt);
+    retSpeeds.discretize(retSpeeds, dt);
 
     double chassisAccelX = (retSpeeds.vxMetersPerSecond - vars.prevSpeeds.vxMetersPerSecond) / dt;
     double chassisAccelY = (retSpeeds.vyMetersPerSecond - vars.prevSpeeds.vyMetersPerSecond) / dt;
@@ -175,15 +155,12 @@ public class SwerveSetpointGenerator {
               accelStates[m].speedMetersPerSecond);
     }
 
-    Logger.recordOutput("finalVars", vars);
-
-    return new SwerveSetpoint( // Logger.recordOutput("output",
-        retSpeeds, outputStates);
+    // log("output",
+    return new SwerveSetpoint(retSpeeds, outputStates);
   }
 
   public SwerveSetpoint generateSimpleSetpoint(
       final SwerveSetpoint prevSetpoint, ChassisSpeeds desiredRobotRelativeSpeeds, double dt) {
-
     AdvancedSwerveModuleState[] outputStates = new AdvancedSwerveModuleState[NUM_MODULES];
     SwerveModuleState[] desiredModuleStates =
         kinematics.toSwerveModuleStates(desiredRobotRelativeSpeeds);
@@ -192,6 +169,7 @@ public class SwerveSetpointGenerator {
       desiredModuleStates[m].optimize(prevSetpoint.moduleStates()[m].angle);
       outputStates[m] = AdvancedSwerveModuleState.fromBase(desiredModuleStates[m]);
     }
+
     return new SwerveSetpoint(kinematics.toChassisSpeeds(desiredModuleStates), outputStates);
   }
 
@@ -309,16 +287,8 @@ public class SwerveSetpointGenerator {
       // battery is sagging down to 11v, which will affect the max torque output
       double currentDraw =
           driveMotor.getCurrent(Math.abs(lastVelRadPerSec), RobotController.getInputVoltage());
-      double reverseCurrentDraw =
-          Math.abs(
-              driveMotor.getCurrent(
-                  Math.abs(lastVelRadPerSec), -RobotController.getInputVoltage()));
       currentDraw = Math.min(currentDraw, driveCurrentLimitAmps);
-
-      reverseCurrentDraw = Math.min(reverseCurrentDraw, driveCurrentLimitAmps);
-      double forwardModuleTorque = driveMotor.getTorque(currentDraw);
-      double reverseModuleTorque = driveMotor.getTorque(reverseCurrentDraw);
-      // double moduleTorque = driveMotor.getTorque(currentDraw);
+      double moduleTorque = driveMotor.getTorque(currentDraw);
 
       double prevSpeed = vars.prevModuleStates[m].speedMetersPerSecond;
       vars.desiredModuleStates[m].optimize(vars.prevModuleStates[m].angle);
@@ -326,13 +296,9 @@ public class SwerveSetpointGenerator {
 
       int forceSign;
       Rotation2d forceAngle = vars.prevModuleStates[m].angle;
-      double moduleTorque;
-
       if (epsilonEquals(prevSpeed, 0.0)
           || (prevSpeed > 0 && desiredSpeed >= prevSpeed)
           || (prevSpeed < 0 && desiredSpeed <= prevSpeed)) {
-        moduleTorque = forwardModuleTorque;
-
         // Torque loss will be fighting motor
         moduleTorque -= torqueLoss;
         forceSign = 1; // Force will be applied in direction of module
@@ -340,7 +306,6 @@ public class SwerveSetpointGenerator {
           forceAngle = forceAngle.plus(Rotation2d.k180deg);
         }
       } else {
-        moduleTorque = reverseModuleTorque;
         // Torque loss will be helping the motor
         moduleTorque += torqueLoss;
         forceSign = -1; // Force will be applied in opposite direction of module

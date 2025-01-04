@@ -9,7 +9,10 @@ import frc.robot.extras.vision.LimelightHelpers;
 import frc.robot.extras.vision.LimelightHelpers.PoseEstimate;
 import frc.robot.extras.vision.MegatagPoseEstimate;
 import frc.robot.subsystems.vision.VisionConstants.Limelight;
+// import frc.robot.subsystems.vision.VisionInterface.VisionInputs;
 import java.util.concurrent.ConcurrentHashMap;
+// import java.util.concurrent.ExecutorService;
+// import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PhysicalVision implements VisionInterface {
@@ -19,6 +22,7 @@ public class PhysicalVision implements VisionInterface {
   private double headingRateDegreesPerSecond = 0;
   private final ConcurrentHashMap<Limelight, AtomicReference<VisionInputs>> limelightThreads =
       new ConcurrentHashMap<>();
+  // private final ExecutorService executorService = Executors.newFixedThreadPool(3);
   private final AtomicReference<VisionInputs> latestInputs =
       new AtomicReference<>(new VisionInputs());
   private final ThreadManager threadManager = new ThreadManager(Limelight.values().length);
@@ -57,6 +61,8 @@ public class PhysicalVision implements VisionInterface {
         inputs.limelightCalculatedPoses[limelight.getId()] = getPoseFromAprilTags(limelight);
         inputs.limelightTimestamps[limelight.getId()] = getTimeStampSeconds(limelight);
         inputs.limelightLastSeenPose = getLastSeenPose();
+        inputs.limelightAprilTagDistances[limelight.getId()] =
+            getLimelightAprilTagDistance(limelight);
 
         latestInputs.set(inputs);
         limelightThreads.get(limelight).set(latestInputs.get());
@@ -151,6 +157,7 @@ public class PhysicalVision implements VisionInterface {
             mt1.pose.getRotation().getDegrees(),
             mt2.pose.getRotation().getDegrees(),
             VisionConstants.MEGA_TAG_ROTATION_DISCREPANCY_THREASHOLD);
+    // return true;
   }
 
   /**
@@ -290,6 +297,12 @@ public class PhysicalVision implements VisionInterface {
     this.headingRateDegreesPerSecond = headingRateDegrees;
   }
 
+  /**
+   * Checks if the specified limelight is connected
+   *
+   * @param limelight The limelight to check
+   * @return True if the limelight network table contains the key "tv"
+   */
   public boolean isLimelightConnected(Limelight limelight) {
     NetworkTable limelightTable = LimelightHelpers.getLimelightNTTable(limelight.getName());
     return limelightTable.containsKey("tv");
@@ -396,7 +409,6 @@ public class PhysicalVision implements VisionInterface {
   }
 
   /** Shuts down all the threads. */
-  // @Override
   public void endAllThreads() {
     threadManager.shutdownAllThreads();
   }

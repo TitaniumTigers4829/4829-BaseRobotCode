@@ -23,8 +23,9 @@ public class SimulatedModule implements ModuleInterface {
       new Constraints(
           ModuleConstants.MAX_ANGULAR_SPEED_ROTATIONS_PER_SECOND,
           ModuleConstants.MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED);
-  private final ProfiledPIDController turnPID = new ProfiledPIDController(5, 0, 0, turnConstraints);
-  private final SimpleMotorFeedforward turnFF = new SimpleMotorFeedforward(6, 8, 0);
+  private final ProfiledPIDController turnPID =
+      new ProfiledPIDController(18, 0, 0, turnConstraints);
+  private final SimpleMotorFeedforward turnFF = new SimpleMotorFeedforward(0, 0, 0);
 
   public SimulatedModule(SwerveModuleSimulation moduleSimulation) {
     this.moduleSimulation = moduleSimulation;
