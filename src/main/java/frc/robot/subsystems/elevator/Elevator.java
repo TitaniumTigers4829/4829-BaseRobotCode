@@ -1,6 +1,8 @@
 /** This subsystem is an elevator that uses PID for its position. */
 package frc.robot.subsystems.elevator;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -32,5 +34,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    elevatorInterface.updateInputs(inputs);
+    Logger.processInputs("Elevator/", inputs);
   }
 }

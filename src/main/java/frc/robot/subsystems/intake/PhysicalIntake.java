@@ -12,8 +12,6 @@ import frc.robot.Constants.HardwareConstants;
 public class PhysicalIntake implements IntakeInterface {
   private final TalonFX intakeMotor = new TalonFX(IntakeConstants.INTAKE_MOTOR_ID);
 
-  private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0);
-
   private final StatusSignal<AngularVelocity> intakeVelocity;
 
   public PhysicalIntake() {

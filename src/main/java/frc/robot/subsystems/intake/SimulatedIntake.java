@@ -3,13 +3,17 @@ package frc.robot.subsystems.intake;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class SimulatedIntake implements IntakeInterface {
-  DCMotorSim intakeSim = new DCMotorSim(null, DCMotor.getFalcon500(1), 0);
+  DCMotorSim intakeSim = new DCMotorSim(LinearSystemId.createDCMotorSystem(DCMotor.getFalcon500(1), 0.01, 1), DCMotor.getFalcon500(1), 0);
   private double intakeAppliedVolts = 0.0;
 
-  public SimulatedIntake(IntakeInputs inputs) {
+  public SimulatedIntake() {}
+
+  @Override
+  public void updateInputs(IntakeInputs inputs) {
     intakeSim.update(0.02);
 
     inputs.intakeVelocity =

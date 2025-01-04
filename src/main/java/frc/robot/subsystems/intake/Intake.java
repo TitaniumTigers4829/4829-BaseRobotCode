@@ -18,12 +18,12 @@ public class Intake extends SubsystemBase {
    */
   public void setIntakeSpeed(double speed) {
     intakeInterface.setIntakeSpeed(speed);
-    Logger.recordOutput("OTBIntake/Intake", speed);
+    Logger.recordOutput("OTBIntake/IntakeSpeed", speed);
   }
 
   @Override
   public void periodic() {
     intakeInterface.updateInputs(inputs);
-    Logger.processInputs("OTBIntake", inputs);
+    Logger.processInputs("OTBIntake/", inputs);
   }
 }

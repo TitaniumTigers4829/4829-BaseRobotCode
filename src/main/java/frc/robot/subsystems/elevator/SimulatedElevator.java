@@ -33,7 +33,7 @@ public class SimulatedElevator implements ElevatorInterface {
   }
 
   public void setElevatorPosition(double position) {
-    elevatorSim.setState(simPID.calculate(position), ElevatorConstants.VELOCITY_METERS_PER_SECOND);
+    setVolts(simPID.calculate(getElevatorPosition(), position));
   }
 
   public double getElevatorPosition() {
