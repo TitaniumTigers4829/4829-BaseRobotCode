@@ -24,6 +24,7 @@ public class SimulatedVision extends PhysicalVision {
   PhotonCameraSim frontRightCameraSim;
   private final VisionSystemSim visionSim;
   private final Supplier<Pose2d> robotSimulationPose;
+  private Pose2d lastSeenPose = new Pose2d();
 
   private final int kResWidth = 1280;
   private final int kResHeight = 800;
@@ -46,14 +47,15 @@ public class SimulatedVision extends PhysicalVision {
     // Create simulated camera properties. These can be set to mimic your actual
     // camera.
     var cameraProperties = new SimCameraProperties();
-    // cameraProperties.setCalibration(kResWidth, kResHeight, Rotation2d.fromDegrees(97.7));
-    // cameraProperties.setCalibError(0.35, 0.10);
+    cameraProperties.setCalibration(kResWidth, kResHeight, Rotation2d.fromDegrees(97.7));
+    cameraProperties.setCalibError(0.35, 0.10);
     cameraProperties.setFPS(15);
     cameraProperties.setAvgLatencyMs(20);
     cameraProperties.setLatencyStdDevMs(5);
 
     // Create a PhotonCameraSim which will update the linked PhotonCamera's values
-    // with visible targets.
+    // with visible
+    // targets.
     // Instance variables
     shooterCameraSim =
         new PhotonCameraSim(getSimulationCamera(Limelight.SHOOTER), cameraProperties);
@@ -62,23 +64,24 @@ public class SimulatedVision extends PhysicalVision {
     frontRightCameraSim =
         new PhotonCameraSim(getSimulationCamera(Limelight.FRONT_RIGHT), cameraProperties);
 
-    visionSim.addCamera(shooterCameraSim, VisionConstants.SHOOTER_TRANSFORM);
+    visionSim.addCamera(
+        shooterCameraSim, VisionConstants.SHOOTER_TRANSFORM); // check inverse things
     visionSim.addCamera(frontLeftCameraSim, VisionConstants.FRONT_LEFT_TRANSFORM);
     visionSim.addCamera(frontRightCameraSim, VisionConstants.FRONT_RIGHT_TRANSFORM);
 
     // Enable the raw and processed streams. (http://localhost:1181 / 1182)
-    shooterCameraSim.enableRawStream(true);
-    shooterCameraSim.enableProcessedStream(true);
-    frontLeftCameraSim.enableRawStream(true);
-    frontLeftCameraSim.enableProcessedStream(true);
-    frontRightCameraSim.enableRawStream(true);
-    frontRightCameraSim.enableProcessedStream(true);
+    // shooterCameraSim.enableRawStream(true);
+    // shooterCameraSim.enableProcessedStream(true);
+    // frontLeftCameraSim.enableRawStream(true);
+    // frontLeftCameraSim.enableProcessedStream(true);
+    // frontRightCameraSim.enableRawStream(true);
+    // frontRightCameraSim.enableProcessedStream(true);
 
-    // Enable drawing a wireframe visualization of the field to the camera streams.
-    // This is extremely resource-intensive and is disabled by default.
-    shooterCameraSim.enableDrawWireframe(true);
-    frontLeftCameraSim.enableDrawWireframe(true);
-    frontRightCameraSim.enableDrawWireframe(true);
+    // // Enable drawing a wireframe visualization of the field to the camera streams.
+    // // This is extremely resource-intensive and is disabled by default.
+    // shooterCameraSim.enableDrawWireframe(true);
+    // frontLeftCameraSim.enableDrawWireframe(true);
+    // frontRightCameraSim.enableDrawWireframe(true);
   }
 
   @Override
@@ -90,17 +93,17 @@ public class SimulatedVision extends PhysicalVision {
       visionSim.update(robotSimulationPose.get());
       Logger.recordOutput("Vision/SimIO/updateSimPose", robotSimulationPose.get());
     }
+    super.updateInputs(inputs);
 
     for (Limelight limelight : Limelight.values()) {
       writeToTable(
           getSimulationCamera(limelight).getAllUnreadResults(),
           getLimelightTable(limelight),
           limelight);
-      inputs.limelightTargets[limelight.getId()] = getNumberOfAprilTags(limelight);
-      inputs.limelightAprilTagDistances[limelight.getId()] =
-          getLimelightAprilTagDistance(limelight);
+      // inputs.limelightTargets[limelight.getId()] = getNumberOfAprilTags(limelight);
+      // inputs.limelightAprilTagDistance[limelight.getId()] =
+      // getLimelightAprilTagDistance(limelight);
     }
-    super.updateInputs(inputs);
   }
 
   private void writeToTable(
@@ -143,13 +146,16 @@ public class SimulatedVision extends PhysicalVision {
         table
             .getEntry("botpose_orb_wpiblue")
             .setDoubleArray(pose_data.stream().mapToDouble(Double::doubleValue).toArray());
-        tagCount[limelight.getId()] = result.getMultiTagResult().get().fiducialIDsUsed.size();
-        apriltagDist[limelight.getId()] =
-            result.getMultiTagResult().get().estimatedPose.best.getX();
-      }
 
-      table.getEntry("tv").setInteger(result.hasTargets() ? 1 : 0);
-      table.getEntry("cl").setDouble(result.metadata.getLatencyMillis());
+        table.getEntry("tv").setInteger(result.hasTargets() ? 1 : 0);
+        table.getEntry("cl").setDouble(result.metadata.getLatencyMillis());
+        lastSeenPose =
+            new Pose2d(
+                result.getMultiTagResult().get().estimatedPose.best.getTranslation().getX(),
+                result.getMultiTagResult().get().estimatedPose.best.getY(),
+                new Rotation2d(
+                    result.getMultiTagResult().get().estimatedPose.best.getRotation().getAngle()));
+      }
     }
   }
 
@@ -171,26 +177,18 @@ public class SimulatedVision extends PhysicalVision {
     };
   }
 
+  // @Override
+  // public boolean canSeeAprilTags(Limelight limelight) {
+  //   table.getEntry("tv").setInteger(result.hasTargets() ? 1 : 0);
+
+  // }
   @Override
   public void setHeadingInfo(double headingDegrees, double headingRateDegrees) {
     super.setHeadingInfo(headingDegrees, headingRateDegrees);
   }
 
   @Override
-  public int getNumberOfAprilTags(Limelight limelight) {
-    // TODO Auto-generated method stub
-    return tagCount[limelight.getId()];
-  }
-
-  @Override
-  public double getLimelightAprilTagDistance(Limelight limelight) {
-    // TODO Auto-generated method stub
-    return apriltagDist[limelight.getId()];
-  }
-
-  @Override
   public Pose2d getLastSeenPose() {
-    // TODO Auto-generated method stub
-    return super.getLastSeenPose();
+    return lastSeenPose;
   }
 }

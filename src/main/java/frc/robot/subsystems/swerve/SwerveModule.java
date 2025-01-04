@@ -39,7 +39,10 @@ public class SwerveModule extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    // updateOdometryPositions();
+    Logger.recordOutput("Drive/current turn angle", getTurnRotation().getRotations());
+  }
 
   public void setVoltage(Voltage volts) {
     io.setDriveVoltage(volts);
@@ -61,6 +64,7 @@ public class SwerveModule extends SubsystemBase {
       io.stopModule();
     }
     io.setDesiredState(state);
+    Logger.recordOutput("Drive/desired turn angle", state.angle.getRotations());
   }
 
   /** Returns the current turn angle of the module. */

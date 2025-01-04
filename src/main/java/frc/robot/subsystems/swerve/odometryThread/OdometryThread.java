@@ -5,8 +5,10 @@ import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.Constants;
 import frc.robot.Constants.HardwareConstants;
-// import frc.robot.Constants.SimulationConstants;
+import frc.robot.Constants.SimulationConstants;
+import frc.robot.Robot;
 import frc.robot.extras.util.DeviceCANBus;
+import frc.robot.extras.util.TimeUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -73,13 +75,12 @@ public interface OdometryThread {
   final class OdometryThreadSim implements OdometryThread {
     @Override
     public void updateInputs(OdometryThreadInputs inputs) {
-      // inputs.measurementTimeStamps = new
-      // double[SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD];
-      // final double robotStartingTimeStamps = TimeUtil.getLogTimeSeconds(),
-      //     iterationPeriodSeconds =
-      //         Robot.defaultPeriodSecs / SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD;
-      // for (int i = 0; i < SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD; i++)
-      //   inputs.measurementTimeStamps[i] = robotStartingTimeStamps + i * iterationPeriodSeconds;
+      inputs.measurementTimeStamps = new double[SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD];
+      final double robotStartingTimeStamps = TimeUtil.getLogTimeSeconds(),
+          iterationPeriodSeconds =
+              Robot.defaultPeriodSecs / SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD;
+      for (int i = 0; i < SimulationConstants.SIMULATION_TICKS_IN_1_PERIOD; i++)
+        inputs.measurementTimeStamps[i] = robotStartingTimeStamps + i * iterationPeriodSeconds;
     }
   }
 }

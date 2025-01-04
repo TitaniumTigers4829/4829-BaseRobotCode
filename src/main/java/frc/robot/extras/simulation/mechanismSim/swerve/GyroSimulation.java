@@ -170,7 +170,7 @@ public class GyroSimulation {
    * IMU</a>
    */
   public static GyroSimulation createNavX2() {
-    return new GyroSimulation(2, 0.04);
+    return new GyroSimulation(0.00208333333, 0.04);
   }
 
   /**

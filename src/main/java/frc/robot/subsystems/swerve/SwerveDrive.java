@@ -14,8 +14,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.extras.setpointGen.SwerveSetpoint;
-import frc.robot.extras.setpointGen.SwerveSetpointGenerator;
+import frc.robot.extras.simulation.mechanismSim.swerve.SwerveModuleSimulation.WHEEL_GRIP;
 import frc.robot.extras.util.DeviceCANBus;
 import frc.robot.extras.util.TimeUtil;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
@@ -25,6 +24,8 @@ import frc.robot.subsystems.swerve.gyro.GyroInterface;
 import frc.robot.subsystems.swerve.module.ModuleInterface;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThread;
 import frc.robot.subsystems.swerve.odometryThread.OdometryThreadInputsAutoLogged;
+import frc.robot.extras.setpointGen.SwerveSetpoint;
+import frc.robot.extras.setpointGen.SwerveSetpointGenerator;
 import frc.robot.subsystems.vision.VisionConstants;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -49,7 +50,7 @@ public class SwerveDrive extends SubsystemBase {
           58,
           7,
           ModuleConstants.WHEEL_DIAMETER_METERS,
-          1.5,
+          WHEEL_GRIP.TIRE_WHEEL.cof,
           0.0);
   private SwerveSetpoint setpoint = SwerveSetpoint.zeroed();
 
@@ -139,7 +140,6 @@ public class SwerveDrive extends SubsystemBase {
         VecBuilder.fill(xStandardDeviation, yStandardDeviation, thetaStandardDeviation));
   }
 
-  @Override
   public void periodic() {
     final double t0 = TimeUtil.getRealTimeSeconds();
     fetchOdometryInputs();
@@ -202,7 +202,7 @@ public class SwerveDrive extends SubsystemBase {
                 xSpeed, ySpeed, rotationSpeed, getOdometryAllianceRelativeRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
 
-    setpoint = setpointGenerator.generateSimpleSetpoint(setpoint, desiredSpeeds, 0.02);
+    setpoint = setpointGenerator.generateSetpoint(setpoint, desiredSpeeds, 0.02);
 
     setModuleStates(setpoint.moduleStates());
     Logger.recordOutput("SwerveStates/DesiredStates", setpoint.moduleStates());

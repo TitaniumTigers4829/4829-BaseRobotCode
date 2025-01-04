@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface GyroInterface {
-
   @AutoLog
   public static class GyroInputs {
     public boolean isConnected = false;
