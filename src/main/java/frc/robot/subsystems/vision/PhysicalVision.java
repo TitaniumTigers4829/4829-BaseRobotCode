@@ -297,6 +297,12 @@ public class PhysicalVision implements VisionInterface {
     this.headingRateDegreesPerSecond = headingRateDegrees;
   }
 
+  /**
+   * Checks if the specified limelight is connected
+   *
+   * @param limelight The limelight to check
+   * @return True if the limelight network table contains the key "tv"
+   */
   public boolean isLimelightConnected(Limelight limelight) {
     NetworkTable limelightTable = LimelightHelpers.getLimelightNTTable(limelight.getName());
     return limelightTable.containsKey("tv");
@@ -403,7 +409,6 @@ public class PhysicalVision implements VisionInterface {
   }
 
   /** Shuts down all the threads. */
-  // @Override
   public void endAllThreads() {
     threadManager.shutdownAllThreads();
   }

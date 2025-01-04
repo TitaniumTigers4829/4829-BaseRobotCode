@@ -106,6 +106,13 @@ public class SimulatedVision extends PhysicalVision {
     }
   }
 
+  /**
+   * Writes photonvision results to the limelight network table
+   *
+   * @param results The simulated photonvision pose estimation results
+   * @param table The Limelight table to write to
+   * @param limelight The Limelight to write for
+   */
   private void writeToTable(
       List<PhotonPipelineResult> results, NetworkTable table, Limelight limelight) {
     // write to ll table
@@ -159,7 +166,13 @@ public class SimulatedVision extends PhysicalVision {
     }
   }
 
-  public PhotonCamera getSimulationCamera(Limelight limelight) {
+  /**
+   * Gets the PhotonCamera for the given Limelight
+   *
+   * @param limelight The Limelight to get the camera for
+   * @return A PhotonCamera object for the given Limelight
+   */
+  private PhotonCamera getSimulationCamera(Limelight limelight) {
     return switch (limelight) {
       case SHOOTER -> VisionConstants.SHOOTER_CAMERA;
       case FRONT_LEFT -> VisionConstants.FRONT_LEFT_CAMERA;
@@ -168,7 +181,13 @@ public class SimulatedVision extends PhysicalVision {
     };
   }
 
-  public NetworkTable getLimelightTable(Limelight limelight) {
+  /**
+   * Gets the Limelight network table
+   *
+   * @param limelight The Limelight to get the table for
+   * @return The network table of the Limelight
+   */
+  private NetworkTable getLimelightTable(Limelight limelight) {
     return switch (limelight) {
       case SHOOTER -> LimelightHelpers.getLimelightNTTable(Limelight.SHOOTER.getName());
       case FRONT_LEFT -> LimelightHelpers.getLimelightNTTable(Limelight.FRONT_LEFT.getName());
