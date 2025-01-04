@@ -1,7 +1,6 @@
 package frc.robot.extras.util;
 
 import edu.wpi.first.math.geometry.Rotation3d;
-import frc.robot.BuildConstants;
 import java.util.Random;
 
 public class MathUtil {
@@ -9,7 +8,7 @@ public class MathUtil {
    * random object that generates random variables the seed is the hash of GIT_SHA this way when you
    * do log-replay even the generated random numbers are the same
    */
-  private static final Random random = new Random(BuildConstants.GIT_SHA.hashCode());
+  private static final Random random = new Random((long) Math.random());
 
   public static double linearInterpretationWithBounding(
       double x1, double y1, double x2, double y2, double x) {
